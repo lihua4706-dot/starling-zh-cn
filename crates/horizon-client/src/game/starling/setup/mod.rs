@@ -389,7 +389,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
                 .into(),
             None,
         ),
-        Step::Start => ("Set up Starling", tr("setup.intro"), None),
+        Step::Start => ("设置 Starling", tr("setup.intro"), None),
         Step::Offline => (
             "Are you sure?",
             "You will not be able to play on most servers! We highly recommend signing in with \
@@ -397,8 +397,8 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
                 .into(),
             None,
         ),
-        Step::Talking(message) => ("Set up Starling", message.clone(), None),
-        Step::AccountForm => ("Set up Starling", String::new(), None),
+        Step::Talking(message) => ("设置 Starling", message.clone(), None),
+        Step::AccountForm => ("设置 Starling", String::new(), None),
         Step::Code { link, .. } => (
             "Sign in with Microsoft",
             format!("On {link}, enter this code:"),
@@ -498,13 +498,13 @@ fn buttons(step: &Step) -> Vec<(String, Action)> {
         }
         #[cfg(target_os = "android")]
         Step::Horizon(false) => vec![
-            literal("Bring them over", Action::Horizon),
-            literal("Skip", Action::HorizonDone),
+            literal("把它们搬过来", Action::Horizon),
+            literal("跳过", Action::HorizonDone),
         ],
         #[cfg(target_os = "android")]
         Step::Horizon(true) => vec![
             literal("Next", Action::HorizonDone),
-            literal("Pick the folder again", Action::Horizon),
+            literal("重新选择文件夹", Action::Horizon),
         ],
         #[cfg(target_os = "android")]
         Step::StartupScreen { .. } => vec![
@@ -528,17 +528,17 @@ fn buttons(step: &Step) -> Vec<(String, Action)> {
         ],
         Step::Talking(_) => vec![(tr("cancel"), Action::CancelSignIn)],
         Step::Failed(_) => vec![
-            literal("Try again", Action::Retry),
+            literal("重试", Action::Retry),
             (tr("setup.import"), Action::Pick),
         ],
         Step::SignInFailed(_) => vec![
-            literal("Try again", Action::Retry),
+            literal("重试", Action::Retry),
             (tr("back"), Action::AccountBack),
             (tr("setup.offline_title"), Action::Offline),
         ],
         step if waiting(step) => vec![
-            literal("Go fishing", Action::Fish),
-            literal("Settings", Action::Settings),
+            literal("去钓鱼", Action::Fish),
+            literal("设置", Action::Settings),
         ],
         _ => Vec::new(),
     }

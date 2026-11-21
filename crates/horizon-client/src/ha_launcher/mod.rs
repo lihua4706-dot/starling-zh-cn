@@ -317,9 +317,9 @@ pub fn play(installed: bool) -> Result<(), String> {
     std::fs::write(&marker, b"")
         .map_err(|error| format!("无法保存启动请求。{error}"))?;
     let message = if installed {
-        horizon_client::lang::get_or("starling.restart.play", "Starting Starling…")
+        horizon_client::lang::get_or("starling.restart.play", "正在启动 Starling…")
     } else {
-        horizon_client::lang::get_or("starling.restart.setup", "Opening setup…")
+        horizon_client::lang::get_or("starling.restart.setup", "正在打开设置向导…")
     };
     if !crate::android::call_restart(&message) {
         let _ = std::fs::remove_file(marker);

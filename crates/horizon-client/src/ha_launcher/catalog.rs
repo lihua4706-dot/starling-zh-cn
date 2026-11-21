@@ -619,7 +619,7 @@ impl InstalledFilter {
     pub const ALL: [Self; 4] = [Self::All, Self::Mods, Self::Packs, Self::Shaders];
     pub fn label(self) -> &'static str {
         match self {
-            Self::All => "All",
+            Self::All => "全部",
             Self::Mods => "模组",
             Self::Packs => "资源包",
             Self::Shaders => "光影",
@@ -1166,7 +1166,7 @@ impl Catalog {
         self.fm_clipboard = Some((paths, is_cut));
         self.status = format!(
             "{} {count} item(s) to clipboard. Open destination folder and tap Paste.",
-            if is_cut { "Cut" } else { "已复制" }
+            if is_cut { "剪切" } else { "已复制" }
         );
     }
 

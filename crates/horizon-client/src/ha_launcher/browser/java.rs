@@ -247,7 +247,7 @@ impl Job<'_> {
                 "{relative} is already there and wasn't installed by the browser: move it away first."
             ));
         }
-        progress(&format!("Installing {}", project.title), 1.);
+        progress(&format!("正在安装 {}", project.title), 1.);
         let part = home.join(MODS_DIR).join(format!(".{}.part", check.mod_id));
         let _ = fs::remove_dir_all(&part);
         copy_dir(&carry, &part).inspect_err(|_| {
