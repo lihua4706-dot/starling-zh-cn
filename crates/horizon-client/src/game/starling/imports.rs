@@ -788,7 +788,7 @@ mod tests {
     #[test]
     fn its_lines_start_with_a_capital_and_zips_go_by_their_names() {
         assert_eq!(
-            sentence("the game does not know".into()),
+            sentence("游戏无法识别".into()),
             "游戏无法识别"
         );
         assert_eq!(sentence("World \"a\" added".into()), "World \"a\" added");

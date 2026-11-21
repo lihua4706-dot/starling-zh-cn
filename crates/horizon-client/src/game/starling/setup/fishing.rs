@@ -266,7 +266,7 @@ impl Fishing {
                     .map_or(CATCHES[0].0, |c| c.0);
                 self.caught += 1;
                 self.sounds.push(Sound::Catch);
-                self.say(format!("You caught {catch}!"), now);
+                self.say(format!("你钓到了 {catch}！"), now);
             }
             Phase::Coming { .. } => self.say("收竿太早：它游走了。".into(), now),
             Phase::Idle => return,
