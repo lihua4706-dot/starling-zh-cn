@@ -1,3 +1,5 @@
+> 🌐 **中文版说明 / Chinese**：本仓库是 `starling-client/starling` 的简体中文汉化 fork，完整中文介绍见 **[README.zh-CN.md](README.zh-CN.md)**（该中文文档由 DeepSeek 生成）。
+>
 > [!IMPORTANT]
 > **Discord:** join Modrizon, the working server for the mod API effort (mod developers, testers, contributors): [discord.gg/j5qs5tZTrZ](https://discord.gg/j5qs5tZTrZ). A side room for modding work; Horizon's own server stays the place for the game.
 >
