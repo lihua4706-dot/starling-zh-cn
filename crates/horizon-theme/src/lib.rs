@@ -25,6 +25,12 @@ pub mod fonts {
     pub const GEIST_MEDIUM: &[u8] = include_bytes!("../fonts/Geist-Medium.ttf");
     pub const GEIST_SEMIBOLD: &[u8] = include_bytes!("../fonts/Geist-SemiBold.ttf");
     pub const GEIST_MONO: &[u8] = include_bytes!("../fonts/GeistMono-Regular.ttf");
+    /// Noto Sans SC, subset to ASCII + Latin-1 + common punctuation + the GB2312
+    /// common Han block, so the Chinese-localized launcher (zh-cn) renders its
+    /// text; three weights baked from the variable font. SIL Open Font License.
+    pub const NOTO_REGULAR: &[u8] = include_bytes!("../fonts/Noto-Regular.ttf");
+    pub const NOTO_MEDIUM: &[u8] = include_bytes!("../fonts/Noto-Medium.ttf");
+    pub const NOTO_SEMIBOLD: &[u8] = include_bytes!("../fonts/Noto-SemiBold.ttf");
     pub const PIXEL_MEDIUM: &[u8] = include_bytes!("../fonts/PixelifySans-Medium.ttf");
     pub const PIXEL_SEMIBOLD: &[u8] = include_bytes!("../fonts/PixelifySans-SemiBold.ttf");
     pub const PIXEL_BOLD: &[u8] = include_bytes!("../fonts/PixelifySans-Bold.ttf");

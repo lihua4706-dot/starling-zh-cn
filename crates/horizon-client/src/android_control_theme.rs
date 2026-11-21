@@ -144,10 +144,10 @@ impl Fonts {
         let f = |b: &'static [u8]| FontRef::try_from_slice(b).expect("bundled font");
         Self {
             faces: [
-                f(horizon_theme::fonts::GEIST_REGULAR),
-                f(horizon_theme::fonts::GEIST_MEDIUM),
-                f(horizon_theme::fonts::GEIST_SEMIBOLD),
-                f(horizon_theme::fonts::GEIST_MONO),
+                f(horizon_theme::fonts::NOTO_REGULAR),
+                f(horizon_theme::fonts::NOTO_MEDIUM),
+                f(horizon_theme::fonts::NOTO_SEMIBOLD),
+                f(horizon_theme::fonts::NOTO_REGULAR),
             ],
         }
     }
