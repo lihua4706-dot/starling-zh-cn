@@ -344,7 +344,7 @@ fn test_build() -> Option<String> {
 /// Sends a report to the build gateway, on a thread of its own.
 fn send(report: Value) {
     let spawned = std::thread::Builder::new()
-        .name("Performance report".into())
+        .name("性能报告".into())
         .spawn(move || {
             let body = serde_json::to_vec(&report).unwrap_or_default();
             let result = ureq::AgentBuilder::new()
@@ -896,7 +896,7 @@ impl Game<'_> {
         if now {
             write();
         } else if let Err(e) = std::thread::Builder::new()
-            .name("Performance test".into())
+            .name("性能测试".into())
             .spawn(write)
         {
             log::warn!("Starling: performance test: {e}");
@@ -1558,7 +1558,7 @@ impl Game<'_> {
         );
         let theirs = shared.clone();
         let spawned = thread::Builder::new()
-            .name("Calibration".into())
+            .name("校准".into())
             .spawn(move || calibration_thread(control, theirs, game_dir, candidates));
         if let Err(e) = spawned {
             log::warn!("Starling: calibration: {e}");

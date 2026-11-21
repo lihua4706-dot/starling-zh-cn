@@ -41,7 +41,7 @@ const PUBLISHED_SERVER: &str = "published-build-server";
 /// In the folder of a build from the player's own server: which one.
 const CAME_FROM: &str = "server";
 /// The button that compiles on GitHub's machines (`Act::CompileOnGithub`).
-const USE_GITHUB: &str = "Use GitHub (slower)";
+const USE_GITHUB: &str = "使用 GitHub（较慢）";
 /// What the service takes in one request (`MAX_BODY`).
 const LARGEST_REQUEST: usize = 32 << 20;
 /// A build's folder here starts with this, and a new one takes the place of the last.
@@ -394,7 +394,7 @@ fn list(version: &str) -> Result<Vec<Build>, String> {
         return Err(errors
             .into_iter()
             .next()
-            .unwrap_or_else(|| "No native mod builds have been made yet.".to_owned()));
+            .unwrap_or_else(|| "还没有构建任何原生模组。".to_owned()));
     }
     Ok(releases::merge_native_builds(lists))
 }
@@ -453,7 +453,7 @@ fn download(build: &Build, version: &str, shared: &Mutex<Shared>) -> Result<Stri
     let got: String = hash.finalize().iter().map(|b| format!("{b:02x}")).collect();
     if got != want {
         let _ = std::fs::remove_file(&part);
-        return Err("The download came out damaged. Try again.".into());
+        return Err("下载文件损坏，请重试。".into());
     }
     // A rename: a library this game runs stays mapped as it was.
     std::fs::rename(&part, folder.join(LIBRARY)).map_err(|e| e.to_string())?;
@@ -497,7 +497,7 @@ fn bundles_body() -> Result<Vec<u8>, String> {
         );
     }
     if mods.is_empty() {
-        return Err("There is no native mod to compile.".into());
+        return Err("没有需要编译的原生模组。".into());
     }
     mods.sort();
     let mut body = Vec::new();
@@ -578,7 +578,7 @@ fn fetch_library(
                     .map_err(|e| format!("{}: {e}", part.display()))?;
                 done += n as u64;
                 if done > size {
-                    return Err("The build server sent more than it said.".into());
+                    return Err("构建服务器发送的内容超出预期。".into());
                 }
                 shared.lock().unwrap_or_else(PoisonError::into_inner).status = format!(
                     "Downloading: {:.0} of {:.0} MB",
@@ -609,7 +609,7 @@ fn fetch_library(
     let got: String = hash.finalize().iter().map(|b| format!("{b:02x}")).collect();
     if got != want {
         let _ = std::fs::remove_file(part);
-        return Err("The download came out damaged. Try again.".into());
+        return Err("下载文件损坏，请重试。".into());
     }
     Ok(())
 }
@@ -761,7 +761,7 @@ fn compile_from_store(
         )));
     }
     if wanted.is_empty() {
-        return Err("There is no native mod to compile.".into());
+        return Err("没有需要编译的原生模组。".into());
     }
     if !old.is_empty() {
         log::warn!(
@@ -771,7 +771,7 @@ fn compile_from_store(
         );
     }
     let abi = releases::process_abi();
-    say("Looking for your mods in the store...".into());
+    say("正在商店中查找你的模组…".into());
     let repo = store::STORE_REPO;
     let Some(text) = github_text(
         agent,
@@ -779,7 +779,7 @@ fn compile_from_store(
     )?
     else {
         return Ok(FromStore::NotHere(
-            "The mod store has no builds yet. Try again later.".into(),
+            "模组商店还没有构建，请稍后再试。".into(),
         ));
     };
     // Only this game's build: a library of another one doesn't load here.
@@ -1043,7 +1043,7 @@ fn build_in_store(
             .iter()
             .find(|(_, x)| x == w)
             .map(|(p, _)| p)
-            .ok_or("A mod went from the folder.")?;
+            .ok_or("文件夹中少了一个模组。")?;
         let body = std::fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
         if body.len() > LARGEST_REQUEST {
             return Err(format!("{} is too big to compile.", w.id));
@@ -1063,13 +1063,13 @@ fn build_in_store(
             .map_err(|e| e.to_string())?;
         let job = store::job_of(&w.source, abi);
         if answer["job"].as_str() != Some(job.as_str()) {
-            return Err("The build server gave another job.".into());
+            return Err("构建服务器分配了其他任务。".into());
         }
         pending.push((w.clone(), job));
     }
     {
         let mut s = shared.lock().unwrap_or_else(PoisonError::into_inner);
-        s.status = "Compiling...".into();
+        s.status = "正在编译…".into();
         s.building_since = Some(Instant::now());
     }
     let started = Instant::now();
@@ -1080,7 +1080,7 @@ fn build_in_store(
     let mut service_asked = Instant::now();
     while !pending.is_empty() {
         if started.elapsed() > LONGEST_ON_GITHUB {
-            return Err("The build took too long. Try again later.".into());
+            return Err("构建耗时过长，请稍后再试。".into());
         }
         let mut still = Vec::new();
         for (w, job) in pending {
@@ -1133,7 +1133,7 @@ fn build_in_store(
                         }
                     }
                     Err(ureq::Error::Status(404, _)) => {
-                        return Err("The build server lost the job. Try again.".into());
+                        return Err("构建服务器丢失了任务，请重试。".into());
                     }
                     Err(_) => {}
                 }
@@ -1161,7 +1161,7 @@ fn told(
         Some("queued") => {
             let ahead = status["ahead"].as_u64().unwrap_or(0);
             s.status = match (github, ahead) {
-                (true, 0) => "Waiting for a machine on GitHub...".to_owned(),
+                (true, 0) => "正在等待 GitHub 上的机器…".to_owned(),
                 _ => format!("In line: {ahead} before yours"),
             };
             s.building_since = None;
@@ -1176,10 +1176,10 @@ fn told(
         Some("failed") => {
             return Err(status["error"]
                 .as_str()
-                .unwrap_or("The build failed.")
+                .unwrap_or("构建失败。")
                 .to_owned());
         }
-        _ => return Err("The build server lost the job. Try again.".into()),
+        _ => return Err("构建服务器丢失了任务，请重试。".into()),
     }
     Ok(None)
 }
@@ -1200,7 +1200,7 @@ fn wait_on_service(
     let mut quiet = 0;
     loop {
         if started.elapsed() > longest {
-            return Err("The build took too long. Try again later.".into());
+            return Err("构建耗时过长，请稍后再试。".into());
         }
         std::thread::sleep(POLL);
         *asked += 1;
@@ -1272,7 +1272,7 @@ fn wait_on_github(
     let tags = store::results_tags(job);
     {
         let mut s = shared.lock().unwrap_or_else(PoisonError::into_inner);
-        s.status = "Compiling...".into();
+        s.status = "正在编译…".into();
         s.building_since = Some(Instant::now());
     }
     // A failure there at the first look that may pass is the last build's, and the service builds
@@ -1283,7 +1283,7 @@ fn wait_on_github(
     let mut service_asked = Instant::now();
     loop {
         if started.elapsed() > longest {
-            return Err("The build took too long. Try again later.".into());
+            return Err("构建耗时过长，请稍后再试。".into());
         }
         // The first look also asks the release of the first evening's builds; a new one goes to
         // its shard.
@@ -1327,7 +1327,7 @@ fn wait_on_github(
                 .call()
                 .map_err(|e| match e {
                     ureq::Error::Status(404, _) => {
-                        Some("The build server lost the job. Try again.".to_owned())
+                        Some("构建服务器丢失了任务，请重试。".to_owned())
                     }
                     // Can't tell now: GitHub is looked at again, and the service later.
                     _ => None,
@@ -1373,9 +1373,9 @@ fn compile(version: &str, github: bool, shared: &Mutex<Shared>) -> Result<String
         .timeout_read(Duration::from_secs(40))
         .build();
     say(if github {
-        "Sending the mod to GitHub...".into()
+        "正在把模组发送到 GitHub…".into()
     } else {
-        "Sending the mod to the build server...".into()
+        "正在把模组发送到构建服务器…".into()
     });
     let body = bundles_body()?;
     let via = if github { "&via=github" } else { "" };
@@ -1413,13 +1413,13 @@ fn compile(version: &str, github: bool, shared: &Mutex<Shared>) -> Result<String
             break (answer["job"].as_str().unwrap_or_default().to_owned(), repo);
         }
         if started.elapsed() > WAKING {
-            return Err("The build server did not wake up. Try again later.".into());
+            return Err("构建服务器没有响应，请稍后再试。".into());
         }
         say("Waking the build server up: about a minute...".into());
         std::thread::sleep(POLL * 3);
     };
     if !plain(&job) {
-        return Err("The build server gave no job.".into());
+        return Err("构建服务器未分配任务。".into());
     }
     let (finished, url) = match &repo {
         // The answer on GitHub, where the service puts it: the service is asked only now and then.
@@ -1448,7 +1448,7 @@ fn compile(version: &str, github: bool, shared: &Mutex<Shared>) -> Result<String
     if want.len() != 64 || size == 0 {
         return Err("The build does not say its SHA-256.".into());
     }
-    say("Downloading...".into());
+    say("正在下载…".into());
     let name = format!("{COMPILED}{job}");
     let folder = dir().join(&name);
     std::fs::create_dir_all(&folder).map_err(|e| format!("{}: {e}", folder.display()))?;
@@ -1818,7 +1818,7 @@ impl Game<'_> {
         // Said in red, above the rest.
         let mut danger = None;
         let (title, body) = match &stage {
-            Stage::Loading => ("Native mods".to_owned(), "Looking for builds...".to_owned()),
+            Stage::Loading => ("原生模组".to_owned(), "正在查找构建…".to_owned()),
             Stage::List => {
                 for b in builds.iter().take(SHOWN) {
                     let text = if current.as_deref() == Some(&b.name) {
@@ -1829,9 +1829,9 @@ impl Game<'_> {
                     acts.push((text, Act::Use(b.clone())));
                 }
                 if current.is_some() {
-                    acts.push(("Play without native mods".into(), Act::StopUsing));
+                    acts.push(("不带原生模组游玩".into(), Act::StopUsing));
                 }
-                acts.push(("Build server...".into(), Act::Server));
+                acts.push(("构建服务器…".into(), Act::Server));
                 danger = custom_host.map(|host| {
                     format!(
                         "Compiling uses another build server: {host}. We take no responsibility \
@@ -1843,12 +1843,12 @@ impl Game<'_> {
                     None => String::new(),
                 };
                 let found = if builds.is_empty() {
-                    "No builds for this version yet."
+                    "此版本还没有构建。"
                 } else {
                     "Each is this version's game with those mods compiled in."
                 };
                 (
-                    "Native mods".to_owned(),
+                    "原生模组".to_owned(),
                     format!(
                         "{playing}{found} Native mods run with the game's full access. To add \
                          one, open its .hnmod with Starling and press Compile on its row."
@@ -1864,13 +1864,13 @@ impl Game<'_> {
                 ),
             ),
             Stage::Chosen(name) => {
-                acts.push(("Restart now".into(), Act::Restart));
+                acts.push(("立即重启".into(), Act::Restart));
                 danger = came_from(name).map(|host| {
                     format!("This build came from {host}, not from Starling's server.")
                 });
                 (
                     if name.starts_with(COMPILED) || name == NATIVE_LIBS {
-                        "Your native mods are ready".to_owned()
+                        "你的原生模组已就绪".to_owned()
                     } else {
                         format!("{} is ready", label(name))
                     },
@@ -1880,17 +1880,17 @@ impl Game<'_> {
                 )
             }
             Stage::Failed(e) => {
-                acts.push(("Try again".into(), Act::Retry));
+                acts.push(("重试".into(), Act::Retry));
                 if self.native_builds.compile_failed && custom_host.is_none() {
                     acts.push((USE_GITHUB.into(), Act::CompileOnGithub));
                 }
-                ("Native mods".to_owned(), e.clone())
+                ("原生模组".to_owned(), e.clone())
             }
             Stage::Warn(id) => {
                 let github = custom_host
                     .is_none()
                     .then(|| (USE_GITHUB.to_owned(), Act::CompileOnGithub));
-                let compile = ("Compile".to_owned(), Act::Compile);
+                let compile = ("编译".to_owned(), Act::Compile);
                 // Use GitHub pressed on the Mods page: it comes first.
                 match github {
                     Some(github) if self.native_builds.on_github => {
@@ -1902,7 +1902,7 @@ impl Game<'_> {
                         acts.extend(github);
                     }
                 }
-                acts.push(("Build server...".into(), Act::Server));
+                acts.push(("构建服务器…".into(), Act::Server));
                 danger = custom_host.map(|host| {
                     format!(
                         "{host} is not Starling's server. The game it sends back runs with full \
@@ -1946,7 +1946,7 @@ impl Game<'_> {
             }
             Stage::Compiling => unreachable!("drawn by draw_compiling"),
         };
-        acts.push(("Close".into(), Act::Close));
+        acts.push(("关闭".into(), Act::Close));
         let mut ui = Ui::new(&self.gui.atlas, batch, (-1.0, -1.0));
         let (w, h) = (ui.w, ui.h);
         ui.fill(0.0, 0.0, w, h, color::with_alpha(color::bg(), 0.72));
@@ -2083,7 +2083,7 @@ impl Game<'_> {
             rect[0] + rect[2] / 2.0,
             rect[1] + (rect[3] - 13.0) / 2.0 - 2.0,
             color::text(),
-            "Hide",
+            "隐藏",
         );
         let other = [rect[0] - hide_w - 8.0, rect[1], hide_w, rect[3]];
         ui.rounded(other[0], other[1], other[2], other[3], 8.0, color::raised());
@@ -2093,7 +2093,7 @@ impl Game<'_> {
             other[0] + other[2] / 2.0,
             other[1] + (other[3] - 13.0) / 2.0 - 2.0,
             color::text(),
-            if card.digging { "Fish" } else { "Mine" },
+            if card.digging { "钓鱼" } else { "挖掘" },
         );
         ui.finish();
         *self.native_builds.buttons.borrow_mut() = vec![(rect, Act::Close), (other, Act::Switch)];

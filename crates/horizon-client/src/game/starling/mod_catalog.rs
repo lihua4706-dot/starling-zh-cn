@@ -22,9 +22,9 @@ use std::time::{Duration, Instant};
 use winit::event::{Touch, TouchPhase};
 
 const SHELVES: [(Shelf, &str); 3] = [
-    (Shelf::Mods, "Mods"),
-    (Shelf::ResourcePacks, "Resource packs"),
-    (Shelf::ShaderPacks, "Shader packs"),
+    (Shelf::Mods, "模组"),
+    (Shelf::ResourcePacks, "资源包"),
+    (Shelf::ShaderPacks, "光影包"),
 ];
 // In UI units: a landscape phone's short side is 700 of them (`density`), about 0.1 mm each. The
 // system's smallest finger target, 48 dp, is about 78 of them.
@@ -295,9 +295,9 @@ fn draw_confirm(ui: &mut Ui<'_>, title: &str, drawn: &mut Vec<([f32; 4], Act)>) 
         10.0,
         color::DANGER,
     );
-    label(ui, remove, color::text(), "Remove");
+    label(ui, remove, color::text(), "移除");
     drawn.push((remove, Act::ConfirmRemove));
-    plate(ui, cancel, "Cancel", false);
+    plate(ui, cancel, "取消", false);
     drawn.push((cancel, Act::CancelRemove));
 }
 
@@ -371,10 +371,10 @@ fn draw_list(
             ROW_BUTTON_H,
         ];
         if shared.installing.as_deref() == Some(project.title.as_str()) {
-            label(ui, rect, color::MUTED, "Installing");
+            label(ui, rect, color::MUTED, "正在安装");
         } else if card.installed.contains(&project.id) {
             let (state, remove) = installed_parts(rect);
-            label(ui, state, color::MUTED, "Installed");
+            label(ui, state, color::MUTED, "已安装");
             ui.rounded(
                 remove[0],
                 remove[1],
@@ -383,12 +383,12 @@ fn draw_list(
                 10.0,
                 color::hover(),
             );
-            label(ui, remove, color::text(), "Remove");
+            label(ui, remove, color::text(), "移除");
             if let Some(part) = list::shown_part(remove, top, bottom) {
                 drawn.push((part, Act::Remove(i)));
             }
         } else {
-            plate(ui, rect, "Install", true);
+            plate(ui, rect, "安装", true);
             if let Some(part) = list::shown_part(rect, top, bottom) {
                 drawn.push((part, Act::Install(i)));
             }
@@ -402,7 +402,7 @@ fn draw_list(
     let (line, ink) = match shared.feed.tail() {
         Tail::Loading => (loading_line(card.shelf, rows.is_empty()), color::MUTED),
         Tail::More => (loading_line(card.shelf, false), color::MUTED),
-        Tail::End if rows.is_empty() => ("Nothing found.".to_owned(), color::MUTED),
+        Tail::End if rows.is_empty() => ("未找到任何内容。".to_owned(), color::MUTED),
         Tail::End => ("That's all of them.".to_owned(), color::MUTED),
         Tail::Failed(why) => (why.clone(), color::text()),
     };
@@ -419,7 +419,7 @@ fn draw_list(
             ROW_BUTTON_W,
             ROW_BUTTON_H,
         ];
-        plate(ui, rect, "Try again", false);
+        plate(ui, rect, "重试", false);
         if let Some(part) = list::shown_part(rect, top, bottom) {
             drawn.push((part, Act::Retry));
         }
@@ -435,12 +435,12 @@ fn draw_head(ui: &mut Ui<'_>, card: &Catalog, edge: f32, drawn: &mut Vec<([f32; 
         MARGIN,
         8.0,
         color::text(),
-        "Catalog",
+        "目录",
     );
     button(
         ui,
         [edge - 130.0, 8.0, 130.0, 62.0],
-        "Close",
+        "关闭",
         false,
         Act::Close,
         drawn,
@@ -481,7 +481,7 @@ fn draw_head(ui: &mut Ui<'_>, card: &Catalog, edge: f32, drawn: &mut Vec<([f32; 
         );
     }
     let (typed, ink) = if card.query.is_empty() && !card.typing {
-        ("Search...", color::MUTED)
+        ("搜索…", color::MUTED)
     } else {
         (card.query.as_str(), color::text())
     };
@@ -512,7 +512,7 @@ fn draw_head(ui: &mut Ui<'_>, card: &Catalog, edge: f32, drawn: &mut Vec<([f32; 
             CLEAR_W,
             search[3],
         ];
-        label(ui, clear, color::MUTED, "Clear");
+        label(ui, clear, color::MUTED, "清除");
         drawn.push((clear, Act::Clear));
     }
     drawn.push((search, Act::Search));
@@ -649,7 +649,7 @@ impl Game<'_> {
             .installing
             .is_some();
         if busy {
-            self.catalog.notice = Some(("Wait for the install to finish first.".to_owned(), true));
+            self.catalog.notice = Some(("请先等待安装完成。".to_owned(), true));
             return;
         }
         let title = project.title.clone();

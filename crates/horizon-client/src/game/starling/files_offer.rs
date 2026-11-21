@@ -70,25 +70,25 @@ pub(super) fn declined() -> PathBuf {
 pub(super) fn texts(stage: Stage) -> [&'static str; 4] {
     match stage {
         Stage::Ask => [
-            "Keep your files where you can reach them",
+            "把文件放在你方便找到的地方",
             "Starling can keep your worlds, packs, mods and screenshots in a Starling folder on \
              your phone's storage, which any file manager (and a computer over USB) opens. \
              Android will ask you to allow access to files for that.",
-            "Set up",
-            "Not now",
+            "设置",
+            "暂不",
         ],
         Stage::Waiting => [
-            "Allow access to files",
+            "允许访问文件",
             "Turn on the switch for Starling in the screen that opened, then come back here.",
-            "Open it again",
-            "Not now",
+            "再次打开",
+            "暂不",
         ],
         Stage::Restart => [
-            "All set",
+            "全部就绪",
             "Restart Starling to move your worlds, packs and settings into the Starling folder. \
              It copies them first: nothing is lost.",
-            "Restart now",
-            "Later",
+            "立即重启",
+            "稍后",
         ],
     }
 }
@@ -97,19 +97,19 @@ fn card_texts(card: Card) -> [&'static str; 4] {
     match card {
         Card::Folder(stage) => texts(stage),
         Card::Horizon(false) => [
-            "Coming from Horizon Android?",
+            "从 Horizon Android 转来？",
             "Horizon Android is part of Starling now: bring your worlds and resource packs over. \
              Close Horizon Android first, then, in the folder that opens, tap Use this folder and \
              Allow. They are copied: Horizon Android keeps its own.",
-            "Bring them over",
-            "Not now",
+            "把它们搬过来",
+            "暂不",
         ],
         Card::Horizon(true) => [
-            "Coming from Horizon Android?",
+            "从 Horizon Android 转来？",
             "Your worlds and resource packs are on their way: the note at the top says what each \
              one added. Tap Done when they are in.",
-            "Done",
-            "Pick the folder again",
+            "完成",
+            "重新选择文件夹",
         ],
     }
 }
@@ -275,7 +275,7 @@ impl Game<'_> {
                 if crate::android::import_horizon_android() {
                     offer.horizon = Some(true);
                 } else {
-                    self.imports.say_failed("No folder picker opened".into());
+                    self.imports.say_failed("未打开文件夹选择器".into());
                 }
             }
             (Card::Horizon(true), _) => {

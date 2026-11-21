@@ -383,8 +383,8 @@ pub(super) fn draw_editor(
             ring_of(ui, shape, c, r, color::ACCENT);
         }
         let (name, sprite) = match target {
-            Target::Stick if dpad => ("D-pad".to_owned(), None),
-            Target::Stick => ("Move".to_owned(), None),
+            Target::Stick if dpad => ("方向键".to_owned(), None),
+            Target::Stick => ("移动".to_owned(), None),
             _ => face(target),
         };
         let tint = if place.show == Show::Off {
@@ -418,14 +418,14 @@ pub(super) fn draw_editor(
             Chip::Smaller => "-",
             Chip::Bigger => "+",
             Chip::Visibility => match shown {
-                Some(Show::Ghost) => "Ghost",
-                Some(Show::Off) => "Off",
+                Some(Show::Ghost) => "幽灵",
+                Some(Show::Off) => "关",
                 _ => "On",
             },
             Chip::Sneak => config.sneak.label(),
-            Chip::Anchor if config.fixed_stick => "Fixed",
-            Chip::Anchor => "Float",
-            Chip::Delete => "Del",
+            Chip::Anchor if config.fixed_stick => "固定",
+            Chip::Anchor => "浮动",
+            Chip::Delete => "删除",
         };
         label(ui, c, r, text, ink(1.0));
     }
@@ -451,7 +451,7 @@ pub(super) fn draw_editor(
     );
     circle(ui, [x0 + (x1 - x0) * value, y], 0.28 * u, ink(1.0));
     let whose = match editor.selected {
-        Some(Target::Stick) => "Move".to_owned(),
+        Some(Target::Stick) => "移动".to_owned(),
         Some(Target::Button(b)) => b.label().to_owned(),
         Some(target @ Target::Extra(_)) => face(target).0,
         None => "all".to_owned(),
@@ -477,22 +477,22 @@ pub(super) fn draw_editor(
         };
         circle(ui, c, r, fill);
         let text = match action {
-            EditorAction::Done => "Done",
-            EditorAction::Reset => "Reset",
-            EditorAction::Add => "Add",
+            EditorAction::Done => "完成",
+            EditorAction::Reset => "重置",
+            EditorAction::Add => "添加",
             // The movement control picked (a press switches it): auto is the D-pad where the
             // stick moves as the keys.
             EditorAction::Movement => match config.dpad {
-                Some(true) => "D-pad",
-                Some(false) => "Stick",
-                None => "Auto",
+                Some(true) => "方向键",
+                Some(false) => "摇杆",
+                None => "自动",
             },
             // What a tap and a press act on: what is touched, or the crosshair's.
             EditorAction::Interact => config.interact.label(),
-            EditorAction::Vibrate if config.vibrate => "Vib on",
-            EditorAction::Vibrate => "Vib off",
-            EditorAction::Gyro if config.gyro => "Gyro on",
-            EditorAction::Gyro => "Gyro off",
+            EditorAction::Vibrate if config.vibrate => "震动开",
+            EditorAction::Vibrate => "震动关",
+            EditorAction::Gyro if config.gyro => "陀螺仪开",
+            EditorAction::Gyro => "陀螺仪关",
             EditorAction::ThreeFingers if config.three_fingers => "3-tap on",
             EditorAction::ThreeFingers => "3-tap off",
         };
@@ -1694,7 +1694,7 @@ impl Game<'_> {
                         if other {
                             touch::FUNCTION_KEYS[i]
                         } else {
-                            touch::DEBUG_COMBOS.get(i).map_or("F keys", |c| c.1)
+                            touch::DEBUG_COMBOS.get(i).map_or("F 键", |c| c.1)
                         },
                         ink(1.0),
                     );
@@ -2041,7 +2041,7 @@ impl Game<'_> {
         if horizon_client::platform::pick_file() {
             self.touch.import_image = Some(id);
         } else {
-            self.imports.say_failed("No file picker opened".into());
+            self.imports.say_failed("未打开文件选择器".into());
         }
     }
 
@@ -2064,7 +2064,7 @@ impl Game<'_> {
             Ok((w, h, pixels)) => {
                 self.ui.options.import_button_image(w, h, &pixels);
                 self.imports
-                    .say("Picture imported", "On the canvas: Done keeps it".into());
+                    .say("图片已导入", "On the canvas: Done keeps it".into());
             }
             Err(e) => self.imports.say_failed(e),
         }

@@ -109,7 +109,7 @@ pub(super) fn export_diagnostics() {
     }
     let home = logging::private_home();
     if let Err(error) = std::thread::Builder::new()
-        .name("Diagnostic export".into())
+        .name("导出诊断".into())
         .spawn(move || {
             logging::flush();
             let result = crate::diagnostics::export(&home);

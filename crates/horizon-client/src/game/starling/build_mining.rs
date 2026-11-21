@@ -180,7 +180,7 @@ impl BuildMining {
             }
         }
         if text.is_empty() {
-            text = "Tap the blocks beside the way in to dig".to_owned();
+            text = "点击通道旁的方块进行挖掘".to_owned();
         }
         let width = ui.measure(Face::Regular, 13.0, &text) + 24.0;
         ui.rounded((w - width) / 2.0, h - 36.0, width, 26.0, 8.0, color::bg());

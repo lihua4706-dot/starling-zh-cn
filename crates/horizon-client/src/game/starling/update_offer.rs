@@ -73,7 +73,7 @@ fn now() -> u64 {
 fn latest(url: &str, current: &str) -> Result<serde_json::Value, String> {
     let text = ureq::get(url)
         .set("User-Agent", &format!("Starling/{current}"))
-        .set("Accept", "application/vnd.github+json")
+        .set("接受", "application/vnd.github+json")
         .timeout(Duration::from_secs(15))
         .call()
         .map_err(|e| e.to_string())?
@@ -140,7 +140,7 @@ fn download(
     let mut done = 0;
     loop {
         if cancel.load(Ordering::Relaxed) {
-            return Err("Cancelled.".into());
+            return Err("已取消。".into());
         }
         let n = body.read(&mut buffer).map_err(|e| e.to_string())?;
         if n == 0 {
@@ -156,7 +156,7 @@ fn download(
     let got: String = hash.finalize().iter().map(|b| format!("{b:02x}")).collect();
     if release.sha256.as_ref().is_some_and(|want| *want != got) || done == 0 {
         let _ = std::fs::remove_file(&part);
-        return Err("The download came out damaged. Try again.".into());
+        return Err("下载文件损坏，请重试。".into());
     }
     std::fs::rename(&part, dir.join(&release.name)).map_err(|e| e.to_string())?;
     Ok(release.name.clone())
@@ -221,7 +221,7 @@ impl Game<'_> {
         {
             offer.stage = Some(match result {
                 Ok(name) if crate::android::install_update(&name) => Stage::Installing,
-                Ok(_) => Stage::Failed("Android has no installer that takes the update.".into()),
+                Ok(_) => Stage::Failed("安卓没有可安装此更新的安装器。".into()),
                 Err(e) => Stage::Failed(e),
             });
         }
@@ -270,24 +270,24 @@ impl Game<'_> {
                      one: your worlds and settings stay.",
                     mb(release.size)
                 ),
-                &["Update", "Tomorrow", "No"],
+                &["更新", "明天", "No"],
             ),
             Stage::Downloading => (
                 format!("Downloading Starling {version}"),
                 format!("{} of {} MB", mb(done), mb(total)),
-                &["Cancel"],
+                &["取消"],
             ),
             Stage::Installing => (
                 format!("Install Starling {version}"),
                 "Android asks to install the update (the first time, to allow installs from \
                  Starling). Once it is in, open Starling again."
                     .into(),
-                &["Install", "Later"],
+                &["安装", "稍后"],
             ),
             Stage::Failed(e) => (
-                "The update did not download".into(),
+                "更新下载失败".into(),
                 e.clone(),
-                &["Try again", "Later"],
+                &["重试", "稍后"],
             ),
         };
         let mut ui = Ui::new(&self.gui.atlas, batch, (-1.0, -1.0));
@@ -443,7 +443,7 @@ impl Game<'_> {
                     && !crate::android::install_update(&release.name)
                 {
                     offer.stage = Some(Stage::Failed(
-                        "Android has no installer that takes the update.".into(),
+                        "安卓没有可安装此更新的安装器。".into(),
                     ));
                 }
             }

@@ -233,12 +233,12 @@ impl Imports {
         match event {
             Event::Receiving { name, bytes } => self.show(
                 now,
-                "Receiving a file",
+                "正在接收文件",
                 format!("{} · {:.0} MB", shown(&name), bytes as f64 / 1e6),
                 State::Working,
             ),
             Event::Installing { name } => {
-                self.show(now, "Importing", shown(&name).to_owned(), State::Working)
+                self.show(now, "正在导入", shown(&name).to_owned(), State::Working)
             }
             Event::Done(installed) => {
                 log::info!("Horizon: import: {}", installed.message);
@@ -255,7 +255,7 @@ impl Imports {
             }
             Event::Failed { name, error } => {
                 log::warn!("Horizon: import of {name} failed: {error}");
-                self.show(now, "Could not import", error, State::Failed);
+                self.show(now, "无法导入", error, State::Failed);
             }
         }
         finished
@@ -300,7 +300,7 @@ impl Imports {
 
     /// The banner says what went wrong.
     pub(super) fn say_failed(&mut self, detail: String) {
-        self.show(Instant::now(), "Could not import", detail, State::Failed);
+        self.show(Instant::now(), "无法导入", detail, State::Failed);
     }
 
     /// The sounds since the last call, for the caller's audio.
@@ -448,15 +448,15 @@ fn shown(name: &str) -> &str {
 /// The banner's title for what an import added.
 fn done_title(kind: Kind) -> &'static str {
     match kind {
-        Kind::World => "World imported",
-        Kind::ResourcePack => "Resource pack imported",
-        Kind::DataPack => "Data pack imported",
-        Kind::ShaderPack => "Shader pack imported",
-        Kind::Mod | Kind::NativeMod => "Mod imported",
-        Kind::GpuDriver => "GPU driver imported",
-        Kind::Skin => "Skin imported",
-        Kind::Resources => "Minecraft resources imported",
-        Kind::Bedrock | Kind::Unknown => "Imported",
+        Kind::World => "世界已导入",
+        Kind::ResourcePack => "资源包已导入",
+        Kind::DataPack => "数据包已导入",
+        Kind::ShaderPack => "光影包已导入",
+        Kind::Mod | Kind::NativeMod => "模组已导入",
+        Kind::GpuDriver => "GPU 驱动已导入",
+        Kind::Skin => "皮肤已导入",
+        Kind::Resources => "Minecraft 资源已导入",
+        Kind::Bedrock | Kind::Unknown => "已导入",
     }
 }
 
@@ -652,8 +652,8 @@ impl super::Game<'_> {
         if !self.button_image_wait() {
             match self.imports.poll(&self.ui.vanilla_root.clone()) {
                 Some(Kind::Resources) => self.imports.say(
-                    "Minecraft resources imported",
-                    "Restart the game to use them".into(),
+                    "Minecraft 资源已导入",
+                    "重启游戏以使用它们".into(),
                 ),
                 Some(Kind::ResourcePack) => self.refresh_pack_lists(),
                 // The Mods page lists it at once; a mod with code runs as soon as it is turned on.
@@ -725,7 +725,7 @@ mod tests {
     fn it_drops_in_with_a_sound_rings_once_and_goes_back_up() {
         let mut imports = Imports::default();
         let t0 = Instant::now();
-        imports.show(t0, "Importing", "a".into(), State::Working);
+        imports.show(t0, "正在导入", "a".into(), State::Working);
         assert_eq!(imports.take_sounds(), [Chime::Arrive]);
         // Above the screen as it starts, past its place as it bounces, then in place.
         let banner = imports.banner.as_ref().unwrap();
@@ -735,12 +735,12 @@ mod tests {
         assert_eq!(banner.drop(t0 + ENTER), Some(1.0));
         // Still working: no second drop, no sound.
         let t1 = t0 + Duration::from_millis(500);
-        imports.show(t1, "Importing", "a".into(), State::Working);
+        imports.show(t1, "正在导入", "a".into(), State::Working);
         assert!(imports.take_sounds().is_empty());
         let t2 = t0 + Duration::from_secs(1);
         imports.show(
             t2,
-            "World imported",
+            "世界已导入",
             "b".into(),
             State::Done(Some(Kind::World)),
         );
@@ -753,7 +753,7 @@ mod tests {
         assert_eq!(banner.drop(t2 + SHOWN + LEAVE), None);
         // The next import, once it went up, drops in again.
         let t3 = t2 + SHOWN + LEAVE;
-        imports.show(t3, "Importing", "c".into(), State::Working);
+        imports.show(t3, "正在导入", "c".into(), State::Working);
         assert_eq!(imports.take_sounds(), [Chime::Arrive]);
         assert_eq!(imports.banner.as_ref().unwrap().entered, t3);
     }
@@ -764,21 +764,21 @@ mod tests {
         let t0 = Instant::now();
         imports.show(
             t0,
-            "World imported",
+            "世界已导入",
             "a".into(),
             State::Done(Some(Kind::World)),
         );
         imports.show(
             t0 + Duration::from_millis(200),
-            "World imported",
+            "世界已导入",
             "b".into(),
             State::Done(None),
         );
         assert_eq!(imports.take_sounds(), [Chime::Done]);
-        imports.show(t0 + AGAIN, "Could not import", "c".into(), State::Failed);
+        imports.show(t0 + AGAIN, "无法导入", "c".into(), State::Failed);
         imports.show(
             t0 + AGAIN * 2,
-            "World imported",
+            "世界已导入",
             "d".into(),
             State::Done(None),
         );
@@ -789,7 +789,7 @@ mod tests {
     fn its_lines_start_with_a_capital_and_zips_go_by_their_names() {
         assert_eq!(
             sentence("the game does not know".into()),
-            "The game does not know"
+            "游戏无法识别"
         );
         assert_eq!(sentence("World \"a\" added".into()), "World \"a\" added");
         assert_eq!(sentence(String::new()), "");

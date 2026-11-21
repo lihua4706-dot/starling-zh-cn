@@ -374,7 +374,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         }
         #[cfg(target_os = "android")]
         Step::Horizon(false) => (
-            "Coming from Horizon Android?",
+            "从 Horizon Android 转来？",
             "Horizon Android is part of Starling now: bring your worlds and resource packs over. \
              Close Horizon Android first, then, in the folder that opens, tap Use this folder and \
              Allow."
@@ -383,7 +383,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         ),
         #[cfg(target_os = "android")]
         Step::Horizon(true) => (
-            "Coming from Horizon Android?",
+            "从 Horizon Android 转来？",
             "Your worlds and resource packs are on their way: the note at the top says what each \
              one added. Tap Next when they are in."
                 .into(),
@@ -503,13 +503,13 @@ fn buttons(step: &Step) -> Vec<(String, Action)> {
         ],
         #[cfg(target_os = "android")]
         Step::Horizon(true) => vec![
-            literal("Next", Action::HorizonDone),
+            literal("下一步", Action::HorizonDone),
             literal("重新选择文件夹", Action::Horizon),
         ],
         #[cfg(target_os = "android")]
         Step::StartupScreen { .. } => vec![
-            literal("Game", Action::FinishOnboarding(true)),
-            literal("Launcher", Action::FinishOnboarding(false)),
+            literal("游戏", Action::FinishOnboarding(true)),
+            literal("启动器", Action::FinishOnboarding(false)),
         ],
         Step::Start => vec![
             (tr("setup.microsoft"), Action::SignIn),

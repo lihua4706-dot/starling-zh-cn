@@ -131,7 +131,7 @@ impl Game<'_> {
     /// The contraption a bearing at `pos` holds, if it is running.
     pub(super) fn contraption(&self, pos: [i32; 3]) -> Option<Contraption> {
         let tag = super::spill::saved_entity(&self.world, pos)?;
-        let c = tag.get("Contraption")?;
+        let c = tag.get("装置")?;
         Some(Contraption::read(c, self.pack.assets.registry))
     }
 

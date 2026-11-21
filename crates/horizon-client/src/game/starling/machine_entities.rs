@@ -135,9 +135,9 @@ impl MachineEntity {
             fluids,
             belt: super::belts::read_items(tag),
             recipe: int(tag, "RecipeIndex") as i32,
-            contraption: tag.get("Contraption").cloned(),
+            contraption: tag.get("装置").cloned(),
             arm: tag.get("Arm").cloned(),
-            felling: tag.get("Felling").cloned(),
+            felling: tag.get("砍伐中").cloned(),
         }
     }
     fn tag(&self, id: &str, pos: [i32; 3]) -> Tag {
@@ -170,13 +170,13 @@ impl MachineEntity {
             ("RecipeIndex", Tag::Int(self.recipe)),
         ];
         if let Some(c) = &self.contraption {
-            entries.push(("Contraption", c.clone()));
+            entries.push(("装置", c.clone()));
         }
         if let Some(a) = &self.arm {
             entries.push(("Arm", a.clone()));
         }
         if let Some(f) = &self.felling {
-            entries.push(("Felling", f.clone()));
+            entries.push(("砍伐中", f.clone()));
         }
         Tag::compound(entries)
     }

@@ -205,7 +205,7 @@ impl Game<'_> {
                 continue;
             }
             let Some(tree) = super::spill::saved_entity(&self.world, *pos)
-                .and_then(|tag| FallingTree::read(tag.get("Felling")?, registry))
+                .and_then(|tag| FallingTree::read(tag.get("砍伐中")?, registry))
             else {
                 continue;
             };

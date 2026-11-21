@@ -149,7 +149,7 @@ impl Game<'_> {
                 .and_then(|(_, worker)| match worker.try_recv() {
                     Ok(result) => Some(result),
                     Err(mpsc::TryRecvError::Disconnected) => {
-                        Some(Err("Could not load account capes".into()))
+                        Some(Err("无法加载账号披风".into()))
                     }
                     Err(mpsc::TryRecvError::Empty) => None,
                 })
@@ -263,9 +263,9 @@ impl Game<'_> {
         std::thread::spawn(move || {
             let result = (|| {
                 let (account, secrets) = session::selected_session("")?
-                    .ok_or("Sign in to Microsoft to manage account capes.")?;
+                    .ok_or("登录微软账号以管理披风。")?;
                 if account.provider != Provider::Microsoft || Some(account.key()) != key {
-                    return Err("The playing Microsoft account changed.".into());
+                    return Err("当前游玩用的微软账号已更改。".into());
                 }
                 if let Some(id) = &change {
                     cloud::activate_cape(&account, &secrets, id.as_deref())?;
@@ -379,8 +379,8 @@ impl Game<'_> {
             let notice = documents::poll();
             self.refresh_wardrobe();
             if let Some(notice) = notice
-                && (notice.text.starts_with("Import failed")
-                    || notice.text == "Android document picker is unavailable")
+                && (notice.text.starts_with("导入失败")
+                    || notice.text == "安卓文档选择器不可用")
             {
                 self.ui.options.skin_warning(notice.text);
             }
@@ -529,6 +529,6 @@ impl Game<'_> {
     fn decode_cape(path: &std::path::Path) -> Result<Vec<u8>, String> {
         let image = skins::read_cape(&skins::read_file(path)?)?;
         horizon_client::skins::process_cape(image.width(), image.height(), image.as_raw())
-            .ok_or_else(|| "Could not read this cape".into())
+            .ok_or_else(|| "无法读取此披风".into())
     }
 }
