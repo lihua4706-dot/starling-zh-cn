@@ -341,9 +341,9 @@ impl Keyboard {
                     Key::Shift => "Shift".into(),
                     Key::Layer if self.symbols => "abc".into(),
                     Key::Layer => "&123".into(),
-                    Key::Space => "Space".into(),
-                    Key::Backspace => "Delete".into(),
-                    Key::Done => "Done".into(),
+                    Key::Space => "空格".into(),
+                    Key::Backspace => "删除".into(),
+                    Key::Done => "完成".into(),
                 };
                 let lw = ui.measure(Face::Medium, ui_theme::BODY, &label);
                 ui.text_line(
@@ -362,13 +362,13 @@ impl Keyboard {
         use horizon_client_render::pad_glyph::{Glyph, Glyphs};
         let shown = Glyphs::unheld(&Default::default(), glyphs);
         let hints = [
-            (MenuJob::Confirm, "Type"),
-            (MenuJob::Alternate, "Delete"),
-            (MenuJob::Extra, "Space"),
+            (MenuJob::Confirm, "输入"),
+            (MenuJob::Alternate, "删除"),
+            (MenuJob::Extra, "空格"),
             (MenuJob::GroupPrev, "Shift"),
-            (MenuJob::PageNext, "Symbols"),
-            (MenuJob::Start, "Done"),
-            (MenuJob::Back, "Close"),
+            (MenuJob::PageNext, "符号"),
+            (MenuJob::Start, "完成"),
+            (MenuJob::Back, "关闭"),
         ];
         let line: Vec<String> = hints
             .iter()

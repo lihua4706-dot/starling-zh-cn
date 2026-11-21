@@ -4351,7 +4351,7 @@ impl Launcher {
                     let p_title = format!(
                         "{} • {} • {}",
                         theme_cfg.preset.label(),
-                        if resolved.is_light { "Light" } else { "Dark" },
+                        if resolved.is_light { "浅色" } else { "深色" },
                         theme_cfg.background_mode.label()
                     );
                     let fit_pt =
@@ -4406,8 +4406,8 @@ impl Launcher {
                     let half = (content_w - 10.0) * 0.5;
                     let quarter = (half - 6.0) * 0.5;
                     for (i, (lbl, mode, active)) in [
-                        ("Dark", ThemeAppearance::Dark, !resolved.is_light),
-                        ("Light", ThemeAppearance::Light, resolved.is_light),
+                        ("深色", ThemeAppearance::Dark, !resolved.is_light),
+                        ("浅色", ThemeAppearance::Light, resolved.is_light),
                     ]
                     .into_iter()
                     .enumerate()

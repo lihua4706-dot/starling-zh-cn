@@ -2248,22 +2248,22 @@ impl GradientDirection {
 
 /// Curated palette swatches for quick one-tap selection in Launcher Settings -> Theme.
 pub const THEME_ACCENT_SWATCHES: [(u32, &str, &str); 8] = [
-    (0x9A7BFF, "#9A7BFF", "Violet"),
-    (0x38BDF8, "#38BDF8", "Cyan"),
-    (0x34D399, "#34D399", "Emerald"),
-    (0xF87171, "#F87171", "Crimson"),
-    (0xFBBF24, "#FBBF24", "Amber"),
-    (0xF472B6, "#F472B6", "Sakura"),
-    (0x60A5FA, "#60A5FA", "Cobalt"),
-    (0xA78BFA, "#A78BFA", "Iris"),
+    (0x9A7BFF, "#9A7BFF", "紫罗兰"),
+    (0x38BDF8, "#38BDF8", "青色"),
+    (0x34D399, "#34D399", "翡翠"),
+    (0xF87171, "#F87171", "绯红"),
+    (0xFBBF24, "#FBBF24", "琥珀"),
+    (0xF472B6, "#F472B6", "樱花"),
+    (0x60A5FA, "#60A5FA", "钴蓝"),
+    (0xA78BFA, "#A78BFA", "鸢尾"),
 ];
 
 pub const THEME_BG_SWATCHES_DARK: [(u32, &str, &str); 6] = [
-    (0x13111C, "#13111C", "Obsidian"),
+    (0x13111C, "#13111C", "黑曜石"),
     (0x0C131F, "#0C131F", "深渊蓝"),
     (0x0D1714, "#0D1714", "深松绿"),
     (0x191013, "#191013", "暗红宝石"),
-    (0x141418, "#141418", "Carbon"),
+    (0x141418, "#141418", "碳黑"),
     (0x0A0A0E, "#0A0A0E", "OLED 纯黑"),
 ];
 

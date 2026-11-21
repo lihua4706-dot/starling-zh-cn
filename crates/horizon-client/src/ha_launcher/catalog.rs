@@ -905,9 +905,9 @@ impl Catalog {
                 let ext_tag = if name.ends_with(".hmod") {
                     "Horizon Mod (.hmod)"
                 } else if name.ends_with(".jar") {
-                    "Java Mod (.jar)"
+                    "Java 模组（.jar）"
                 } else if name.ends_with(".hshader") {
-                    "Horizon Shader (.hshader)"
+                    "Horizon 光影（.hshader）"
                 } else if kind == crate::ha_launcher::client::content_files::Kind::Shaders {
                     "Shader Pack (.zip)"
                 } else {
@@ -1005,7 +1005,7 @@ impl Catalog {
                 let mod_id = package_mod_id(&entry.path(), &name);
                 let size_bytes = entry.metadata().map(|m| m.len()).unwrap_or(0);
                 let format = if name.ends_with(".hnmod") {
-                    "Horizon Native Mod (.hnmod)"
+                    "Horizon 原生模组（.hnmod）"
                 } else {
                     "Horizon Native Mod (.hmod)"
                 };

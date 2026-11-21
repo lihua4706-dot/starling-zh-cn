@@ -31,10 +31,10 @@ const SAID: Duration = Duration::from_millis(1600);
 
 /// What a cast brings up, and how often in a hundred (vanilla's fish, junk and treasure).
 const CATCHES: &[(&str, u32)] = &[
-    ("Raw Cod", 51),
-    ("Raw Salmon", 21),
-    ("Pufferfish", 11),
-    ("Tropical Fish", 2),
+    ("生鳕鱼", 51),
+    ("生鲑鱼", 21),
+    ("河豚", 11),
+    ("热带鱼", 2),
     ("an Old Boot", 6),
     ("a Stick", 4),
     ("a Name Tag", 2),
@@ -307,7 +307,7 @@ impl Fishing {
             }
             Phase::Bite { until } if now >= until => {
                 self.sounds.push(Sound::Plop);
-                self.say("It got away.".into(), now);
+                self.say("它跑了。".into(), now);
                 let next = self.after(now, 1.5, 5.0);
                 self.set(Phase::Waiting { next }, now);
             }
@@ -458,10 +458,10 @@ impl Fishing {
         let hint = match (&self.said, self.phase) {
             (Some((text, _)), _) => Some(text.as_str()),
             _ if self.caught > 0 => None,
-            (None, Phase::Idle) => Some("Hold a finger on the water to fish"),
-            (None, Phase::Cast | Phase::Waiting { .. }) => Some("Keep holding... wait for a bite"),
-            (None, Phase::Coming { .. }) => Some("Something is coming..."),
-            (None, Phase::Bite { .. }) => Some("Now! Lift your finger!"),
+            (None, Phase::Idle) => Some("把手指按在水面上钓鱼"),
+            (None, Phase::Cast | Phase::Waiting { .. }) => Some("继续按住…等待上钩"),
+            (None, Phase::Coming { .. }) => Some("有东西上钩了…"),
+            (None, Phase::Bite { .. }) => Some("就是现在！抬起手指！"),
         };
         if let Some(hint) = hint {
             pill(ui, w / 2.0, hint_y, hint, false);
@@ -580,7 +580,7 @@ mod tests {
         assert!(
             f.said
                 .as_ref()
-                .is_some_and(|(s, _)| s.starts_with("You caught"))
+                .is_some_and(|(s, _)| s.starts_with("你钓到了"))
         );
     }
 

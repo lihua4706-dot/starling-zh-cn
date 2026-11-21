@@ -391,7 +391,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         ),
         Step::Start => ("设置 Starling", tr("setup.intro"), None),
         Step::Offline => (
-            "Are you sure?",
+            "确定吗？",
             "You will not be able to play on most servers! We highly recommend signing in with \
              Microsoft."
                 .into(),
@@ -400,17 +400,17 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         Step::Talking(message) => ("设置 Starling", message.clone(), None),
         Step::AccountForm => ("设置 Starling", String::new(), None),
         Step::Code { link, .. } => (
-            "Sign in with Microsoft",
+            "使用微软账号登录",
             format!("On {link}, enter this code:"),
             Some(tr("waiting_browser")),
         ),
         Step::CheckingFiles => (
-            "Checking game files",
-            "Checking the version and asset list.".into(),
+            "正在检查游戏文件",
+            "正在检查版本与资源清单。".into(),
             None,
         ),
         Step::Download(progress) => (
-            "Downloading the game",
+            "正在下载游戏",
             "From Mojang's servers, checked file by file.".into(),
             Some(if let Some(started) = progress.transfer_started {
                 let stalled = progress
@@ -440,8 +440,8 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
             }),
         ),
         Step::Java(done, total, started) => (
-            "Downloading Java",
-            "Java is needed to prepare the game files on this device.".into(),
+            "正在下载 Java",
+            "在此设备上准备游戏文件需要 Java。".into(),
             started.map(|started| {
                 format!(
                     "{} of {} MB\n{}",
@@ -451,25 +451,25 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
                 )
             }),
         ),
-        Step::Unpacking => ("Preparing the game", "Unpacking Java.".into(), None),
+        Step::Unpacking => ("正在准备游戏", "正在解压 Java。".into(), None),
         Step::Preparing(line) => (
-            "Preparing the game",
-            "This takes a few minutes. Keep Starling open.".into(),
+            "正在准备游戏",
+            "这需要几分钟，请保持 Starling 打开。".into(),
             Some(line.clone()),
         ),
         #[cfg(target_os = "android")]
         Step::StartupScreen { error, .. } => (
-            "Starling is ready",
+            "Starling 已就绪",
             "Open the launcher or go straight to the game. Starling remembers your choice. Change it anytime in Settings > Launcher."
                 .into(),
             error.clone(),
         ),
         Step::Done => (
-            "Starting Starling",
-            "The game files are ready.".into(),
+            "正在启动 Starling",
+            "游戏文件已就绪。".into(),
             None,
         ),
-        Step::Failed(e) | Step::SignInFailed(e) => ("Something went wrong", e.clone(), None),
+        Step::Failed(e) | Step::SignInFailed(e) => ("出了点问题", e.clone(), None),
     }
 }
 
@@ -718,7 +718,7 @@ impl Loading {
         } else {
             buttons(&step)
         };
-        // Wider for three buttons, so "Sign in with Microsoft" fits in a third.
+        // Wider for three buttons, so "使用微软账号登录" fits in a third.
         let three = actions.len() >= 3;
         let card_w = (w - 48.0).min(if three { 660.0 } else { 520.0 });
         let pad = 24.0;
@@ -874,7 +874,7 @@ impl Loading {
                 rect[0] + rect[2] / 2.0,
                 rect[1] + 9.0,
                 color::text(),
-                "Back",
+                "返回",
             );
             drawn[0] = Some((rect, Action::Back));
         }

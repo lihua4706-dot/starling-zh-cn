@@ -1134,14 +1134,14 @@ pub fn aux_mouse_phase(pressed: bool, owned: bool, touched: bool) -> Option<Touc
 }
 
 const COLOR_SWATCHES: [(u32, &str); 8] = [
-    (0xFF1E1B2E, "Obsidian"),
-    (0xFF9A7BFF, "Violet"),
-    (0xFFD0BCFF, "Lavender"),
-    (0xFF38BDF8, "Cyan"),
-    (0xFF34D399, "Emerald"),
-    (0xFFFBBF24, "Amber"),
-    (0xFFF87171, "Crimson"),
-    (0xFFF4EFFA, "Snow"),
+    (0xFF1E1B2E, "黑曜石"),
+    (0xFF9A7BFF, "紫罗兰"),
+    (0xFFD0BCFF, "薰衣草"),
+    (0xFF38BDF8, "青色"),
+    (0xFF34D399, "翡翠"),
+    (0xFFFBBF24, "琥珀"),
+    (0xFFF87171, "绯红"),
+    (0xFFF4EFFA, "雪白"),
 ];
 
 const KB_ROWS: &[&[(&str, &str, f32)]] = &[
