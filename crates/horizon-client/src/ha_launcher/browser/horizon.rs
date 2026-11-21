@@ -106,8 +106,8 @@ fn fetch_index() -> Result<(Index, String), String> {
     let at = location();
     let text = if at.starts_with("https://") {
         let response = download::agent(&at).get(&at).call().map_err(|e| match e {
-            ureq::Error::Status(code, _) => format!("The mod registry answered {code}."),
-            ureq::Error::Transport(t) => format!("The mod registry can't be reached: {t}"),
+            ureq::Error::Status(code, _) => format!("模组注册表返回 {code}。"),
+            ureq::Error::Transport(t) => format!("无法连接模组注册表：{t}"),
         })?;
         let mut text = String::new();
         response
@@ -230,7 +230,7 @@ fn kind_of(kind: &index::Kind) -> Option<Kind> {
 /// Where the registry's mod policy is: who owns and answers for a project, takedowns.
 pub const POLICY: &str = "https://playhorizon.dev/mods/policy";
 
-/// Whether the Horizon project made `p` (the mod policy's "Official": author Horizon, source in
+/// Whether the Horizon project made `p` (the mod policy's "官方": author Horizon, source in
 /// the horizon-rust organisation).
 pub fn official(p: &index::Project) -> bool {
     p.authors == ["Horizon"] && p.source.starts_with("https://github.com/horizon-rust/")
@@ -247,7 +247,7 @@ pub fn trust_and_capabilities(id: &str) -> Vec<String> {
         return Vec::new();
     };
     let mut lines = vec![if official(p) {
-        "Made by Horizon".to_owned()
+        "由 Horizon 制作".to_owned()
     } else {
         format!(
             "Made by {}. Not made or endorsed by the Horizon project ({POLICY})",
@@ -277,7 +277,7 @@ pub fn trust_and_capabilities(id: &str) -> Vec<String> {
                 .map(|c| format!("May {}", c.describe())),
         );
         if v.capabilities.is_empty() {
-            lines.push("Asks for nothing beyond its own log".into());
+            lines.push("仅请求其自身日志".into());
         }
     }
     lines
@@ -459,15 +459,15 @@ impl Source for Registry {
             body,
             links: [
                 Link {
-                    label: "Source".into(),
+                    label: "来源".into(),
                     url: p.source.clone(),
                 },
                 Link {
-                    label: "Page".into(),
+                    label: "页面".into(),
                     url: project.page.clone(),
                 },
                 Link {
-                    label: "Report".into(),
+                    label: "报告".into(),
                     url: format!("{REPORT}&title={}", p.id),
                 },
             ]
@@ -523,8 +523,8 @@ fn local_path(path: &str) -> &str {
 /// What the registry adds to an installed entry.
 fn trust_label(trust: Trust) -> &'static str {
     match trust {
-        Trust::Verified => "Verified",
-        Trust::Unsigned => "Unsigned",
+        Trust::Verified => "已认证",
+        Trust::Unsigned => "未签名",
     }
 }
 
@@ -535,7 +535,7 @@ fn relative(kind: Kind, id: &str, file_name: &str) -> Result<String, String> {
         Kind::ResourcePack => Ok(format!("resourcepacks/{file_name}")),
         Kind::Shader => Ok(format!("shaderpacks/{file_name}")),
         Kind::Modpack => Err("A modpack installs as its own profile (pack::install).".into()),
-        Kind::DataPack => Err("Horizon's registry has no data packs.".into()),
+        Kind::DataPack => Err("Horizon 的注册表中没有数据包。".into()),
     }
 }
 

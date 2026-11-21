@@ -21,16 +21,16 @@ pub(super) fn rows<'a>(
     let mut rows = Vec::new();
     for (option, label) in D::ALL.into_iter().zip(values) {
         let section = match option {
-            D::SafeHorizontal => Some("HUD Safe Zone"),
-            D::ButtonsHorizontal => Some("Button Safe Zone"),
-            D::InterfaceHorizontal => Some("Interface Safe Zone"),
+            D::SafeHorizontal => Some("HUD 安全区"),
+            D::ButtonsHorizontal => Some("按钮安全区"),
+            D::InterfaceHorizontal => Some("界面安全区"),
             _ => None,
         };
         if let Some(title) = section {
             rows.push((
                 title,
-                "Game margins from the current window edges",
-                SettingControl::SectionHeader("Display", Icon::Monitor),
+                "当前窗口边缘的游戏边距",
+                SettingControl::SectionHeader("显示", Icon::Monitor),
             ));
         }
         let control = if option.margin_preview().is_some() {
@@ -45,7 +45,7 @@ pub(super) fn rows<'a>(
         };
         rows.push((
             option.name(),
-            "Shared with the game's Video Settings",
+            "与游戏内的视频设置共享",
             control,
         ));
     }

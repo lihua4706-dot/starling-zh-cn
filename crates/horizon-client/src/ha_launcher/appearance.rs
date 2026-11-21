@@ -13,7 +13,7 @@ pub fn wear(game: &Path, skin: Option<&Path>, slim: bool) -> Result<(), String> 
             let id = path
                 .file_name()
                 .and_then(|n| n.to_str())
-                .ok_or("The wardrobe's skin has no name.")?;
+                .ok_or("衣柜中的皮肤没有名称。")?;
             let name = format!("wardrobe-{id}");
             let dir = game.join(DIR);
             std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;

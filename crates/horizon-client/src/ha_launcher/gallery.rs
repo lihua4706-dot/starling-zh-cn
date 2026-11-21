@@ -69,7 +69,7 @@ fn save_file(file: &Path, report: bool) -> std::result::Result<(), String> {
             .l()?;
         let legacy_dir = if sdk <= 28 {
             let pictures =
-                JObject::from(env.new_string(if report { "Download" } else { "Pictures" })?);
+                JObject::from(env.new_string(if report { "下载" } else { "图片" })?);
             let dir = env
                 .call_static_method(
                     "android/os/Environment",
@@ -98,10 +98,10 @@ fn save_file(file: &Path, report: bool) -> std::result::Result<(), String> {
     });
     let Some(request) = request else {
         PERMISSION_PENDING.store(false, Ordering::Relaxed);
-        return Err("Android could not open file export".into());
+        return Err("安卓无法打开文件导出".into());
     };
     std::thread::Builder::new()
-        .name("Screenshot gallery".into())
+        .name("截图相册".into())
         .spawn(move || {
             let result = write(request).map_err(|e| e.to_string());
             PERMISSION_PENDING.store(false, Ordering::Relaxed);
@@ -181,7 +181,7 @@ fn write(request: Request) -> Result<String> {
         .file
         .file_name()
         .and_then(|n| n.to_str())
-        .ok_or("Invalid screenshot name")?;
+        .ok_or("无效截图名")?;
     let mut row = JObject::null();
     let mut reserved_legacy: Option<PathBuf> = None;
     let result = (|| -> Result<String> {
@@ -274,7 +274,7 @@ fn write(request: Request) -> Result<String> {
             )?
             .l()?;
         if row.is_null() {
-            return Err("MediaStore did not create an image".into());
+            return Err("MediaStore 未创建图像".into());
         }
         let mode = JObject::from(env.new_string("w")?);
         let fd = env
@@ -287,7 +287,7 @@ fn write(request: Request) -> Result<String> {
             .l()?;
         let raw = env.call_method(&fd, "detachFd", "()I", &[])?.i()?;
         if raw < 0 {
-            return Err("MediaStore did not provide a writable file".into());
+            return Err("MediaStore 未提供可写文件".into());
         }
         // detachFd transfers ownership to this File, including on copy failure.
         let mut output = unsafe { std::fs::File::from_raw_fd(raw) };
@@ -302,14 +302,14 @@ fn write(request: Request) -> Result<String> {
         Ok(format!(
             "{} saved to {}/HorizonAndroid/{name}",
             if request.report {
-                "Performance report"
+                "性能报告"
             } else {
-                "Screenshot"
+                "截图"
             },
             if request.report {
-                "Download"
+                "下载"
             } else {
-                "Pictures"
+                "图片"
             }
         ))
     })();

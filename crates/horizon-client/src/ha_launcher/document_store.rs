@@ -25,14 +25,14 @@ fn world_access(id: &str) -> io::Result<()> {
     {
         return Err(io::Error::new(
             ErrorKind::PermissionDenied,
-            "Return to the launcher before accessing worlds or configuration",
+            "访问世界或配置前请先返回启动器",
         ));
     }
     Ok(())
 }
 
 fn invalid() -> io::Error {
-    io::Error::new(ErrorKind::InvalidInput, "Invalid Horizon document")
+    io::Error::new(ErrorKind::InvalidInput, "无效的 Horizon 文档")
 }
 fn component(name: &str) -> io::Result<()> {
     if name.is_empty()
@@ -81,7 +81,7 @@ fn resolve(home: &Path, id: &str) -> io::Result<Document> {
     let mut parts = id.split('/');
     let first = parts.next().ok_or_else(invalid)?;
     let (base, label, reports) = if first == "reports" {
-        (home.join("performance"), "Reports", true)
+        (home.join("performance"), "报告", true)
     } else {
         let number = first.strip_prefix('p').ok_or_else(invalid)?;
         let profile: u32 = number.parse().map_err(|_| invalid())?;
@@ -95,17 +95,17 @@ fn resolve(home: &Path, id: &str) -> io::Result<Document> {
             home.join("profiles").join(format!("profile-{profile}"))
         };
         let (folder, label) = match parts.next() {
-            Some("mods") => ("horizon-mods", "Mods"),
-            Some("packs") => ("resourcepacks", "Resource Packs"),
-            Some("shaders") => ("shaderpacks", "Shader Packs"),
-            Some("worlds") => ("saves", "Worlds"),
-            Some("configuration") => ("", "Configuration"),
+            Some("mods") => ("horizon-mods", "模组"),
+            Some("packs") => ("resourcepacks", "资源包"),
+            Some("shaders") => ("shaderpacks", "光影包"),
+            Some("worlds") => ("saves", "世界"),
+            Some("configuration") => ("", "配置"),
             _ => return Err(invalid()),
         };
         (root.join(folder), label, false)
     };
     let tail: Vec<_> = parts.collect();
-    let configuration = label == "Configuration";
+    let configuration = label == "配置";
     if configuration && !tail.is_empty() && (tail.len() != 1 || !CONFIG_FILES.contains(&tail[0])) {
         return Err(invalid());
     }
@@ -147,7 +147,7 @@ fn resolve(home: &Path, id: &str) -> io::Result<Document> {
 fn row(home: &Path, id: &str) -> io::Result<Value> {
     if id == ROOT {
         return Ok(
-            json!({"document_id": ROOT, "_display_name": "Horizon Android",
+            json!({"document_id": ROOT, "_display_name": "Horizon 安卓",
             "mime_type": DIRECTORY, "flags": 0}),
         );
     }
@@ -219,7 +219,7 @@ pub fn children(home: &Path, id: &str) -> io::Result<Vec<Value>> {
         if index == MAX_CHILDREN {
             return Err(io::Error::new(
                 ErrorKind::InvalidData,
-                "Too many files in one folder to list safely",
+                "一个文件夹中的文件过多，无法安全列出",
             ));
         }
         let entry = entry?;
@@ -286,7 +286,7 @@ pub fn call(home: &Path, op: &str, id: &str, arg: &str) -> io::Result<Value> {
     }
     match op {
         "roots" => Ok(json!([{"root_id": ROOT, "document_id": ROOT,
-            "title": "Horizon Android", "flags": 18, "mime_types": "*/*"}])),
+            "title": "Horizon 安卓", "flags": 18, "mime_types": "*/*"}])),
         "document" => Ok(json!([row(home, id)?])),
         "children" => Ok(json!(children(home, id)?)),
         "child" => Ok(json!(is_child(home, id, arg))),
@@ -464,7 +464,7 @@ mod world_tests {
         let home =
             std::env::temp_dir().join(format!("horizon-world-documents-{}", std::process::id()));
         fs::create_dir_all(&home).unwrap();
-        let id = call(&home, "mkdir", "p0/worlds", "Example").unwrap();
+        let id = call(&home, "mkdir", "p0/worlds", "示例").unwrap();
         assert_eq!(id, "p0/worlds/Example");
         call(&home, "create", id.as_str().unwrap(), "level.dat").unwrap();
         use std::io::{Read, Write};
@@ -535,14 +535,14 @@ pub const PROTECTED_SYSTEM_NAMES: &[&str] = &[
 ];
 
 pub const FM_ROOT_DIRS: &[(&str, &str)] = &[
-    ("", "Root"),
-    ("saves", "Worlds"),
-    ("horizon-mods", "Mods"),
-    ("resourcepacks", "Packs"),
-    ("shaderpacks", "Shaders"),
-    ("controls", "Controls"),
-    ("screenshots", "Shots"),
-    ("performance", "Reports"),
+    ("", "根目录"),
+    ("saves", "世界"),
+    ("horizon-mods", "模组"),
+    ("resourcepacks", "资源包"),
+    ("shaderpacks", "光影"),
+    ("controls", "按键控制"),
+    ("screenshots", "镜头"),
+    ("performance", "报告"),
 ];
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -592,24 +592,24 @@ pub fn is_protected_root_folder(rel_path: &str) -> bool {
 pub fn validate_entry_name(name: &str) -> Result<(), String> {
     let trimmed = name.trim();
     if trimmed.is_empty() {
-        return Err("Name cannot be empty.".into());
+        return Err("名称不能为空。".into());
     }
     if trimmed == "." || trimmed == ".." || trimmed.contains("..") {
         return Err("Path traversal ('..') is not allowed.".into());
     }
     if trimmed.starts_with('.') {
-        return Err("Hidden or system names starting with '.' are not allowed.".into());
+        return Err("不允许以 '.' 开头的隐藏或系统名称。".into());
     }
     if trimmed.len() > 200 {
-        return Err("Name is too long.".into());
+        return Err("名称过长。".into());
     }
     if trimmed.chars().any(|c| {
         c.is_control() || matches!(c, '/' | '\\' | ':' | '*' | '?' | '"' | '<' | '>' | '|')
     }) {
-        return Err("Name cannot contain slashes or special path characters.".into());
+        return Err("名称不能包含斜杠或特殊路径字符。".into());
     }
     if is_protected_system_name(trimmed) {
-        return Err("This name is reserved by the Horizon launcher.".into());
+        return Err("此名称由 Horizon 启动器保留。".into());
     }
     Ok(())
 }
@@ -617,7 +617,7 @@ pub fn validate_entry_name(name: &str) -> Result<(), String> {
 fn verify_no_symlinks(home: &Path, target: &Path) -> Result<(), String> {
     let rel = target
         .strip_prefix(home)
-        .map_err(|_| "Path escapes the Horizon home directory.".to_owned())?;
+        .map_err(|_| "路径越出了 Horizon 主目录。".to_owned())?;
     let mut cur = home.to_path_buf();
     for part in rel.components() {
         use std::path::Component;
@@ -630,11 +630,11 @@ fn verify_no_symlinks(home: &Path, target: &Path) -> Result<(), String> {
                 cur.push(seg);
             }
             Component::CurDir => continue,
-            _ => return Err("Path traversal outside profile directory is forbidden.".into()),
+            _ => return Err("禁止越出存档目录的路径穿越。".into()),
         }
         match fs::symlink_metadata(&cur) {
             Ok(meta) if meta.file_type().is_symlink() => {
-                return Err("Symbolic links are not permitted in Horizon directories.".into());
+                return Err("Horizon 目录中不允许符号链接。".into());
             }
             Ok(_) => {}
             Err(e) if e.kind() == ErrorKind::NotFound => {}
@@ -683,7 +683,7 @@ pub fn ensure_fm_dirs(home: &Path, profile_root: &Path) {
 
 pub fn classify_entry_kind(path: &Path, is_dir: bool) -> String {
     if is_dir {
-        return "Folder".into();
+        return "文件夹".into();
     }
     match path
         .extension()
@@ -701,15 +701,15 @@ pub fn classify_entry_kind(path: &Path, is_dir: bool) -> String {
         Some("jsonl") => "Telemetry Log (.jsonl)".into(),
         Some("toml") => "TOML Config (.toml)".into(),
         Some("txt" | "cfg" | "properties") => "Text Config (.txt)".into(),
-        Some("dat" | "mca" | "mcr") => "World Data".into(),
+        Some("dat" | "mca" | "mcr") => "世界数据".into(),
         Some(ext) => format!("{} File (.{ext})", ext.to_ascii_uppercase()),
-        None => "File".into(),
+        None => "文件".into(),
     }
 }
 
 pub fn format_timestamp_utc(secs: u64) -> String {
     if secs == 0 {
-        return "Unknown".into();
+        return "未知".into();
     }
     let days = secs / 86_400;
     let rem = secs % 86_400;
@@ -738,7 +738,7 @@ pub fn list_fm_dir(
     let dir_path = resolve_fm_path(home, profile_root, clean_rel)?;
     let meta = fs::symlink_metadata(&dir_path).map_err(|e| e.to_string())?;
     if meta.file_type().is_symlink() || !meta.is_dir() {
-        return Err("Target path is not a valid directory.".into());
+        return Err("目标路径不是有效目录。".into());
     }
     let mut entries = Vec::new();
     let mut seen_names = std::collections::BTreeSet::new();
@@ -816,7 +816,7 @@ pub fn list_fm_dir(
                 is_dir: true,
                 size_bytes: count,
                 modified_secs,
-                kind_label: "Folder".into(),
+                kind_label: "文件夹".into(),
             });
         }
     }
@@ -862,12 +862,12 @@ pub fn fm_rename(
 ) -> Result<String, String> {
     let clean_target = target_rel.trim().trim_matches('/');
     if is_protected_root_folder(clean_target) {
-        return Err("Built-in profile root folders cannot be renamed.".into());
+        return Err("内置存档根文件夹无法重命名。".into());
     }
     validate_entry_name(new_name)?;
     let src_path = resolve_fm_path(home, profile_root, clean_target)?;
     if !src_path.exists() {
-        return Err("The selected item no longer exists.".into());
+        return Err("所选项目已不存在。".into());
     }
     let parent_rel = clean_target.rsplit_once('/').map(|(p, _)| p).unwrap_or("");
     let dst_rel = if parent_rel.is_empty() {
@@ -892,7 +892,7 @@ pub fn fm_rename(
 fn verify_tree_no_symlinks(dir: &Path) -> Result<(), String> {
     let meta = fs::symlink_metadata(dir).map_err(|e| e.to_string())?;
     if meta.file_type().is_symlink() {
-        return Err("Refusing to operate on symbolic links.".into());
+        return Err("拒绝操作符号链接。".into());
     }
     if meta.is_dir() {
         for entry in fs::read_dir(dir).map_err(|e| e.to_string())? {
@@ -900,7 +900,7 @@ fn verify_tree_no_symlinks(dir: &Path) -> Result<(), String> {
             let path = entry.path();
             let sm = fs::symlink_metadata(&path).map_err(|e| e.to_string())?;
             if sm.file_type().is_symlink() {
-                return Err("Directory contains a symbolic link.".into());
+                return Err("目录包含符号链接。".into());
             }
             if sm.is_dir() {
                 verify_tree_no_symlinks(&path)?;
@@ -916,19 +916,19 @@ pub fn fm_delete(
     target_rels: &[String],
 ) -> Result<usize, String> {
     if target_rels.is_empty() {
-        return Err("No items selected to delete.".into());
+        return Err("未选择要删除的项目。".into());
     }
     let mut deleted = 0usize;
     for rel in target_rels {
         let clean = rel.trim().trim_matches('/');
         if is_protected_root_folder(clean) {
-            return Err(format!("Cannot delete protected folder '{clean}'."));
+            return Err(format!("无法删除受保护的文件夹 '{clean}'。"));
         }
         let path = resolve_fm_path(home, profile_root, clean)?;
         if let Some(fname) = path.file_name().and_then(|s| s.to_str())
             && is_protected_system_name(fname)
         {
-            return Err(format!("Cannot delete protected launcher file '{fname}'."));
+            return Err(format!("无法删除受保护的启动器文件 '{fname}'。"));
         }
         let meta = match fs::symlink_metadata(&path) {
             Ok(m) => m,
@@ -936,7 +936,7 @@ pub fn fm_delete(
             Err(e) => return Err(e.to_string()),
         };
         if meta.file_type().is_symlink() {
-            return Err("Refusing to delete a symbolic link.".into());
+            return Err("拒绝删除符号链接。".into());
         }
         if meta.is_dir() {
             verify_tree_no_symlinks(&path)?;
@@ -971,7 +971,7 @@ pub fn unique_destination_path(dest_dir: &Path, original_name: &str) -> Result<P
             return Ok(candidate);
         }
     }
-    Err("Too many duplicate filenames in destination folder.".into())
+    Err("目标文件夹中的重名文件过多。".into())
 }
 
 fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), String> {
@@ -984,7 +984,7 @@ fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), String> {
         let child_dst = dst.join(child_name);
         let meta = fs::symlink_metadata(&child_src).map_err(|e| e.to_string())?;
         if meta.file_type().is_symlink() {
-            return Err("Refusing to copy symbolic link.".into());
+            return Err("拒绝复制符号链接。".into());
         }
         if meta.is_dir() {
             copy_dir_recursive(&child_src, &child_dst)?;
@@ -1003,19 +1003,19 @@ pub fn fm_paste(
     dest_rel_dir: &str,
 ) -> Result<usize, String> {
     if sources.is_empty() {
-        return Err("Clipboard is empty.".into());
+        return Err("剪贴板为空。".into());
     }
     let dest_dir = resolve_fm_path(home, profile_root, dest_rel_dir)?;
     let dest_meta = fs::symlink_metadata(&dest_dir).map_err(|e| e.to_string())?;
     if !dest_meta.is_dir() || dest_meta.file_type().is_symlink() {
-        return Err("Destination is not a valid folder.".into());
+        return Err("目标不是有效文件夹。".into());
     }
     let mut count = 0usize;
     for src in sources {
         verify_no_symlinks(home, src)?;
         let src_meta = fs::symlink_metadata(src).map_err(|e| e.to_string())?;
         if src_meta.file_type().is_symlink() {
-            return Err("Refusing to copy or move symbolic links.".into());
+            return Err("拒绝复制或移动符号链接。".into());
         }
         let Some(fname) = src.file_name().and_then(|s| s.to_str()) else {
             continue;
@@ -1061,14 +1061,14 @@ pub fn fm_details(
     let path = resolve_fm_path(home, profile_root, clean)?;
     let meta = fs::symlink_metadata(&path).map_err(|e| e.to_string())?;
     if meta.file_type().is_symlink() {
-        return Err("Refusing to inspect symbolic link.".into());
+        return Err("拒绝检查符号链接。".into());
     }
     let is_dir = meta.is_dir();
     let name = path
         .file_name()
         .and_then(|s| s.to_str())
         .unwrap_or(if clean.is_empty() {
-            "Profile Root"
+            "存档根目录"
         } else {
             clean
         })

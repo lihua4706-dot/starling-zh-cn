@@ -68,7 +68,7 @@ impl Gyroscope {
         let shared = Arc::new(Shared::default());
         let state = shared.clone();
         let worker = thread::Builder::new()
-            .name("Android gyroscope".into())
+            .name("安卓陀螺仪".into())
             .spawn(move || run(&state))
             .ok()?;
         Some(Self {

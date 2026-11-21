@@ -132,7 +132,7 @@ impl Wardrobe {
                 if format!("{:x}", Sha256::digest(&bytes))
                     != "4c7b0468044bfecacc43d00a3a69335a834b73937688292c20d3988cae58248d"
                 {
-                    return Err("Official default skin checksum mismatch".into());
+                    return Err("官方默认皮肤校验和不匹配".into());
                 }
                 Ok(bytes)
             })();
@@ -231,7 +231,7 @@ impl Wardrobe {
                     }
                     self.cache = cache;
                     self.note =
-                        "Cloud profile synchronized. Local overrides are kept separate.".into();
+                        "云端档案已同步，本地覆盖保持独立。".into();
                     self.preview();
                 }
                 Err(error) => self.note = error,
@@ -256,7 +256,7 @@ impl Wardrobe {
                 .library
                 .select(&self.root, &self.key, &entry.id, entry.kind)
             {
-                Ok(()) => "Applied locally. The account's cloud profile is unchanged.".into(),
+                Ok(()) => "已在本地应用，账号的云端档案未改变。".into(),
                 Err(error) => error,
             };
             self.selection_changed_at = Some(std::time::Instant::now());
@@ -269,7 +269,7 @@ impl Wardrobe {
         }
         self.note =
             match crate::ha_launcher::documents::begin_appearance(self.root.clone(), self.kind()) {
-                Ok(()) => "Choose a PNG image in Android Files.".into(),
+                Ok(()) => "在安卓文件中选择一张 PNG 图片。".into(),
                 Err(error) => error,
             };
     }
@@ -285,9 +285,9 @@ impl Wardrobe {
             selection.skin = None;
         }
         self.note = if self.provider.is_some() {
-            "Using the account's cloud appearance. No cloud changes were made."
+            "正在使用账号的云端外观，未做云端更改。"
         } else {
-            "Local override cleared. Using the default appearance."
+            "已清除本地覆盖，使用默认外观。"
         }
         .into();
         self.save();
@@ -317,12 +317,12 @@ impl Wardrobe {
             return;
         }
         let Some(provider) = self.provider else {
-            self.note = "Offline appearance is local to this installation.".into();
+            self.note = "离线外观仅对本安装生效。".into();
             return;
         };
         if provider == Provider::Ely && action.is_some() {
             self.note =
-                "Ely.by cloud skins are managed at ely.by. Custom capes can be applied locally."
+                "Ely.by 云端皮肤在 ely.by 管理，自定义披风可在本地应用。"
                     .into();
             if let Err(error) = crate::ha_launcher::platform::open_login_url("https://ely.by/skins")
             {
@@ -346,7 +346,7 @@ impl Wardrobe {
             _ => None,
         };
         if matches!(action, Some(CloudAction::Upload)) && selection.skin.is_none() {
-            self.note = "Select a local skin before uploading to your Microsoft profile.".into();
+            self.note = "请先选择一个本地皮肤再上传到微软账号。".into();
             return;
         }
         if matches!(action, Some(CloudAction::Cape(_))) && cape.is_none() {
@@ -354,19 +354,19 @@ impl Wardrobe {
         }
         let (sender, receiver) = mpsc::channel();
         self.worker = Some(receiver);
-        self.note = "Contacting account service...".into();
+        self.note = "正在连接账号服务…".into();
         std::thread::spawn(move || {
             let result = (|| {
                 let (account, secrets) = Login::session(&id)?
-                    .ok_or("Sign in before synchronizing your cloud appearance.")?;
+                    .ok_or("请先登录再同步云端外观。")?;
                 if account.key() != key {
-                    return Err("The selected account changed. Open the gallery again.".into());
+                    return Err("所选账号已更改，请重新打开图库。".into());
                 }
                 match action {
                     Some(CloudAction::Upload) => {
                         let path = Library::image(
                             &root,
-                            selection.skin.as_deref().ok_or("Select a skin first.")?,
+                            selection.skin.as_deref().ok_or("请先选择一个皮肤。")?,
                         )?;
                         cloud::upload_skin(
                             &account,
@@ -648,8 +648,8 @@ impl Wardrobe {
         ui.border(x, tabs_y, w, 38.0, 12.0, theme.border);
         let tw = (w - 8.0) * 0.5;
         for (i, (lbl, is_cape, active)) in [
-            (format!("Skins ({skin_count})"), false, !self.capes),
-            (format!("Capes ({cape_count})"), true, self.capes),
+            (format!("皮肤 ({skin_count})"), false, !self.capes),
+            (format!("披风 ({cape_count})"), true, self.capes),
         ]
         .into_iter()
         .enumerate()
@@ -712,7 +712,7 @@ impl Wardrobe {
         // Top-left status badge inside studio card
         let badge_txt = if self.capes {
             if selection.hide_cape {
-                "Cape Hidden"
+                "隐藏披风"
             } else {
                 "3D Cape View"
             }
@@ -787,9 +787,9 @@ impl Wardrobe {
                 ],
                 theme.text_muted,
                 if self.default_worker.is_some() {
-                    "Loading default skin..."
+                    "正在加载默认皮肤…"
                 } else {
-                    "Default skin unavailable offline"
+                    "离线时默认皮肤不可用"
                 },
             );
         }
@@ -873,16 +873,16 @@ impl Wardrobe {
                 .iter()
                 .find(|e| e.id == id && e.kind == self.kind())
                 .map(|e| format!("Active Local: {}", e.title))
-                .unwrap_or_else(|| "Active Local Override".into())
+                .unwrap_or_else(|| "当前本地覆盖".into())
         } else if self.capes {
             if selection.hide_cape {
-                "Cape Hidden Locally".into()
+                "本地隐藏披风".into()
             } else if let Some(c) = self.cache.snapshot.capes.iter().find(|c| c.active) {
                 format!("Active Cloud Cape: {}", c.title)
             } else if self.provider.is_some() {
-                "Account Cloud Cape".into()
+                "账号云端披风".into()
             } else {
-                "No Cape Equipped".into()
+                "未装备披风".into()
             }
         } else if self.provider.is_some() {
             format!("Cloud Profile ({})", self.name)
@@ -905,9 +905,9 @@ impl Wardrobe {
             &fitted_active,
         );
         let detail_sub = if self.worker.is_some() {
-            "Synchronizing with account service..."
+            "正在与账号服务同步…"
         } else if crate::ha_launcher::documents::busy() {
-            "Waiting for Android file picker..."
+            "等待安卓文件选择器…"
         } else if self.capes {
             "Import a 64×32 PNG cape or select below"
         } else {
@@ -1026,7 +1026,7 @@ impl Wardrobe {
                 badge,
             );
 
-            let pill_txt = if is_selected { "Active" } else { "Apply" };
+            let pill_txt = if is_selected { "已启用" } else { "应用" };
             let pill_w = 64.0;
             let pr = [r[0] + lw - pill_w - 10.0, r[1] + 8.0, pill_w, 26.0];
             ui.rounded(
@@ -1123,9 +1123,9 @@ impl Wardrobe {
                     row + 10.0,
                     theme.text_primary,
                     if self.capes {
-                        "No custom capes in your gallery yet"
+                        "你的图库中还没有自定义披风"
                     } else {
-                        "No custom skins in your gallery yet"
+                        "你的图库中还没有自定义皮肤"
                     },
                 );
                 let empty_sub = ui.fit_text(
@@ -1158,9 +1158,9 @@ impl Wardrobe {
                     targets,
                     [lx, row, lw, 34.0],
                     if self.capes {
-                        "Clear Local Cape Override"
+                        "清除本地披风覆盖"
                     } else {
-                        "Reset to Default Appearance Locally"
+                        "在本地恢复默认外观"
                     },
                     Action::WardrobeUseCloud,
                     false,
@@ -1174,7 +1174,7 @@ impl Wardrobe {
                     ui,
                     targets,
                     [lx, row, half_w, 34.0],
-                    "Use Cloud Appearance",
+                    "使用云端外观",
                     Action::WardrobeUseCloud,
                     false,
                 );
@@ -1183,9 +1183,9 @@ impl Wardrobe {
                     targets,
                     [lx + half_w + 8.0, row, half_w, 34.0],
                     if self.worker.is_some() {
-                        "Syncing Cloud..."
+                        "正在同步云端…"
                     } else {
-                        "Refresh Cloud Profile"
+                        "刷新云端账号"
                     },
                     Action::WardrobeCloud,
                     false,
@@ -1199,9 +1199,9 @@ impl Wardrobe {
                         targets,
                         [lx, row, lw, 34.0],
                         if self.provider == Some(Provider::Microsoft) {
-                            "Upload Selected Skin to Microsoft Profile"
+                            "将所选皮肤上传到微软账号"
                         } else {
-                            "Manage Ely.by Cloud Skin on Website"
+                            "在网站上管理 Ely.by 云端皮肤"
                         },
                         Action::WardrobeUpload,
                         false,

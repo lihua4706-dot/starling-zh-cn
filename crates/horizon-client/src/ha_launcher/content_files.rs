@@ -22,9 +22,9 @@ impl Kind {
     }
     pub fn label(self) -> &'static str {
         match self {
-            Self::Mods => "Mods",
-            Self::Packs => "Resource Packs",
-            Self::Shaders => "Shaders",
+            Self::Mods => "模组",
+            Self::Packs => "资源包",
+            Self::Shaders => "光影",
         }
     }
     pub fn accepts(self, name: &str) -> bool {
@@ -71,7 +71,7 @@ pub fn validate(
     }
     let mut zip = zip::ZipArchive::new(file)?;
     if zip.len() > 32768 {
-        return Err("Archive contains too many files".into());
+        return Err("压缩包内文件过多".into());
     }
     let mut names = HashSet::new();
     let mut total = 0u64;
@@ -82,7 +82,7 @@ pub fn validate(
     let mut buffer = [0u8; 65536];
     for i in 0..zip.len() {
         if cancelled() {
-            return Err("Import cancelled".into());
+            return Err("已取消导入".into());
         }
         let mut entry = zip.by_index(i)?;
         let raw = entry.name()?.into_owned();
@@ -95,11 +95,11 @@ pub fn validate(
             || !names.insert(raw.clone())
             || entry.unix_mode().is_some_and(|m| m & 0o170000 == 0o120000)
         {
-            return Err("Archive contains an unsafe or duplicate path".into());
+            return Err("压缩包包含不安全或重复的路径".into());
         }
         total = total
             .checked_add(entry.size())
-            .ok_or("Archive size overflow")?;
+            .ok_or("压缩包大小溢出")?;
         if total > MAX_EXPANDED || kind == Kind::Mods && total > 64 << 20 {
             return Err("Expanded archive exceeds 512 MiB".into());
         }
@@ -114,13 +114,13 @@ pub fn validate(
         manifest |= raw == "horizon-mod.toml";
         let expected = entry.size();
         if raw == "pack.mcmeta" && expected > 1 << 20 {
-            return Err("Pack metadata is too large".into());
+            return Err("包元数据过大".into());
         }
         let mut metadata = Vec::new();
         let mut actual = 0u64;
         while !entry.is_dir() {
             if cancelled() {
-                return Err("Import cancelled".into());
+                return Err("已取消导入".into());
             }
             let n = entry.read(&mut buffer)?;
             if n == 0 {
@@ -131,18 +131,18 @@ pub fn validate(
                 metadata.extend_from_slice(&buffer[..n]);
             }
             if actual > expected || actual > MAX_EXPANDED {
-                return Err("Archive size mismatch".into());
+                return Err("压缩包大小不匹配".into());
             }
         }
         if !entry.is_dir() && actual != expected {
-            return Err("Incomplete archive entry".into());
+            return Err("不完整的压缩包条目".into());
         }
         if raw == "pack.mcmeta"
             && !serde_json::from_slice::<serde_json::Value>(&metadata)?
                 .get("pack")
                 .is_some_and(|v| v.is_object())
         {
-            return Err("Resource pack metadata has no pack object".into());
+            return Err("资源包元数据没有包对象".into());
         }
     }
     if !match kind {
@@ -160,7 +160,7 @@ pub fn validate(
         // Accept both sandboxed code and upstream content-only packages. The
         // shared parser requires mod.wasm unless the manifest grants registries.
         horizon_mod_package::Package::read(path)
-            .map_err(|e| format!("Invalid Horizon mod: {e}"))?;
+            .map_err(|e| format!("无效的 Horizon 模组：{e}"))?;
     }
     Ok(kind == Kind::Shaders && native_shader)
 }
@@ -175,7 +175,7 @@ pub fn copy_bounded(
         if !progress(total) {
             return Err(io::Error::new(
                 io::ErrorKind::Interrupted,
-                "Import cancelled",
+                "已取消导入",
             ));
         }
         let n = input.read(&mut buffer)?;

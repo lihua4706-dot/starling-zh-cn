@@ -87,13 +87,13 @@ fn dimensions(bytes: &[u8]) -> Result<(u32, u32), String> {
     check_size(bytes)?;
     image::ImageReader::with_format(std::io::Cursor::new(bytes), image::ImageFormat::Png)
         .into_dimensions()
-        .map_err(|_| "That isn't a PNG picture.".to_string())
+        .map_err(|_| "那不是 PNG 图片。".to_string())
 }
 
 fn decode(bytes: &[u8]) -> Result<image::RgbaImage, String> {
     image::load_from_memory_with_format(bytes, image::ImageFormat::Png)
         .map(|i| i.to_rgba8())
-        .map_err(|_| "That isn't a PNG picture.".to_string())
+        .map_err(|_| "那不是 PNG 图片。".to_string())
 }
 
 /// A skin's picture, if it is one: 64×64 or 64×32.

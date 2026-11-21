@@ -221,7 +221,7 @@ mod tests {
         };
         let text = format!(
             r#"{{"schema": 1, "projects": [
-              {{"id": "coords_hud", "kind": "mod", "name": "Coordinates HUD", "summary": "", "license": "MIT",
+              {{"id": "coords_hud", "kind": "mod", "name": "坐标 HUD", "summary": "", "license": "MIT",
                 "source": "https://x.test", "versions": [{{"version": "0.1.0", "api": "0.1", "side": "client",
                 "capabilities": ["game-read", "hud", "chat"], "game": "26.3", "file": {{"name": "coords_hud-0.1.0.hmod",
                 "url": "file://{}", "size": {}, "sha256": "{hmod_sha}"}}}}]}},

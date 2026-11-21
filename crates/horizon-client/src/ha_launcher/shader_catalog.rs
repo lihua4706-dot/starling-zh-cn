@@ -42,24 +42,24 @@ pub fn install(
         || project.source != SourceId::Modrinth
         || source.id() != project.source
     {
-        return Err("Expected a Modrinth shader pack".into());
+        return Err("预期为 Modrinth 光影包".into());
     }
     let versions = source.versions(project)?;
-    let v = version(&versions).ok_or("No downloadable shader ZIP is available")?;
+    let v = version(&versions).ok_or("没有可下载的光影 ZIP")?;
     if !v.required.is_empty() {
         return Err(
-            "This shader requires additional projects which Horizon cannot install automatically"
+            "此光影需要 Horizon 无法自动安装的其他项目"
                 .into(),
         );
     }
-    let file = v.file().ok_or("Shader file is missing")?;
+    let file = v.file().ok_or("着色器文件缺失")?;
     if file.size > crate::ha_launcher::client::content_files::MAX_INPUT {
         return Err("Shader ZIP exceeds 256 MiB".into());
     }
-    let name = browser::safe_name(&file.name).ok_or("Unsafe shader file name")?;
+    let name = browser::safe_name(&file.name).ok_or("不安全的着色器文件名")?;
     let folder = home.join("shaderpacks");
     if fs::symlink_metadata(&folder).is_ok_and(|m| m.file_type().is_symlink()) {
-        return Err("Shader folder cannot be a symbolic link".into());
+        return Err("着色器文件夹不能是符号链接".into());
     }
     fs::create_dir_all(&folder).map_err(|e| e.to_string())?;
     let relative = format!("shaderpacks/{name}");
@@ -70,12 +70,12 @@ pub fn install(
     let replacing = target.exists();
     if let Ok(meta) = fs::symlink_metadata(&target) {
         if !meta.is_file() || meta.file_type().is_symlink() {
-            return Err("Cannot replace a folder or symbolic link".into());
+            return Err("无法替换文件夹或符号链接".into());
         }
         if !list.entries.iter().any(|e| ours(e) && e.file == relative)
             || list.entries.iter().any(|e| !ours(e) && e.file == relative)
         {
-            return Err("This shader file already exists. Remove it in Installed or rename it in Files first".into());
+            return Err("此光影文件已存在，请先在“已安装”中移除或在“文件”中重命名".into());
         }
     }
     let stamp = std::time::SystemTime::now()
@@ -95,9 +95,9 @@ pub fn install(
         )
         .map_err(|e| e.to_string())?;
         if native {
-            return Err("This ZIP is a native Horizon shader pack. Use Import file to install it as .hshader".into());
+            return Err("此 ZIP 是 Horizon 原生光影包，请用“导入文件”将其安装为 .hshader".into());
         }
-        let (algo, hash) = file.checksum().ok_or("The source supplies no checksum")?;
+        let (algo, hash) = file.checksum().ok_or("来源未提供校验和")?;
         if replacing {
             fs::rename(&path, &target).map_err(|e| e.to_string())?;
         } else {
@@ -132,7 +132,7 @@ pub fn install(
             checksum: format!("{algo}:{hash}"),
             page: project.page.clone(),
             dependency: false,
-            verdict: Some("Experimental shader compatibility".into()),
+            verdict: Some("实验性光影兼容".into()),
             skipped: vec![],
             namespaces: vec![],
         });

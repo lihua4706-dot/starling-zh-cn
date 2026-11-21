@@ -52,9 +52,9 @@ pub fn open(
         }.unwrap_or_else(|| fallback.into());
         let mode = JObject::from(env.new_string("r")?);
         let fd = env.call_method(&resolver, "openFileDescriptor", "(Landroid/net/Uri;Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;", &[JValue::Object(&uri), JValue::Object(&mode)])?.l()?;
-        if fd.is_null() { return Err("Document provider returned no file".into()); }
+        if fd.is_null() { return Err("文档提供方未返回文件".into()); }
         let raw = env.call_method(&fd, "detachFd", "()I", &[])?.i()?;
-        if raw < 0 { return Err("Document provider returned an invalid descriptor".into()); }
+        if raw < 0 { return Err("文档提供方返回了无效的描述符".into()); }
         // detachFd transferred ownership to Rust.
         let file = unsafe { std::fs::File::from_raw_fd(raw) };
         env.call_method(&fd, "close", "()V", &[])?;

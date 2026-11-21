@@ -65,7 +65,7 @@ pub fn check_file(
     file: &FileRef,
     progress: &dyn Fn(f32),
 ) -> Result<Check, String> {
-    let dir = checked_dir(home, file).ok_or("Its source gives no checksum.")?;
+    let dir = checked_dir(home, file).ok_or("其来源未提供校验和。")?;
     if let Some(c) = read_check(&dir) {
         return Ok(c);
     }

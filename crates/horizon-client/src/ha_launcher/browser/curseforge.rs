@@ -59,16 +59,16 @@ impl CurseForge {
         let response = super::download::agent(url)
             .get(url)
             .set("x-api-key", &self.key)
-            .set("Accept", "application/json")
+            .set("接受", "application/json")
             .call()
             .map_err(|e| match e {
-                ureq::Error::Status(403, _) => "CurseForge refused the launcher's API key.".into(),
-                ureq::Error::Status(code, _) => format!("CurseForge answered {code}."),
-                ureq::Error::Transport(t) => format!("No connection to CurseForge: {t}"),
+                ureq::Error::Status(403, _) => "CurseForge 拒绝了启动器的 API 密钥。".into(),
+                ureq::Error::Status(code, _) => format!("CurseForge 返回 {code}。"),
+                ureq::Error::Transport(t) => format!("无法连接 CurseForge：{t}"),
             })?;
         response
             .into_json()
-            .map_err(|e| format!("CurseForge's answer wasn't readable: {e}"))
+            .map_err(|e| format!("无法读取 CurseForge 的响应：{e}"))
     }
 }
 
@@ -192,7 +192,7 @@ pub(super) fn parse_file(f: &Value) -> Option<Version> {
             .collect(),
         blocked: url
             .is_none()
-            .then(|| "Its author allows downloads from CurseForge's own site only.".to_owned()),
+            .then(|| "其作者只允许从 CurseForge 官网下载。".to_owned()),
     })
 }
 
@@ -217,7 +217,7 @@ impl Source for CurseForge {
     fn project(&self, id: &str) -> Result<Project, String> {
         let m = self.get(&format!("{API}/mods/{}", encode(id)))?;
         parse_mod(&m["data"])
-            .ok_or_else(|| format!("CurseForge: {id} is not a pack Horizon loads."))
+            .ok_or_else(|| format!("CurseForge：{id} 不是 Horizon 可加载的包。"))
     }
 
     fn versions(&self, project: &Project) -> Result<Vec<Version>, String> {

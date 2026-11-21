@@ -467,7 +467,7 @@ fn show_editor(text: &str, multiline: bool) {
     if crate::ha_launcher::native_ime::show(text) {
         EDIT.with(|e| *e.borrow_mut() = Some(text.into()));
     } else {
-        log::warn!("Android system keyboard is unavailable");
+        log::warn!("安卓系统键盘不可用");
     }
 }
 pub fn hide() {
@@ -561,11 +561,11 @@ pub fn open_login_url(url: &str) -> Result<(), String> {
             && u.fragment().is_none()
     });
     if !fixed && !authorize && !verification {
-        return Err("Unexpected Microsoft sign-in URL.".into());
+        return Err("意外的微软登录链接。".into());
     }
     crate::ha_launcher::APP.with(|slot| {
         let app = slot.borrow();
-        let app = app.as_ref().ok_or("Android activity unavailable")?;
+        let app = app.as_ref().ok_or("安卓 Activity 不可用")?;
         let vm = unsafe { JavaVM::from_raw(app.vm_as_ptr().cast()) }.map_err(|e| e.to_string())?;
         let mut env = vm.attach_current_thread().map_err(|e| e.to_string())?;
         env.with_local_frame(16, |env| -> jni::errors::Result<()> {

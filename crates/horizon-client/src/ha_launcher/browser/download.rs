@@ -82,7 +82,7 @@ fn refuse_file(file: &FileRef) -> Option<String> {
         return Some("Its source gives no checksum, so it can't be checked.".into());
     }
     if file.size > MAX {
-        return Some("It is larger than any pack should be.".into());
+        return Some("它比任何包应有的体积都大。".into());
     }
     None
 }
@@ -155,13 +155,13 @@ pub(super) fn save_from_anywhere(
         loop {
             let n = reader
                 .read(&mut buf)
-                .map_err(|e| format!("Download interrupted: {e}"))?;
+                .map_err(|e| format!("下载中断：{e}"))?;
             if n == 0 {
                 break;
             }
             done += n as u64;
             if done > MAX || (file.size > 0 && done > file.size) {
-                return Err("The download is larger than its source says.".to_string());
+                return Err("下载体积大于来源标注。".to_string());
             }
             hasher.update(&buf[..n]);
             out.write_all(&buf[..n]).map_err(|e| e.to_string())?;
@@ -197,7 +197,7 @@ pub fn fetch(file: &FileRef, folder: &Path, progress: &dyn Fn(f32)) -> Result<Pa
         .call()
         .map_err(|e| match e {
             ureq::Error::Status(code, _) => format!("{} answered {code}.", file.url),
-            ureq::Error::Transport(t) => format!("No connection: {t}"),
+            ureq::Error::Transport(t) => format!("无法连接：{t}"),
         })?;
     save(file, response.into_reader(), folder, progress)
 }

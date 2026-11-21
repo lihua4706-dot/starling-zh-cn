@@ -163,12 +163,12 @@ pub(crate) mod client {
             ];
             pub fn label(self) -> &'static str {
                 match self {
-                    Self::Metadata => "Checking Minecraft version",
-                    Self::Download => "Downloading game resources and sound",
-                    Self::Extract => "Unpacking verified files",
-                    Self::WorldData => "Preparing worlds and registries",
-                    Self::Controls => "Downloading touch controls",
-                    Self::Finalize => "Finishing installation",
+                    Self::Metadata => "正在检查 Minecraft 版本",
+                    Self::Download => "正在下载游戏资源与音效",
+                    Self::Extract => "正在解压已验证的文件",
+                    Self::WorldData => "正在准备世界与注册表",
+                    Self::Controls => "正在下载触摸按键",
+                    Self::Finalize => "正在完成安装",
                 }
             }
         }
@@ -315,7 +315,7 @@ pub fn acknowledge_play(private: &Path) {
 pub fn play(installed: bool) -> Result<(), String> {
     let marker = horizon_client::logging::private_home().join(PLAY);
     std::fs::write(&marker, b"")
-        .map_err(|error| format!("Could not save the launch request. {error}"))?;
+        .map_err(|error| format!("无法保存启动请求。{error}"))?;
     let message = if installed {
         horizon_client::lang::get_or("starling.restart.play", "Starting Starling…")
     } else {
@@ -323,7 +323,7 @@ pub fn play(installed: bool) -> Result<(), String> {
     };
     if !crate::android::call_restart(&message) {
         let _ = std::fs::remove_file(marker);
-        return Err("Android could not start Starling. Try again.".into());
+        return Err("安卓无法启动 Starling，请重试。".into());
     }
     Ok(())
 }

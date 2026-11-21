@@ -55,11 +55,11 @@ impl Kind {
 
     pub fn label(self) -> &'static str {
         match self {
-            Kind::Mod => "Mods",
-            Kind::ResourcePack => "Resource packs",
-            Kind::Modpack => "Modpacks",
-            Kind::Shader => "Shader packs",
-            Kind::DataPack => "Data packs",
+            Kind::Mod => "模组",
+            Kind::ResourcePack => "资源包",
+            Kind::Modpack => "整合包",
+            Kind::Shader => "光影包",
+            Kind::DataPack => "数据包",
         }
     }
 
@@ -112,9 +112,9 @@ impl Support {
 
     pub fn label(&self) -> &'static str {
         match self {
-            Support::Works => "Works",
-            Support::Partial(_) => "Partly",
-            Support::No(_) => "Doesn't run",
+            Support::Works => "可用",
+            Support::Partial(_) => "部分可用",
+            Support::No(_) => "无法运行",
         }
     }
 
@@ -272,7 +272,7 @@ pub trait Source: Send + Sync {
 }
 
 /// What the launcher says wherever CurseForge would be.
-pub const CURSEFORGE_SOON: &str = "CurseForge support is coming soon.";
+pub const CURSEFORGE_SOON: &str = "CurseForge 支持即将推出。";
 /// What another source answers for shader packs: Horizon's own are on its registry only.
 pub const SHADERS_ON_HORIZON: &str =
     "Horizon's shader packs are on Horizon's registry: pick Horizon.";
@@ -296,7 +296,7 @@ pub fn support(kind: Kind, game_versions: &[String], loaders: &[String]) -> Supp
         return match newest_release(game_versions)
             .filter(|_| !game_versions.iter().any(|v| v == GAME))
         {
-            Some(other) => Support::No(format!("Made for Horizon on {other}.")),
+            Some(other) => Support::No(format!("为 Horizon（{other}）制作。")),
             None => Support::Works,
         };
     }
@@ -310,18 +310,18 @@ pub fn support(kind: Kind, game_versions: &[String], loaders: &[String]) -> Supp
                      what changed since may look wrong."
                 ))
             } else {
-                Support::Partial("Lists no Minecraft version.".into())
+                Support::Partial("未列出 Minecraft 版本。".into())
             }
         }
         Kind::Modpack => {
             Support::Partial("Horizon runs the mods it can port, from your own downloads.".into())
         }
-        Kind::Shader => Support::No("Not one of Horizon's own shader packs.".into()),
+        Kind::Shader => Support::No("不是 Horizon 自己的光影包。".into()),
         Kind::DataPack => {
             let made_for = match newest_release(game_versions) {
                 _ if game_versions.iter().any(|v| v == GAME) => String::new(),
-                Some(newest) => format!("Made for {newest}: the game may refuse it. "),
-                None => "Lists no Minecraft version. ".into(),
+                Some(newest) => format!("为 {newest} 制作：游戏可能拒绝加载。 "),
+                None => "未列出 Minecraft 版本。 ".into(),
             };
             Support::Partial(format!("{made_for}{DATAPACK_SUPPORT}"))
         }

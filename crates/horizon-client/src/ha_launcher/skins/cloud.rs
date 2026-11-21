@@ -43,9 +43,9 @@ fn official_snapshot(value: &Value) -> Snapshot {
                     title: v["alias"]
                         .as_str()
                         .unwrap_or(if key == "skins" {
-                            "Current Microsoft skin"
+                            "当前微软皮肤"
                         } else {
-                            "Official cape"
+                            "官方披风"
                         })
                         .into(),
                     url: v["url"].as_str()?.into(),
@@ -69,21 +69,21 @@ fn response(result: Result<ureq::Response, ureq::Error>) -> Result<Value, String
             r.into_reader()
                 .take(1024 * 1024)
                 .read_to_end(&mut bytes)
-                .map_err(|_| "Could not read the cloud profile.")?;
+                .map_err(|_| "无法读取云端档案。")?;
             if bytes.is_empty() {
                 Ok(Value::Null)
             } else {
-                serde_json::from_slice(&bytes).map_err(|_| "Invalid cloud profile response.".into())
+                serde_json::from_slice(&bytes).map_err(|_| "无效的云端账号响应。".into())
             }
         }
         Err(ureq::Error::Status(401 | 403, _)) => {
-            Err("Sign in again before changing your cloud appearance.".into())
+            Err("再次登录后才能更改云端外观。".into())
         }
         Err(ureq::Error::Status(429, _)) => {
-            Err("The profile service is busy. Try again later.".into())
+            Err("账号服务繁忙，请稍后重试。".into())
         }
         Err(_) => Err(
-            "Could not contact the profile service. Your local gallery is still available.".into(),
+            "无法连接账号服务，本地图库仍可用。".into(),
         ),
     }
 }
@@ -91,7 +91,7 @@ fn microsoft_snapshot(profile: &str, secrets: &Secrets) -> Result<Snapshot, Stri
     let value = response(
         crate::ha_launcher::account::request_to("GET", profile)
             .set(
-                "Authorization",
+                "授权",
                 &format!("Bearer {}", secrets.access_token()),
             )
             .call(),
@@ -104,7 +104,7 @@ pub(crate) fn fetch_account_capes(
     root: &Path,
 ) -> Result<(Vec<Texture>, Option<PathBuf>), String> {
     if secrets.provider() != Provider::Microsoft {
-        return Err("Sign in to Microsoft to manage account capes.".into());
+        return Err("登录微软账号以管理披风。".into());
     }
     let mut capes = microsoft_snapshot(PROFILE, secrets)?.capes;
     capes.retain_mut(|cape| match texture_url(&cape.url) {
@@ -124,7 +124,7 @@ pub(crate) fn fetch_account_capes(
 
 pub fn fetch(account: &Account, secrets: &Secrets, root: &Path) -> Result<Cache, String> {
     if account.provider != secrets.provider() {
-        return Err("Account and session providers do not match.".into());
+        return Err("账号与会话提供方不匹配。".into());
     }
     let snapshot = match account.provider {
         Provider::Microsoft => microsoft_snapshot(PROFILE, secrets)?,
@@ -174,7 +174,7 @@ pub fn fetch(account: &Account, secrets: &Secrets, root: &Path) -> Result<Cache,
 
 /// Only known provider image hosts; credentials are never attached to downloads.
 fn texture_url(text: &str) -> Result<String, String> {
-    let mut url = url::Url::parse(text).map_err(|_| "Invalid cloud texture URL.")?;
+    let mut url = url::Url::parse(text).map_err(|_| "无效的云端纹理链接。")?;
     let allowed = matches!(
         url.host_str(),
         Some("textures.minecraft.net" | "ely.by" | "skinsystem.ely.by")
@@ -185,23 +185,23 @@ fn texture_url(text: &str) -> Result<String, String> {
         || url.port().is_some()
         || !matches!(url.scheme(), "http" | "https")
     {
-        return Err("The provider returned an unsupported texture host.".into());
+        return Err("提供方返回了不支持的纹理主机。".into());
     }
     url.set_scheme("https")
-        .map_err(|_| "Invalid texture URL.")?;
+        .map_err(|_| "无效的纹理链接。")?;
     Ok(url.into())
 }
 pub fn download(root: &Path, url: &str, cape: bool) -> Result<PathBuf, String> {
     let url = texture_url(url)?;
     let response = crate::ha_launcher::account::request_to("GET", &url)
         .call()
-        .map_err(|_| "Could not download the cloud texture.")?;
+        .map_err(|_| "无法下载云端纹理。")?;
     let mut bytes = Vec::new();
     response
         .into_reader()
         .take(MAX_IMPORT_BYTES as u64 + 1)
         .read_to_end(&mut bytes)
-        .map_err(|_| "Could not read the cloud texture.")?;
+        .map_err(|_| "无法读取云端纹理。")?;
     let image = if cape {
         read_cape(&bytes)?
     } else {
@@ -210,11 +210,11 @@ pub fn download(root: &Path, url: &str, cape: bool) -> Result<PathBuf, String> {
     let mut png = std::io::Cursor::new(vec![]);
     image
         .write_to(&mut png, image::ImageFormat::Png)
-        .map_err(|_| "Could not cache the cloud texture.")?;
+        .map_err(|_| "无法缓存云端纹理。")?;
     let dir = root.join("cloud");
-    std::fs::create_dir_all(&dir).map_err(|_| "Could not create the cloud cache.")?;
+    std::fs::create_dir_all(&dir).map_err(|_| "无法创建云端缓存。")?;
     let path = dir.join(format!("{:x}.png", Sha256::digest(png.get_ref())));
-    std::fs::write(&path, png.get_ref()).map_err(|_| "Could not cache the cloud texture.")?;
+    std::fs::write(&path, png.get_ref()).map_err(|_| "无法缓存云端纹理。")?;
     Ok(path)
 }
 pub fn upload_skin(
@@ -233,7 +233,7 @@ fn upload_skin_at(
     model: Model,
 ) -> Result<(), String> {
     if account.provider != secrets.provider() {
-        return Err("Account and session providers do not match.".into());
+        return Err("账号与会话提供方不匹配。".into());
     }
     if account.provider != Provider::Microsoft {
         return Err("Ely.by cloud skins are managed on ely.by; its public API does not expose skin uploads.".into());
@@ -242,7 +242,7 @@ fn upload_skin_at(
     let mut png = std::io::Cursor::new(vec![]);
     image
         .write_to(&mut png, image::ImageFormat::Png)
-        .map_err(|_| "Could not encode skin.")?;
+        .map_err(|_| "无法编码皮肤。")?;
     let boundary = "horizon-skin-upload-v1";
     let mut body=format!("--{boundary}\r\nContent-Disposition: form-data; name=\"variant\"\r\n\r\n{}\r\n--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"skin.png\"\r\nContent-Type: image/png\r\n\r\n",model.name()).into_bytes();
     body.extend_from_slice(png.get_ref());
@@ -250,7 +250,7 @@ fn upload_skin_at(
     response(
         crate::ha_launcher::account::request_to("POST", &format!("{profile}/skins"))
             .set(
-                "Authorization",
+                "授权",
                 &format!("Bearer {}", secrets.access_token()),
             )
             .set(
@@ -271,11 +271,11 @@ fn activate_cape_at(
     id: Option<&str>,
 ) -> Result<(), String> {
     if account.provider != secrets.provider() {
-        return Err("Account and session providers do not match.".into());
+        return Err("账号与会话提供方不匹配。".into());
     }
     if account.provider != Provider::Microsoft {
         return Err(
-            "Ely.by does not offer user-selectable cloud capes. Choose a local cape instead."
+            "Ely.by 不提供用户可选云端披风，请改为选择本地披风。"
                 .into(),
         );
     }
@@ -283,7 +283,7 @@ fn activate_cape_at(
         // Confirm ownership and skip writing a cape that is already active.
         let capes = microsoft_snapshot(profile, secrets)?.capes;
         let Some(cape) = capes.iter().find(|cape| cape.id == id) else {
-            return Err("This cape does not belong to the signed-in account.".into());
+            return Err("此披风不属于当前登录账号。".into());
         };
         if cape.active {
             return Ok(());
@@ -291,7 +291,7 @@ fn activate_cape_at(
         response(
             crate::ha_launcher::account::request_to("PUT", &format!("{profile}/capes/active"))
                 .set(
-                    "Authorization",
+                    "授权",
                     &format!("Bearer {}", secrets.access_token()),
                 )
                 .send_json(serde_json::json!({"capeId":id})),
@@ -300,7 +300,7 @@ fn activate_cape_at(
         response(
             crate::ha_launcher::account::request_to("DELETE", &format!("{profile}/capes/active"))
                 .set(
-                    "Authorization",
+                    "授权",
                     &format!("Bearer {}", secrets.access_token()),
                 )
                 .call(),
@@ -370,7 +370,7 @@ mod tests {
                     _ => {
                         assert!(first.starts_with("GET /profile "));
                         let state = if index == 4 { "ACTIVE" } else { "INACTIVE" };
-                        (200,serde_json::json!({"capes":[{"id":"owned","alias":"Owned cape","url":"https://textures.minecraft.net/texture/abc","state":state}]}).to_string())
+                        (200,serde_json::json!({"capes":[{"id":"owned","alias":"已拥有的披风","url":"https://textures.minecraft.net/texture/abc","state":state}]}).to_string())
                     }
                 };
                 write!(stream,"HTTP/1.1 {status} Result\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",body.len()).unwrap();

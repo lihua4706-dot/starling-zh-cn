@@ -96,10 +96,10 @@ impl Login {
             (Some(name), true) => {
                 format!("Already signed in as {name} · {}", self.provider_name())
             }
-            (Some(name), false) => format!("Sign-in required for {name}"),
-            _ if self.pending() => "Signing in...".into(),
-            _ if !offline_name.trim().is_empty() => format!("Offline: {offline_name}"),
-            _ => "Offline / Sign in".into(),
+            (Some(name), false) => format!("需要登录 {name}"),
+            _ if self.pending() => "正在登录…".into(),
+            _ if !offline_name.trim().is_empty() => format!("离线：{offline_name}"),
+            _ => "离线 / 登录".into(),
         }
     }
 
@@ -225,7 +225,7 @@ impl Login {
                 .remove_when_idle(account::store(), &a.key())
                 .and_then(|_| accounts.save())
             {
-                Ok(()) => "Signed out. Offline play is available.".into(),
+                Ok(()) => "已退出登录，可离线游玩。".into(),
                 Err(e) => e,
             };
         }
@@ -234,9 +234,9 @@ impl Login {
     pub fn copy_code(&mut self) {
         if let Some(SignInState::Code(code)) = &self.state {
             self.message = if crate::ha_launcher::platform::copy_login_code(&code.user_code) {
-                "Code copied. Paste it on the Microsoft page.".into()
+                "验证码已复制，请粘贴到微软页面。".into()
             } else {
-                "Could not copy the code. Try again.".into()
+                "无法复制验证码，请重试。".into()
             };
         }
     }
@@ -367,39 +367,39 @@ impl Login {
         ui.border(x, y, w, h, 26.0, login_border());
 
         let (title, subtitle): (&str, String) = if self.providers {
-            ("Accounts", "Choose how you want to play".into())
+            ("账号", "选择你想如何游玩".into())
         } else if self.choosing {
             let line = if let Some(name) = &self.profile {
                 if self.signed_in {
                     format!("Signed in as {name} with {}", self.provider_name())
                 } else {
-                    format!("Sign in required for {name}")
+                    format!("需要登录 {name}")
                 }
             } else {
-                "Choose an account or play offline".into()
+                "选择一个账号或离线游玩".into()
             };
-            ("Your accounts", line)
+            ("你的账号", line)
         } else if self.ely {
             (
-                "Ely.by account",
-                "Credentials go only to authserver.ely.by".into(),
+                "Ely.by 账号",
+                "凭据仅发送到 authserver.ely.by".into(),
             )
         } else if self.offline {
             (
-                "Offline profile",
-                "A local name for single-player and LAN".into(),
+                "离线账号",
+                "用于单人游戏与局域网联机的本地名称".into(),
             )
         } else {
             let line = if let Some(name) = &self.profile {
                 if self.signed_in {
-                    format!("Already signed in as {name}")
+                    format!("已登录为 {name}")
                 } else {
-                    format!("Sign in to use {name}")
+                    format!("登录以使用 {name}")
                 }
             } else {
-                "Xbox and Minecraft profile".into()
+                "Xbox 与 Minecraft 账号".into()
             };
-            ("Microsoft account", line)
+            ("微软账号", line)
         };
         if !self.providers {
             let back = [x + 16.0, y + 16.0, 38.0, 38.0];
@@ -468,20 +468,20 @@ impl Login {
             for (i, (label, note, action, mark)) in [
                 (
                     "Microsoft",
-                    "Xbox and Minecraft",
+                    "Xbox 与 Minecraft",
                     Action::MicrosoftAccount,
                     "M",
                 ),
-                ("Ely.by", "Alternative auth", Action::ElySignIn, "E"),
+                ("Ely.by", "其他登录方式", Action::ElySignIn, "E"),
                 (
-                    "Offline",
-                    "Play without signing in",
+                    "离线",
+                    "不登录直接游玩",
                     Action::OfflineAccount,
                     "O",
                 ),
                 (
-                    "Saved accounts",
-                    "Switch account",
+                    "已保存的账号",
+                    "切换账号",
                     Action::SavedAccounts,
                     "S",
                 ),
@@ -525,7 +525,7 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, footer_y, w - 40.0, 42.0],
-                "Close",
+                "关闭",
                 Action::CloseLogin,
                 false,
             );
@@ -536,7 +536,7 @@ impl Login {
             let row_h = ((footer_y - content_y - 26.0) / 4.0).clamp(36.0, 56.0);
             let offline_current = self.profile.is_none();
             let offline_label = if offline_name.trim().is_empty() {
-                "Offline player"
+                "离线玩家"
             } else {
                 offline_name
             };
@@ -545,7 +545,7 @@ impl Login {
                 targets,
                 [x + 20.0, content_y, w - 40.0, row_h],
                 offline_label,
-                "Offline profile",
+                "离线账号",
                 offline_current,
                 Action::SelectOffline,
             );
@@ -598,7 +598,7 @@ impl Login {
                 ui,
                 targets,
                 [after, footer_y, add_w, 38.0],
-                "Add account",
+                "添加账号",
                 Action::AddAccount,
                 false,
             );
@@ -606,7 +606,7 @@ impl Login {
                 ui,
                 targets,
                 [after + add_w + 8.0, footer_y, rest - add_w - 8.0, 38.0],
-                "Done",
+                "完成",
                 Action::CloseLogin,
                 true,
             );
@@ -617,24 +617,24 @@ impl Login {
             for (i, (name, label, value, secret, placeholder)) in [
                 (
                     "ely_username",
-                    "Username or email",
+                    "用户名或邮箱",
                     self.username.as_str(),
                     false,
-                    "Username or email",
+                    "用户名或邮箱",
                 ),
                 (
                     "ely_password",
-                    "Password",
+                    "密码",
                     self.password.as_str(),
                     true,
-                    "Password",
+                    "密码",
                 ),
                 (
                     "ely_otp",
-                    "Two-factor code",
+                    "两步验证码",
                     self.otp.as_str(),
                     true,
-                    "Optional",
+                    "可选",
                 ),
             ]
             .into_iter()
@@ -664,7 +664,7 @@ impl Login {
                     ui,
                     targets,
                     [x + 20.0, footer_y, w - 40.0, 42.0],
-                    "Done editing",
+                    "完成编辑",
                     Action::FinishNameEdit,
                     true,
                 );
@@ -687,9 +687,9 @@ impl Login {
                 targets,
                 [x + 20.0, footer_y, w - 40.0, 42.0],
                 if self.pending() {
-                    "Signing in..."
+                    "正在登录…"
                 } else {
-                    "Sign in to Ely.by"
+                    "登录 Ely.by"
                 },
                 Action::SubmitEly,
                 true,
@@ -698,7 +698,7 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, footer_y - 48.0, w - 40.0, 36.0],
-                "Back to accounts",
+                "返回账号",
                 Action::Account,
                 false,
             );
@@ -712,9 +712,9 @@ impl Login {
                 content_y,
                 w - 40.0,
                 58.0,
-                "Player name",
+                "玩家名",
                 offline_name,
-                "Enter a name",
+                "输入名称",
                 focused,
             );
             targets.push(([x + 20.0, content_y, w - 40.0, 58.0], Action::Field("name")));
@@ -739,7 +739,7 @@ impl Login {
                     ui,
                     targets,
                     [x + 20.0, footer_y, w - 40.0, 42.0],
-                    "Done editing",
+                    "完成编辑",
                     Action::FinishNameEdit,
                     true,
                 );
@@ -749,7 +749,7 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, footer_y, w - 40.0, 42.0],
-                "Use offline account",
+                "使用离线账号",
                 Action::SelectOffline,
                 true,
             );
@@ -757,7 +757,7 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, footer_y - 48.0, w - 40.0, 36.0],
-                "Back to accounts",
+                "返回账号",
                 Action::Account,
                 false,
             );
@@ -842,7 +842,7 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, row_y, half, 38.0],
-                "Copy code",
+                "复制验证码",
                 Action::CopyLoginCode,
                 false,
             );
@@ -850,21 +850,21 @@ impl Login {
                 ui,
                 targets,
                 [x + 32.0 + half, row_y, half, 38.0],
-                "Open browser",
+                "打开浏览器",
                 Action::LoginLink,
                 false,
             );
             row_y += 46.0;
         } else {
             let text = if self.signed_in {
-                "Your account is saved on this device. Sessions renew automatically."
+                "你的账号已保存在此设备上，会话会自动续期。"
             } else {
-                "You sign in inside Microsoft's browser; this app never sees your password."
+                "你在微软浏览器中登录，本应用永远不会看到你的密码。"
             };
             row_y = paragraph(ui, x + 20.0, row_y, w - 40.0, text, login_muted(), 2) + 8.0;
         }
         let message = if matches!(&self.state, Some(SignInState::Starting)) {
-            "Requesting a sign-in code..."
+            "正在请求登录码…"
         } else {
             self.message.as_str()
         };
@@ -876,19 +876,19 @@ impl Login {
                 ui,
                 targets,
                 [x + 20.0, row_y, w - 40.0, 30.0],
-                "Request Minecraft API approval",
+                "请求 Minecraft API 授权",
                 Action::ReviewApp,
                 false,
             );
         }
         let (label, action) = if matches!(&self.state, Some(SignInState::Code(_))) {
-            ("Copy code and open browser", Action::LoginLink)
+            ("复制验证码并打开浏览器", Action::LoginLink)
         } else if self.pending() {
-            ("Restart browser sign-in", Action::SignIn)
+            ("重新开始浏览器登录", Action::SignIn)
         } else if self.signed_in {
-            ("Switch Microsoft account", Action::SignIn)
+            ("切换微软账号", Action::SignIn)
         } else {
-            ("Sign in with browser", Action::SignIn)
+            ("在浏览器中登录", Action::SignIn)
         };
         button(
             ui,
@@ -903,16 +903,16 @@ impl Login {
             ui,
             targets,
             [x + 20.0, footer_y - 48.0, half, 38.0],
-            "Device code",
+            "设备验证码",
             Action::DeviceSignIn,
             false,
         );
         let (second_label, second_action) = if self.pending() {
-            ("Cancel", Action::CancelLogin)
+            ("取消", Action::CancelLogin)
         } else if self.profile.is_some() {
-            ("Sign out", Action::SignOut)
+            ("退出登录", Action::SignOut)
         } else {
-            ("Back", Action::Account)
+            ("返回", Action::Account)
         };
         button(
             ui,

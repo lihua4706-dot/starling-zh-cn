@@ -47,18 +47,18 @@ impl Library {
         let data = match std::fs::read(&path) {
             Ok(data) => data,
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(Self::default()),
-            Err(_) => return Err("Could not read the local wardrobe.".into()),
+            Err(_) => return Err("无法读取本地衣柜。".into()),
         };
         if data.len() > 2 * 1024 * 1024 {
-            return Err("The wardrobe index is too large.".into());
+            return Err("衣柜索引过大。".into());
         }
         let mut value: Self =
-            serde_json::from_slice(&data).map_err(|_| "The wardrobe index is damaged.")?;
+            serde_json::from_slice(&data).map_err(|_| "衣柜索引已损坏。")?;
         if value.schema != 1 {
-            return Err("This wardrobe needs a newer launcher.".into());
+            return Err("此衣柜需要更新版本的启动器。".into());
         }
         if value.entries.iter().any(|e| !valid_id(&e.id)) {
-            return Err("The wardrobe contains an invalid image identifier.".into());
+            return Err("衣柜包含无效的图像标识。".into());
         }
         let mut removed = Vec::new();
         value.entries.retain(|entry| {
@@ -94,17 +94,17 @@ impl Library {
         Ok(value)
     }
     pub fn save(&self, root: &Path) -> Result<(), String> {
-        std::fs::create_dir_all(root).map_err(|_| "Could not create the wardrobe folder.")?;
+        std::fs::create_dir_all(root).map_err(|_| "无法创建衣柜文件夹。")?;
         let bytes =
-            serde_json::to_vec_pretty(self).map_err(|_| "Could not encode the wardrobe.")?;
+            serde_json::to_vec_pretty(self).map_err(|_| "无法编码衣柜。")?;
         std::fs::write(root.join("wardrobe.json.tmp"), bytes)
-            .map_err(|_| "Could not save the wardrobe.")?;
+            .map_err(|_| "无法保存衣柜。")?;
         std::fs::rename(root.join("wardrobe.json.tmp"), root.join("wardrobe.json"))
-            .map_err(|_| "Could not replace the wardrobe index.".into())
+            .map_err(|_| "无法替换衣柜索引。".into())
     }
     pub fn image(root: &Path, id: &str) -> Result<PathBuf, String> {
         if !valid_id(id) {
-            return Err("Invalid wardrobe image identifier.".into());
+            return Err("无效的衣柜图像标识。".into());
         }
         Ok(root.join("images").join(format!("{id}.png")))
     }
@@ -123,13 +123,13 @@ impl Library {
         let mut output = std::io::Cursor::new(Vec::new());
         image
             .write_to(&mut output, image::ImageFormat::Png)
-            .map_err(|_| "Could not encode PNG.")?;
+            .map_err(|_| "无法编码 PNG。")?;
         let png = output.into_inner();
         let id = format!("{:x}", Sha256::digest(&png));
         let path = Self::image(root, &id)?;
         std::fs::create_dir_all(path.parent().unwrap())
-            .map_err(|_| "Could not create image storage.")?;
-        std::fs::write(path, png).map_err(|_| "Could not keep this image.")?;
+            .map_err(|_| "无法创建图片存储。")?;
+        std::fs::write(path, png).map_err(|_| "无法保留此图片。")?;
         if !self.entries.iter().any(|e| e.id == id && e.kind == kind) {
             self.entries.push(Entry {
                 id: id.clone(),
@@ -145,7 +145,7 @@ impl Library {
             root,
             path.file_stem()
                 .and_then(|s| s.to_str())
-                .unwrap_or("Imported PNG"),
+                .unwrap_or("已导入 PNG"),
             kind,
             &read_file(path)?,
         )
@@ -158,7 +158,7 @@ impl Library {
         kind: Kind,
     ) -> Result<(), String> {
         if !self.entries.iter().any(|e| e.id == id && e.kind == kind) {
-            return Err("Choose an image from your gallery.".into());
+            return Err("从图库中选择一张图片。".into());
         }
         let selection = self.selections.entry(account_key.into()).or_default();
         match kind {
@@ -197,13 +197,13 @@ impl Library {
         } else {
             cloud.is_some_and(|(_, s, _)| s)
         };
-        std::fs::create_dir_all(game_home).map_err(|_| "Could not create the game folder.")?;
+        std::fs::create_dir_all(game_home).map_err(|_| "无法创建游戏文件夹。")?;
         let descriptor = serde_json::json!({"schema":1,"skin":skin,"cape":cape,"slim":slim,"hide_cape":selection.hide_cape});
         std::fs::write(
             game_home.join("horizon-appearance.json"),
             descriptor.to_string(),
         )
-        .map_err(|_| "Could not prepare the game's appearance.")?;
+        .map_err(|_| "无法准备游戏外观。")?;
         crate::ha_launcher::appearance::wear(
             game_home,
             own.as_deref(),

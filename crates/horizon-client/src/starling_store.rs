@@ -94,7 +94,7 @@ impl Answer {
             "failed" => Some(Answer::Failed {
                 error: json["error"]
                     .as_str()
-                    .unwrap_or("The build failed.")
+                    .unwrap_or("构建失败。")
                     .chars()
                     .take(600)
                     .collect(),

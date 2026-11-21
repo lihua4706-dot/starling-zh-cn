@@ -25,11 +25,11 @@ impl Sort {
     ];
     pub fn label(self) -> &'static str {
         match self {
-            Sort::Relevance => "Relevance",
-            Sort::Downloads => "Downloads",
-            Sort::Follows => "Follows",
-            Sort::Newest => "Newest",
-            Sort::Updated => "Updated",
+            Sort::Relevance => "相关度",
+            Sort::Downloads => "下载量",
+            Sort::Follows => "关注数",
+            Sort::Newest => "最新",
+            Sort::Updated => "已更新",
         }
     }
     /// Modrinth's `index`.
@@ -64,8 +64,8 @@ impl Environment {
     pub const ALL: [Environment; 2] = [Environment::Client, Environment::Server];
     pub fn label(self) -> &'static str {
         match self {
-            Environment::Client => "Client",
-            Environment::Server => "Server",
+            Environment::Client => "客户端",
+            Environment::Server => "服务器",
         }
     }
 }
@@ -187,8 +187,8 @@ pub fn modrinth_details(project: &Value, members: &Value) -> Details {
     gallery.sort_by_key(|(order, i)| (!i.featured, *order));
     let mut links = Vec::new();
     for (key, label) in [
-        ("source_url", "Source"),
-        ("issues_url", "Issues"),
+        ("source_url", "来源"),
+        ("issues_url", "议题"),
         ("wiki_url", "Wiki"),
         ("discord_url", "Discord"),
     ] {
@@ -321,7 +321,7 @@ mod tests {
         );
         assert_eq!(
             d.links.iter().map(|l| l.label.as_str()).collect::<Vec<_>>(),
-            ["Source", "Discord", "Donate (Ko-fi)"]
+            ["来源", "Discord", "Donate (Ko-fi)"]
         );
         assert_eq!(d.authors, ["Macaw", "helper"]);
         assert_eq!(d.categories, ["decoration", "utility"]);

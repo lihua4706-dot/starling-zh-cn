@@ -620,7 +620,7 @@ impl ApplicationHandler for Launcher {
                         "Saved {name} in Reports. Review the ZIP before sharing; nothing was uploaded."
                     )
                 }
-                Err(error) => format!("Diagnostic export failed: {error}"),
+                Err(error) => format!("诊断导出失败：{error}"),
             };
         }
         crate::ha_launcher::platform::poll_gamepad_connections();
@@ -677,7 +677,7 @@ impl ApplicationHandler for Launcher {
             }
         }
         for result in crate::ha_launcher::gallery::poll() {
-            self.catalog.status = result.unwrap_or_else(|e| format!("File export failed: {e}"));
+            self.catalog.status = result.unwrap_or_else(|e| format!("文件导出失败：{e}"));
         }
         if self.login.poll() {
             self.refresh_wardrobe_account();

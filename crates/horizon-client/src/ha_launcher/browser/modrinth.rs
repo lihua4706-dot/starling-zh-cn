@@ -121,7 +121,7 @@ fn parse_hit_as(hit: &Value, kind: Kind) -> Option<Project> {
 /// its native-only shader policy; Android labels this catalog experimental.
 pub fn search_shader_packs(query: &Query) -> Result<Vec<Project>, String> {
     if query.kind != Kind::Shader {
-        return Err("Expected a shader search".into());
+        return Err("预期为光影搜索".into());
     }
     let found = get(&search_url(query))?;
     Ok(shader_hits(&found))
@@ -200,7 +200,7 @@ pub fn version_files(version: &str) -> Result<Vec<FileRef>, String> {
     let v = get(&format!("{API}/version/{}", encode(version)))?;
     parse_version(&v)
         .map(|v| v.files)
-        .ok_or_else(|| format!("Modrinth: no version {version}."))
+        .ok_or_else(|| format!("Modrinth：没有版本 {version}。"))
 }
 
 /// Projects' icons in one request (`GET /projects?ids=[…]`, at most 100 ids): id → icon URL, for
@@ -241,7 +241,7 @@ impl Source for Modrinth {
 
     fn project(&self, id: &str) -> Result<Project, String> {
         let p = get(&format!("{API}/project/{}", encode(id)))?;
-        parse_project(&p).ok_or_else(|| format!("Modrinth: {id} is not a pack Horizon loads."))
+        parse_project(&p).ok_or_else(|| format!("Modrinth：{id} 不是 Horizon 可加载的包。"))
     }
 
     fn versions(&self, project: &Project) -> Result<Vec<Version>, String> {
@@ -296,12 +296,12 @@ fn get(url: &str) -> Result<Value, String> {
             ureq::Error::Status(429, _) => {
                 "Modrinth asks to slow down: try again in a minute.".into()
             }
-            ureq::Error::Status(code, _) => format!("Modrinth answered {code}."),
-            ureq::Error::Transport(t) => format!("No connection to Modrinth: {t}"),
+            ureq::Error::Status(code, _) => format!("Modrinth 返回 {code}。"),
+            ureq::Error::Transport(t) => format!("无法连接 Modrinth：{t}"),
         })?;
     response
         .into_json()
-        .map_err(|e| format!("Modrinth's answer wasn't readable: {e}"))
+        .map_err(|e| format!("无法读取 Modrinth 的响应：{e}"))
 }
 
 /// Percent-encoding for a query value or a path segment.

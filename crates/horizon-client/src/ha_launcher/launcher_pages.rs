@@ -524,7 +524,7 @@ fn toggle(
         x,
         y + (h - 20.0) * 0.5,
         if on { my3_accent() } else { my3_muted() },
-        if on { "Enabled" } else { "Off" },
+        if on { "已启用" } else { "关闭" },
     );
     let track_x = x + w - 52.0;
     let track_y = y + (h - 26.0) * 0.5;
@@ -933,7 +933,7 @@ fn draw_my3_progress_view(
     let metrics_line = format!("{speed_label}  •  {eta_label}");
     let metrics_w = ui.measure(Face::Medium, 13.0, &metrics_line);
     let stage_line = if paused {
-        format!("Paused • {stage_text}")
+        format!("已暂停 • {stage_text}")
     } else {
         stage_text.to_owned()
     };
@@ -1321,7 +1321,7 @@ impl Launcher {
             let total_mib = f64::from(self.catalog.downloading_size_mib.max(1.0));
             let done_mib = (total_mib * f64::from(frac)).clamp(0.0, total_mib);
             let title = if self.catalog.downloading_title.is_empty() {
-                "Downloading add-on...".to_owned()
+                "正在下载附加项…".to_owned()
             } else {
                 format!("Installing {}", self.catalog.downloading_title)
             };
@@ -1353,7 +1353,7 @@ impl Launcher {
                 &self.catalog.transfer.speed_label(),
                 &self.catalog.transfer.eta_label(done_mib, total_mib),
                 step_idx,
-                &["Resolve", "Download", "Verify", "Install"],
+                &["解析", "下载", "校验", "安装"],
                 smooth_frac,
                 self.anim.shimmer_phase,
                 &stage,
@@ -1411,19 +1411,19 @@ impl Launcher {
                     content_x,
                     content_w,
                     h,
-                    "Getting your game ready",
+                    "正在准备你的游戏",
                     &sub_left,
                     &sub_right,
                     &self.install_transfer.speed_label(),
                     &self.install_transfer.eta_label(done_mib, total_mib),
                     current,
                     &[
-                        "Manifest",
-                        "Metadata",
-                        "Client JAR",
-                        "Verify",
-                        "Extract",
-                        "Ready",
+                        "清单",
+                        "元数据",
+                        "客户端 JAR",
+                        "校验",
+                        "解压",
+                        "就绪",
                     ],
                     smooth_overall,
                     self.anim.shimmer_phase,
@@ -1445,9 +1445,9 @@ impl Launcher {
                     card_y + 18.0,
                     my3_text(),
                     if installed {
-                        "Ready to play"
+                        "可以开始游戏了"
                     } else if compact {
-                        "Your Java worlds"
+                        "你的 Java 世界"
                     } else {
                         "Your Java worlds, on Android"
                     },
@@ -1496,11 +1496,11 @@ impl Launcher {
                         &mut self.targets,
                         [content_x, btn_y, play_w, 46.0],
                         if self.error.is_some() {
-                            "Try again"
+                            "重试"
                         } else if installed {
                             "Play Minecraft 26.3"
                         } else {
-                            "Set up Starling"
+                            "设置 Starling"
                         },
                         Action::Play,
                         true,
@@ -1537,11 +1537,11 @@ impl Launcher {
                 header_y,
                 my3_text(),
                 if page == Page::Mods {
-                    "Mods"
+                    "模组"
                 } else if page == Page::Shaders {
-                    "Shader Packs"
+                    "光影包"
                 } else {
-                    "Resource Packs"
+                    "资源包"
                 },
             );
             if matches!(page, Page::Shaders | Page::Mods) {
@@ -1575,9 +1575,9 @@ impl Launcher {
             let search_btn_w = 98.0;
             let field_w = (content_w - search_btn_w - 8.0).max(120.0);
             let search_hint = if page == Page::Mods {
-                "Search mods or paste .hmod HTTPS link..."
+                "搜索模组或粘贴 .hmod HTTPS 链接…"
             } else {
-                "Search catalog..."
+                "搜索目录…"
             };
             let search_rect = ui.text_field(
                 content_x,
@@ -1596,9 +1596,9 @@ impl Launcher {
                 &mut self.targets,
                 [content_x + field_w + 8.0, search_y, search_btn_w, 36.0],
                 if page == Page::Mods && self.catalog.query.trim().starts_with("https://") {
-                    "Import .hmod"
+                    "导入 .hmod"
                 } else {
-                    "Search"
+                    "搜索"
                 },
                 Action::Search,
                 true,
@@ -1614,7 +1614,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [content_x, sub_y, 114.0, 29.0],
-                "Open folder",
+                "打开文件夹",
                 Action::OpenFolder(kind),
                 false,
             );
@@ -1622,7 +1622,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [content_x + 122.0, sub_y, 114.0, 29.0],
-                "Import file",
+                "导入文件",
                 Action::Import(kind),
                 false,
             );
@@ -1772,7 +1772,7 @@ impl Launcher {
                     &mut ui,
                     &mut self.targets,
                     btn_rect,
-                    if enabled { "Installed" } else { "Install" },
+                    if enabled { "已安装" } else { "安装" },
                     Action::ToggleBundled(id),
                     !enabled,
                 );
@@ -1923,7 +1923,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [content_x, pager_y, 102.0, 32.0],
-                "Previous",
+                "上一步",
                 Action::Previous,
                 false,
             );
@@ -1931,7 +1931,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [content_x + 110.0, pager_y, 102.0, 32.0],
-                "Next",
+                "下一步",
                 Action::Next,
                 false,
             );
@@ -2039,7 +2039,7 @@ impl Launcher {
                 x + 22.0,
                 y + 21.0,
                 my3_text(),
-                "Set up Starling",
+                "设置 Starling",
             );
             ui.text(
                 Face::Regular,
@@ -2059,14 +2059,14 @@ impl Launcher {
             );
             let bw = (width - 64.0) / 3.0;
             for (index, (label, action, primary)) in [
-                ("Cancel", Action::Dismiss, false),
+                ("取消", Action::Dismiss, false),
                 (
-                    "Launcher",
+                    "启动器",
                     Action::ChooseSetupDestination(false),
                     !self.catalog.config.open_directly,
                 ),
                 (
-                    "Game",
+                    "游戏",
                     Action::ChooseSetupDestination(true),
                     self.catalog.config.open_directly,
                 ),
@@ -2116,7 +2116,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [x + 20.0, y + 94.0, bw, 42.0],
-                "Cancel",
+                "取消",
                 Action::Dismiss,
                 false,
             );
@@ -2124,7 +2124,7 @@ impl Launcher {
                 &mut ui,
                 &mut self.targets,
                 [x + 32.0 + bw, y + 94.0, bw, 42.0],
-                "Exit",
+                "退出",
                 Action::ConfirmExit,
                 true,
             );
@@ -2222,9 +2222,9 @@ impl Launcher {
             header_y + 2.0,
             my3_text(),
             if self.catalog.installed_sub_tab == InstalledSubTab::Library {
-                "Content Library"
+                "内容库"
             } else {
-                "Profile File Manager"
+                "存档文件管理"
             },
         );
 
@@ -2241,7 +2241,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             lib_rect,
-            "Library",
+            "内容库",
             Action::SetInstalledSubTab(InstalledSubTab::Library),
             self.catalog.installed_sub_tab == InstalledSubTab::Library,
         );
@@ -2249,7 +2249,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             fm_rect,
-            "File Manager",
+            "文件管理",
             Action::SetInstalledSubTab(InstalledSubTab::FileManager),
             self.catalog.installed_sub_tab == InstalledSubTab::FileManager,
         );
@@ -2310,7 +2310,7 @@ impl Launcher {
                     .filter(|item| filter.matches(item.kind))
                     .count();
                 let lbl = if compact && filter == InstalledFilter::Packs {
-                    format!("Packs ({count})")
+                    format!("资源包 ({count})")
                 } else {
                     format!("{} ({count})", filter.label())
                 };
@@ -2376,9 +2376,9 @@ impl Launcher {
                     top + 18.0,
                     my3_text(),
                     if self.catalog.local.is_empty() {
-                        "No local add-ons installed yet"
+                        "还没有安装本地附加项"
                     } else {
-                        "No installed add-ons match your filter"
+                        "没有符合筛选条件的已安装附加项"
                     },
                 );
                 ui.hint_line(
@@ -2394,7 +2394,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [content_x + 20.0, cta_y, cta_w, 34.0],
-                    "Import Mod",
+                    "导入模组",
                     Action::Import(Kind::Mods),
                     true,
                 );
@@ -2402,7 +2402,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [content_x + 28.0 + cta_w, cta_y, cta_w, 34.0],
-                    "Import Pack",
+                    "导入整合包",
                     Action::Import(Kind::Packs),
                     false,
                 );
@@ -2410,7 +2410,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [content_x + 36.0 + cta_w * 2.0, cta_y, cta_w, 34.0],
-                    "File Manager",
+                    "文件管理",
                     Action::SetInstalledSubTab(InstalledSubTab::FileManager),
                     false,
                 );
@@ -2558,7 +2558,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     export_r,
-                    "Export",
+                    "导出",
                     Action::ExportLocal(orig_idx),
                     false,
                 );
@@ -2566,7 +2566,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     delete_r,
-                    "Delete",
+                    "删除",
                     Action::DeleteLocal(orig_idx),
                     false,
                 );
@@ -2614,7 +2614,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             [content_x + content_w - right_cta_w, nav_y, imp_btn_w, 30.0],
-            "Import",
+            "导入",
             Action::FmImportHere,
             true,
         );
@@ -2733,23 +2733,23 @@ impl Launcher {
             .as_ref()
             .map_or(0, |(v, _)| v.len());
         let paste_label = if clip_count > 0 {
-            format!("Paste ({clip_count})")
+            format!("粘贴 ({clip_count})")
         } else {
-            "Paste".into()
+            "粘贴".into()
         };
         let del_label = if sel_count > 0 {
-            format!("Delete ({sel_count})")
+            format!("删除 ({sel_count})")
         } else {
-            "Delete".into()
+            "删除".into()
         };
         let tools: [(&str, Action, bool); 8] = [
             ("All", Action::FmSelectAll, false),
-            ("Clear", Action::FmClearSelection, false),
-            ("Copy", Action::FmCopy, sel_count > 0),
+            ("清除", Action::FmClearSelection, false),
+            ("复制", Action::FmCopy, sel_count > 0),
             ("Cut", Action::FmCut, sel_count > 0),
             (&paste_label, Action::FmPaste, clip_count > 0),
-            ("Rename", Action::FmOpenRenameSelected, sel_count == 1),
-            ("Export", Action::FmExportSelected, sel_count > 0),
+            ("重命名", Action::FmOpenRenameSelected, sel_count == 1),
+            ("导出", Action::FmExportSelected, sel_count > 0),
             (&del_label, Action::FmRequestDeleteSelected, sel_count > 0),
         ];
         let t_gap = 4.0;
@@ -2780,7 +2780,7 @@ impl Launcher {
                 content_x + 54.0,
                 top + 18.0,
                 my3_text(),
-                "This folder is empty",
+                "此文件夹为空",
             );
             ui.hint_line(
                 content_x + 54.0,
@@ -2936,7 +2936,7 @@ impl Launcher {
                 ui,
                 &mut self.targets,
                 info_r,
-                "Details",
+                "详情",
                 Action::FmOpenDetails(idx),
                 false,
             );
@@ -2944,7 +2944,7 @@ impl Launcher {
                 ui,
                 &mut self.targets,
                 ren_r,
-                "Rename",
+                "重命名",
                 Action::FmOpenRename(idx),
                 false,
             );
@@ -2952,7 +2952,7 @@ impl Launcher {
                 ui,
                 &mut self.targets,
                 del_r,
-                "Delete",
+                "删除",
                 Action::FmRequestDeleteSingle(idx),
                 false,
             );
@@ -3027,7 +3027,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 20.0, my + mh - 54.0, bw, 38.0],
-                    "Cancel",
+                    "取消",
                     Action::FmCloseModal,
                     false,
                 );
@@ -3035,7 +3035,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 32.0 + bw, my + mh - 54.0, bw, 38.0],
-                    "Confirm Delete",
+                    "确认删除",
                     Action::FmConfirmDelete,
                     true,
                 );
@@ -3056,13 +3056,13 @@ impl Launcher {
                     mx + 20.0,
                     my + 16.0,
                     my3_text(),
-                    "Rename File or Folder",
+                    "重命名文件或文件夹",
                 );
                 ui.hint_line(
                     mx + 20.0,
                     my + 42.0,
                     mw - 40.0,
-                    &format!("Target: /{target_rel} (Slashes and '..' are rejected)"),
+                    &format!("目标：/{target_rel}（斜杠和 '..' 会被拒绝）"),
                     my3_muted(),
                 );
                 let field_r = ui.text_field(
@@ -3072,7 +3072,7 @@ impl Launcher {
                     48.0,
                     "NEW NAME",
                     &self.catalog.fm_input_text,
-                    "Enter new filename",
+                    "输入新文件名",
                     self.catalog.editing == Some("fm_rename"),
                 );
                 self.targets.push((field_r, Action::Field("fm_rename")));
@@ -3081,7 +3081,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 20.0, my + mh - 52.0, bw, 38.0],
-                    "Cancel",
+                    "取消",
                     Action::FmCloseModal,
                     false,
                 );
@@ -3089,7 +3089,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 32.0 + bw, my + mh - 52.0, bw, 38.0],
-                    "Save Name",
+                    "存档名称",
                     Action::FmSubmitRename,
                     true,
                 );
@@ -3110,7 +3110,7 @@ impl Launcher {
                     mx + 20.0,
                     my + 16.0,
                     my3_text(),
-                    "Create New Folder",
+                    "新建文件夹",
                 );
                 let loc = if self.catalog.fm_current_dir.is_empty() {
                     "/".to_owned()
@@ -3121,7 +3121,7 @@ impl Launcher {
                     mx + 20.0,
                     my + 42.0,
                     mw - 40.0,
-                    &format!("Location: {loc}"),
+                    &format!("位置：{loc}"),
                     my3_muted(),
                 );
                 let field_r = ui.text_field(
@@ -3131,7 +3131,7 @@ impl Launcher {
                     48.0,
                     "FOLDER NAME",
                     &self.catalog.fm_input_text,
-                    "Enter folder name",
+                    "输入文件夹名称",
                     self.catalog.editing == Some("fm_new_folder"),
                 );
                 self.targets.push((field_r, Action::Field("fm_new_folder")));
@@ -3140,7 +3140,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 20.0, my + mh - 52.0, bw, 38.0],
-                    "Cancel",
+                    "取消",
                     Action::FmCloseModal,
                     false,
                 );
@@ -3148,7 +3148,7 @@ impl Launcher {
                     ui,
                     &mut self.targets,
                     [mx + 32.0 + bw, my + mh - 52.0, bw, 38.0],
-                    "Create Folder",
+                    "新建文件夹",
                     Action::FmSubmitNewFolder,
                     true,
                 );
@@ -3216,7 +3216,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         [mx + 18.0, btn_y, bw, 34.0],
-                        "Rename",
+                        "重命名",
                         Action::FmOpenRename(entry_idx),
                         false,
                     );
@@ -3224,7 +3224,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         [mx + 24.0 + bw, btn_y, bw, 34.0],
-                        "Export",
+                        "导出",
                         Action::FmExportSingle(entry_idx),
                         false,
                     );
@@ -3232,7 +3232,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         [mx + 30.0 + bw * 2.0, btn_y, bw, 34.0],
-                        "Delete",
+                        "删除",
                         Action::FmRequestDeleteSingle(entry_idx),
                         false,
                     );
@@ -3240,7 +3240,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         [mx + 36.0 + bw * 3.0, btn_y, bw, 34.0],
-                        "Done",
+                        "完成",
                         Action::FmCloseModal,
                         true,
                     );
@@ -3249,7 +3249,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         [mx + mw - 128.0, btn_y, 110.0, 34.0],
-                        "Close",
+                        "关闭",
                         Action::FmCloseModal,
                         true,
                     );
@@ -3267,15 +3267,15 @@ impl Launcher {
             let version = modal
                 .versions
                 .get(modal.selected_version)
-                .map_or_else(|| "Latest".to_owned(), |v| v.number.clone());
+                .map_or_else(|| "最新".to_owned(), |v| v.number.clone());
             if let Some(bundled) = modal.bundled_id {
                 if self.catalog.bundled_enabled.contains(bundled) {
                     "Installed (Tap to Disable)".to_owned()
                 } else {
-                    format!("Enable Built-in ({version})")
+                    format!("启用内置 ({version})")
                 }
             } else if crate::ha_launcher::catalog::native_unsupported(&modal.project) {
-                "Native .hnmod temporarily unsupported on Android".to_owned()
+                "安卓上暂时不支持原生 .hnmod".to_owned()
             } else if let Some(state) = self.catalog.download_label(&modal.project) {
                 state
             } else {
@@ -3365,7 +3365,7 @@ impl Launcher {
             meta_parts.push(modal.license.clone());
         }
         if modal.loading {
-            meta_parts.push("Syncing Modrinth details...".into());
+            meta_parts.push("正在同步 Modrinth 详情…".into());
         }
         let meta_line = meta_parts.join("  •  ");
         let fitted_meta = ui.fit_text(Face::Regular, 12.5, &meta_line, title_max);
@@ -3417,7 +3417,7 @@ impl Launcher {
                 inner_x,
                 cy,
                 my3_accent(),
-                "About Project",
+                "关于项目",
             );
         }
         cy += 22.0;
@@ -3438,7 +3438,7 @@ impl Launcher {
                     inner_x,
                     cy,
                     my3_accent(),
-                    "Screenshots",
+                    "截图",
                 );
             }
             cy += 22.0;
@@ -3484,7 +3484,7 @@ impl Launcher {
                 inner_x,
                 cy,
                 my3_accent(),
-                "Available Versions",
+                "可用版本",
             );
         }
         cy += 24.0;
@@ -3553,7 +3553,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             [mx + 18.0, my + mh - 48.0, 108.0, 38.0],
-            "Close",
+            "关闭",
             Action::CloseProjectModal,
             false,
         );
@@ -3739,7 +3739,7 @@ impl Launcher {
         let fit_err = ui.fit_text(
             Face::Mono,
             10.2,
-            &format!("Last Error: {err_str}"),
+            &format!("上次错误：{err_str}"),
             gw - 24.0,
         );
         ui.text(
@@ -3758,7 +3758,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             [gx, btn_y, bw3, 36.0],
-            "Close",
+            "关闭",
             Action::CloseDiagnosticsSummary,
             false,
         );
@@ -3766,7 +3766,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             [gx + bw3 + 8.0, btn_y, bw3, 36.0],
-            "Open Reports",
+            "打开报告",
             Action::OpenReportsFolder,
             false,
         );
@@ -3774,7 +3774,7 @@ impl Launcher {
             ui,
             &mut self.targets,
             [gx + (bw3 + 8.0) * 2.0, btn_y, bw3, 36.0],
-            "Export ZIP",
+            "导出 ZIP",
             Action::ExportDiagnostics,
             true,
         );
@@ -3801,44 +3801,44 @@ impl Launcher {
                 content_x,
                 62.0 + slide_y,
                 my3_text(),
-                "Settings",
+                "设置",
             );
 
             let cards: [(Icon, &str, &str, Action); 6] = [
                 (
                     Icon::Monitor,
-                    "Video Settings",
+                    "视频设置",
                     "Rendering, resolution and performance",
                     Action::SettingsCat(SettingsCategory::Video),
                 ),
                 (
                     Icon::Gear,
-                    "Launcher Settings",
+                    "启动器设置",
                     "Theme customization, profiles, DPI scale & preferences",
                     Action::SettingsCat(SettingsCategory::Launcher),
                 ),
                 (
                     Icon::Gamepad,
-                    "Controls",
+                    "按键控制",
                     "HUD touch layout, buttons, sensitivity and profiles",
                     Action::SettingsCat(SettingsCategory::Controls),
                 ),
                 (
                     Icon::Flask,
-                    "Experimental Stuff",
-                    "Unstable features. We put the weird shit here.",
+                    "实验性功能",
+                    "不稳定功能。奇怪的东西都放在这里。",
                     Action::SettingsCat(SettingsCategory::Experimental),
                 ),
                 (
                     Icon::Terminal,
-                    "Diagnostics",
+                    "诊断",
                     "Logs, device info and troubleshooting",
                     Action::SettingsCat(SettingsCategory::Diagnostics),
                 ),
                 (
                     Icon::MicrosoftGrid,
-                    "Account",
-                    "Microsoft and Xbox sign-in",
+                    "账号",
+                    "微软 / Xbox 登录",
                     Action::Account,
                 ),
             ];
@@ -3992,11 +3992,11 @@ impl Launcher {
                     ),
                     (
                         "Rendering backend (Vulkan / GLES)",
-                        "Hardware GPU driver pipeline used when launching Minecraft",
+                        "启动 Minecraft 时使用的硬件 GPU 驱动管线",
                         SettingControl::Button(&renderer_str, Action::Renderer, true),
                     ),
                     (
-                        "Client resolution scale",
+                        "客户端分辨率缩放",
                         "3D framebuffer resolution percentage (also adjustable live in-game via Floating Menu)",
                         if self.catalog.editing == Some("render_scale") {
                             SettingControl::TextField {
@@ -4016,22 +4016,22 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Display refresh rate",
+                        "显示刷新率",
                         "Preferred Android screen refresh rate (60Hz / 90Hz / 120Hz)",
                         SettingControl::Button(&hz_str, Action::DisplayHz, false),
                     ),
                     (
-                        "Immersive fullscreen",
-                        "Hide Android system navigation bars during launcher and gameplay",
+                        "沉浸式全屏",
+                        "在启动器与游戏过程中隐藏安卓系统导航栏",
                         SettingControl::Toggle(c.screen.immersive, Action::Immersive),
                     ),
                     (
                         "IN-GAME GRAPHICS, DISTANCES & MOTION",
                         "Chunk visibility, simulation radius, FOV, framerate & animation controls",
-                        SettingControl::SectionHeader("Minecraft Video", Icon::Shaders),
+                        SettingControl::SectionHeader("Minecraft 视频", Icon::Shaders),
                     ),
                     (
-                        "Render Distance",
+                        "渲染距离",
                         "Visible chunk radius (6–8 chunks recommended on Mali-G52 with shaders)",
                         SettingControl::Slider {
                             value_label: &rd_str,
@@ -4041,8 +4041,8 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Simulation Distance",
-                        "Active entity and block-tick radius around the player",
+                        "模拟距离",
+                        "玩家周围实体与方块刻的活动半径",
                         SettingControl::Slider {
                             value_label: &sd_str,
                             fraction: sd_frac,
@@ -4052,7 +4052,7 @@ impl Launcher {
                     ),
                     (
                         "Field of View (FOV)",
-                        "Horizontal camera view angle in degrees",
+                        "水平视角角度（度）",
                         SettingControl::Slider {
                             value_label: &fov_str,
                             fraction: fov_frac,
@@ -4061,13 +4061,13 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Graphics Quality Preset",
+                        "图形质量预设",
                         "Cycle between Fast, Fancy and Fabulous rendering modes",
                         SettingControl::Button(&preset_str, Action::CycleGraphicsPreset, false),
                     ),
                     (
-                        "Max Framerate Ceiling",
-                        "Cap gameplay FPS to save power or unlock for high-refresh displays",
+                        "最大帧率上限",
+                        "限制游戏帧率以省电，或为高刷新率显示解锁",
                         SettingControl::Button(&fps_str, Action::CycleMaxFps, false),
                     ),
                     (
@@ -4076,12 +4076,12 @@ impl Launcher {
                         SettingControl::Toggle(opts.vsync, Action::ToggleVsync),
                     ),
                     (
-                        "Menu Background Blur",
-                        "Cached zero-lag backdrop blur when opening inventory or pause menus",
+                        "菜单背景模糊",
+                        "打开背包或暂停菜单时的零延迟缓存背景模糊",
                         SettingControl::Toggle(opts.menu_blur > 0, Action::ToggleMenuBlur),
                     ),
                     (
-                        "Disable In-Game Animations",
+                        "禁用游戏内动画",
                         "Turn off animated block textures, chunk fade, hand bobbing & UI transitions completely",
                         SettingControl::Toggle(game_anim_off, Action::ToggleGameAnimations),
                     ),
@@ -4153,7 +4153,7 @@ impl Launcher {
                     format!("{} MiB v", c.cache_budget_mib)
                 };
                 let server_str = if c.server.is_empty() {
-                    "Singleplayer / Tap to set".to_owned()
+                    "单人游戏 / 点击设置".to_owned()
                 } else {
                     c.server.clone()
                 };
@@ -4166,7 +4166,7 @@ impl Launcher {
                         SettingControl::SectionHeader(c.theme.preset.label(), Icon::Settings),
                     ),
                     (
-                        "Theme",
+                        "主题",
                         "Preset themes, custom solid/accent colors, multi-stop gradients & light/dark mode",
                         SettingControl::Button(
                             &theme_str,
@@ -4180,7 +4180,7 @@ impl Launcher {
                         SettingControl::Button(&ui_scale_str, Action::UiScale, false),
                     ),
                     (
-                        "Disable Launcher Animations",
+                        "禁用启动器动画",
                         "Turn off page transitions, nav rail slides, shimmer & modal animations in launcher",
                         SettingControl::Toggle(
                             c.disable_launcher_animations,
@@ -4188,7 +4188,7 @@ impl Launcher {
                         ),
                     ),
                     (
-                        "Disable In-Game Animations",
+                        "禁用游戏内动画",
                         "Turn off animated block textures, chunk fade, view bobbing & HUD animations in-game",
                         SettingControl::Toggle(game_anim_off, Action::ToggleGameAnimations),
                     ),
@@ -4198,32 +4198,32 @@ impl Launcher {
                         SettingControl::SectionHeader(&profile_str, Icon::Folder),
                     ),
                     (
-                        "Active game profile",
+                        "当前游戏档案",
                         "Each profile isolates its own worlds, mods and options",
                         SettingControl::Button(&profile_str, Action::Profile, false),
                     ),
                     (
-                        "Open directly in the game",
+                        "直接在游戏中打开",
                         "Start in the selected instance. H > Launcher and the pause menu can still open the launcher",
                         SettingControl::Toggle(c.open_directly, Action::ToggleOpenDirectly),
                     ),
                     (
-                        "Input host mode",
-                        "Switch between touchscreen HUD and physical mouse/keyboard",
+                        "输入宿主模式",
+                        "在触屏 HUD 与实体鼠标/键盘之间切换",
                         SettingControl::Button(&input_str, Action::InputHost, false),
                     ),
                     (
-                        "Chunk worker thread ceiling",
-                        "Background worldgen and chunk meshing worker limit",
+                        "区块工作线程上限",
+                        "后台世界生成与区块网格构建线程上限",
                         SettingControl::Button(&worker_str, Action::WorkerLimit, false),
                     ),
                     (
-                        "Reusable RAM cache budget",
+                        "可复用内存缓存预算",
                         "Pooled audio & mesh buffer cache ceiling",
                         SettingControl::Button(&cache_str, Action::CacheBudget, false),
                     ),
                     (
-                        "Quick-join server address",
+                        "快速加入服务器地址",
                         "Optional server IP:port to connect immediately on Play",
                         SettingControl::TextField {
                             label: "SERVER IP",
@@ -4236,7 +4236,7 @@ impl Launcher {
                     (
                         "Open game & world folders",
                         "Manage saves, resource packs and mods in Android Files",
-                        SettingControl::Button("Open Files", Action::GameFiles, false),
+                        SettingControl::Button("打开文件", Action::GameFiles, false),
                     ),
                 ];
 
@@ -4393,7 +4393,7 @@ impl Launcher {
                         ui,
                         &mut self.targets,
                         reset_r,
-                        "Reset Default",
+                        "恢复默认",
                         Action::ResetTheme,
                         false,
                     );
@@ -4728,7 +4728,7 @@ impl Launcher {
                         ),
                         (
                             if theme_cfg.use_three_stops {
-                                "Mid Stop"
+                                "中停"
                             } else {
                                 "Mid (Off)"
                             },
@@ -4736,7 +4736,7 @@ impl Launcher {
                             "theme_grad_mid",
                         ),
                         (
-                            "End Stop",
+                            "末停",
                             theme_cfg.gradient_end_hex.as_str(),
                             "theme_grad_end",
                         ),
@@ -4841,13 +4841,13 @@ impl Launcher {
                 let copy_btn_label = if self.catalog.editing == Some("profile_name")
                     && self.catalog.config.preset_edit_mode == "copy"
                 {
-                    "Typing Name..."
+                    "输入名称…"
                 } else if self.catalog.editing == Some("profile_desc")
                     && self.catalog.config.preset_edit_mode == "copy"
                 {
-                    "Typing Desc..."
+                    "输入描述…"
                 } else {
-                    "Copy Preset"
+                    "复制预设"
                 };
                 let edit_meta_title = format!("Edit {} Preset Name & Description", sys_name);
                 let edit_meta_sub = if touch_cfg.is_default_preset() {
@@ -4856,15 +4856,15 @@ impl Launcher {
                     "Pencil / Edit: rename or update description of the selected user preset"
                 };
                 let edit_meta_btn = if touch_cfg.is_default_preset() {
-                    "Protected"
+                    "受保护"
                 } else if self.catalog.editing == Some("profile_name")
                     && self.catalog.config.preset_edit_mode == "edit"
                 {
-                    "Typing Name..."
+                    "输入名称…"
                 } else if self.catalog.editing == Some("profile_desc")
                     && self.catalog.config.preset_edit_mode == "edit"
                 {
-                    "Typing Desc..."
+                    "输入描述…"
                 } else {
                     "Edit (Pencil)"
                 };
@@ -4895,7 +4895,7 @@ impl Launcher {
                         &editor_title,
                         editor_sub,
                         SettingControl::Button(
-                            "Customize Controls",
+                            "自定义按键",
                             Action::OpenControlEditor,
                             true,
                         ),
@@ -4912,7 +4912,7 @@ impl Launcher {
                             SettingControl::TextField {
                                 label: "PRESET NAME",
                                 value: &self.catalog.config.custom_profile_name,
-                                hint: "Enter preset name",
+                                hint: "输入预设名称",
                                 active: true,
                                 action: Action::Field("profile_name"),
                             }
@@ -4927,7 +4927,7 @@ impl Launcher {
                             SettingControl::TextField {
                                 label: "DESCRIPTION",
                                 value: &self.catalog.config.custom_profile_desc,
-                                hint: "Enter preset description",
+                                hint: "输入预设描述",
                                 active: true,
                                 action: Action::Field("profile_desc"),
                             }
@@ -4940,9 +4940,9 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Export Active Control Preset",
+                        "导出当前按键预设",
                         "Export current layout JSON to Horizon Reports & controls folder",
-                        SettingControl::Button("Export JSON", Action::ExportControlProfile, false),
+                        SettingControl::Button("导出 JSON", Action::ExportControlProfile, false),
                     ),
                     (
                         "CAMERA LOOK & AIMING SENSITIVITY",
@@ -4951,7 +4951,7 @@ impl Launcher {
                     ),
                     (
                         "Sensitivity (Touch Look Speed)",
-                        "Direct finger drag camera rotation speed multiplier",
+                        "手指拖动旋转视角的速度倍率",
                         SettingControl::Slider {
                             value_label: &touch_sens,
                             fraction: touch_sens_frac,
@@ -4970,13 +4970,13 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Invert Y-Axis",
-                        "Inverts vertical camera look direction for touch and mouse",
+                        "反转 Y 轴",
+                        "反转触摸与鼠标的垂直视角方向",
                         SettingControl::Toggle(invert_y_active, Action::ToggleInvertY),
                     ),
                     (
                         "Split Touch (Aim & Look)",
-                        "Separates aiming and camera look with center crosshair",
+                        "用中心准星分离瞄准与视角",
                         SettingControl::Toggle(touch_cfg.crosshair(), Action::ToggleSplitControls),
                     ),
                     (
@@ -4985,8 +4985,8 @@ impl Launcher {
                         SettingControl::SectionHeader("ERGONOMICS", Icon::Settings),
                     ),
                     (
-                        "HUD Button Scale",
-                        "Global size multiplier for on-screen touch buttons",
+                        "HUD 按钮缩放",
+                        "屏幕触摸按钮的全局尺寸倍率",
                         SettingControl::Slider {
                             value_label: &btn_scale,
                             fraction: btn_scale_frac,
@@ -4995,54 +4995,54 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Movement Control Scheme",
-                        "Switch between classic D-Pad buttons and analog thumb joystick",
+                        "移动操控方案",
+                        "在经典方向键与模拟摇杆之间切换",
                         SettingControl::Button(scheme_str, Action::ToggleControlScheme, false),
                     ),
                     (
-                        "Joystick Active Touch Zone",
+                        "摇杆活动触摸区",
                         "Choose Follow Finger, Mid-Bottom Left, Right Side, or Fixed origin",
                         SettingControl::Button(zone_str, Action::CycleJoystickZone, false),
                     ),
                     (
-                        "Left-Handed HUD Mirroring",
-                        "Mirrors movement controls to the right side of the screen",
+                        "左手 HUD 镜像",
+                        "将移动控制镜像到屏幕右侧",
                         SettingControl::Toggle(touch_cfg.left_handed, Action::ToggleLeftHanded),
                     ),
                     (
-                        "Toggle Sprint Mode",
-                        "Latch sprint on a single tap instead of holding the sprint button",
+                        "切换疾跑模式",
+                        "单击锁定疾跑，无需按住疾跑键",
                         SettingControl::Toggle(sprint_latch_active, Action::ToggleSprintLatch),
                     ),
                     (
-                        "Inventory Walk Controls",
-                        "Keep movement controls active while inventory or chest screens are open",
+                        "背包行走控制",
+                        "打开背包或箱子界面时保持移动控制",
                         SettingControl::Toggle(
                             touch_cfg.inventory_controls,
                             Action::ToggleInventoryControls,
                         ),
                     ),
                     (
-                        "Auto-Jump",
+                        "自动跳跃",
                         "Automatically jump when walking up 1-block terrain steps",
                         SettingControl::Toggle(opts.auto_jump, Action::ToggleAutoJump),
                     ),
                     (
-                        "Control Hub Button",
-                        "Show the top-left control menu button",
+                        "控制中心按钮",
+                        "显示左上角控制菜单按钮",
                         SettingControl::Toggle(
                             touch_cfg.show_control_hub,
                             Action::ToggleControlHub,
                         ),
                     ),
                     (
-                        "UI Vibration",
-                        "Vibration when pressing interface buttons",
+                        "界面震动",
+                        "按下界面按钮时震动",
                         SettingControl::Toggle(touch_cfg.ui_vibrate, Action::ToggleTouchUiVibrate),
                     ),
                     (
-                        "Gameplay Vibration",
-                        "Vibration for damage and block breaking",
+                        "游戏震动",
+                        "受伤与破坏方块时震动",
                         SettingControl::Toggle(touch_cfg.vibrate, Action::ToggleTouchVibrate),
                     ),
                     (
@@ -5051,15 +5051,15 @@ impl Launcher {
                         SettingControl::SectionHeader("POINTER & GYRO", Icon::Play),
                     ),
                     (
-                        "Authoritative Virtual Mouse",
-                        "Enable virtual mouse pointer in menus and on-demand in GoyControl",
+                        "权威虚拟鼠标",
+                        "在菜单和 GoyControl 中按需启用虚拟鼠标指针",
                         SettingControl::Toggle(
                             touch_cfg.virtual_mouse_enabled,
                             Action::ToggleVirtualMouseEnabled,
                         ),
                     ),
                     (
-                        "Virtual Cursor Scale",
+                        "虚拟光标缩放",
                         "Adjust size of the Windows 11 virtual mouse arrow in menus",
                         SettingControl::Slider {
                             value_label: &ptr_size,
@@ -5069,13 +5069,13 @@ impl Launcher {
                         },
                     ),
                     (
-                        "Gyroscope Aiming",
-                        "Tilt your phone for fine bow and crosshair aiming adjustments",
+                        "陀螺仪瞄准",
+                        "倾斜手机以微调弓箭与准星瞄准",
                         SettingControl::Toggle(touch_cfg.gyroscope, Action::ToggleGyro),
                     ),
                     (
-                        "Gyroscope Sensitivity",
-                        "Fine-tune motion tilt speed when Gyroscope Aiming is enabled",
+                        "陀螺仪灵敏度",
+                        "启用陀螺仪瞄准时微调倾斜速度",
                         SettingControl::Slider {
                             value_label: &gyro_sens,
                             fraction: gyro_sens_frac,
@@ -5239,9 +5239,9 @@ impl Launcher {
                 self.list_view = Some([list_top, list_bottom, max_scroll]);
 
                 let active_mode_badge = if c.super_perf_mode {
-                    "Super Perf Active"
+                    "超级性能已启用"
                 } else if c.battery_perf_mode {
-                    "Battery Saver Active"
+                    "省电模式已启用"
                 } else if c.max_fps_mode {
                     "260 FPS Uncapped"
                 } else {
@@ -5255,12 +5255,12 @@ impl Launcher {
                         SettingControl::SectionHeader(active_mode_badge, Icon::Flask),
                     ),
                     (
-                        "Super Performance Mode",
+                        "超级性能模式",
                         "Aggressive chunk culling, fast clouds, minimal particles & Vulkan batching",
                         SettingControl::Toggle(c.super_perf_mode, Action::ToggleSuperPerf),
                     ),
                     (
-                        "Battery Performance Mode",
+                        "电池性能模式",
                         "Caps framerate to 60 FPS with VSync and reduces background worker wakeups",
                         SettingControl::Toggle(c.battery_perf_mode, Action::ToggleBatteryPerf),
                     ),
@@ -5272,10 +5272,10 @@ impl Launcher {
                     (
                         "LOW-LATENCY INPUT, STREAMING & SCHEDULER",
                         "Direct touch dispatch, 4 MiB chunk upload budget boost & Android ADPF thermal hints",
-                        SettingControl::SectionHeader("Engine Tuning", Icon::Gear),
+                        SettingControl::SectionHeader("引擎调优", Icon::Gear),
                     ),
                     (
-                        "Zero-Latency Touch Pipeline",
+                        "零延迟触摸管线",
                         "Bypasses redundant pointer filtering for instant camera & virtual mouse response",
                         SettingControl::Toggle(
                             c.zero_latency_touch,
@@ -5283,12 +5283,12 @@ impl Launcher {
                         ),
                     ),
                     (
-                        "Fast Chunk Mesh Upload Boost",
+                        "快速区块网格上传加速",
                         "Increases per-frame GPU upload budget to 4 MiB to eliminate movement stutter",
                         SettingControl::Toggle(c.fast_chunk_upload, Action::ToggleFastChunkUpload),
                     ),
                     (
-                        "Android ADPF Performance Hints",
+                        "安卓 ADPF 性能提示",
                         "Sends real-time CPU thermal & frame-work hints to the Android scheduler",
                         SettingControl::Toggle(
                             c.device.performance_hints,
@@ -5296,12 +5296,12 @@ impl Launcher {
                         ),
                     ),
                     (
-                        "Detailed GPU Pass Profiling",
+                        "详细 GPU 通道分析",
                         "Records per-pass GPU timings in diagnostic reports (adds minor overhead)",
                         SettingControl::Toggle(c.device.gpu_profile, Action::GpuProfile),
                     ),
                     (
-                        "Experimental Leaf Culling",
+                        "实验性树叶剔除",
                         "Simplifies dense foliage and changes its appearance; applies on next Play",
                         SettingControl::Toggle(
                             c.experimental_leaf_culling,
@@ -5345,9 +5345,9 @@ impl Launcher {
 
                 let has_err = self.home.join("android-error.txt").is_file();
                 let health_badge = if has_err {
-                    "Crash Log Recorded"
+                    "已记录崩溃日志"
                 } else {
-                    "Runtime Healthy"
+                    "运行环境正常"
                 };
 
                 let rows: [(&str, &str, SettingControl<'_>); 7] = [
@@ -5359,32 +5359,32 @@ impl Launcher {
                     (
                         "Inspect logs & device summary",
                         "Open interactive Diagnostics & Runtime Health Summary dialog",
-                        SettingControl::Button("View Summary", Action::Logs, true),
+                        SettingControl::Button("查看摘要", Action::Logs, true),
                     ),
                     (
                         "Export diagnostic report (.zip)",
-                        "Packages logs and device info into a local ZIP for troubleshooting",
-                        SettingControl::Button("Export ZIP", Action::ExportDiagnostics, false),
+                        "将日志和设备信息打包为本地 ZIP 以供排查",
+                        SettingControl::Button("导出 ZIP", Action::ExportDiagnostics, false),
                     ),
                     (
                         "FRAME TELEMETRY & WORLD STORAGE",
-                        "JSONL frame-time recorder and direct access to profile world saves",
+                        "JSONL 帧时间记录器，可直接访问档案世界存档",
                         SettingControl::SectionHeader("Telemetry & Saves", Icon::Folder),
                     ),
                     (
-                        "Record gameplay performance",
+                        "记录游戏性能",
                         "Captures frame-time and chunk-build telemetry during Play (up to 30 min)",
                         SettingControl::Toggle(c.record_performance, Action::RecordPerformance),
                     ),
                     (
                         "Export raw performance data (.jsonl)",
-                        "Share or inspect recorded frame telemetry in Android Files",
-                        SettingControl::Button("Export JSONL", Action::ExportPerformance, false),
+                        "在安卓文件中共享或查看已记录的帧遥测",
+                        SettingControl::Button("导出 JSONL", Action::ExportPerformance, false),
                     ),
                     (
                         "World backup & file manager",
-                        "Open worlds folder in system Files to back up or copy saves",
-                        SettingControl::Button("World Files", Action::WorldFiles, false),
+                        "在系统文件中打开世界文件夹以备份或复制存档",
+                        SettingControl::Button("世界文件", Action::WorldFiles, false),
                     ),
                 ];
 
@@ -5489,7 +5489,7 @@ impl Launcher {
                 self.install_cancelled.store(true, Ordering::Relaxed);
                 self.install_paused.store(false, Ordering::Relaxed);
                 self.worker = None;
-                self.catalog.status = "Game preparation cancelled.".into();
+                self.catalog.status = "已取消游戏准备。".into();
             }
             Some(Action::PauseCatalogDownload) => {
                 self.catalog.toggle_pause();
@@ -5644,7 +5644,7 @@ impl Launcher {
                 self.catalog.status = if self.catalog.config.super_perf_mode {
                     "Super Performance Mode enabled: fast chunk culling, minimal particles & Vulkan batching."
                 } else {
-                    "Super Performance Mode disabled."
+                    "超级性能模式已禁用。"
                 }
                 .into();
             }
@@ -5662,7 +5662,7 @@ impl Launcher {
                 self.catalog.status = if self.catalog.config.battery_perf_mode {
                     "Battery Performance Mode enabled: 60 FPS cap with VSync and balanced workers."
                 } else {
-                    "Battery Performance Mode disabled."
+                    "电池性能模式已禁用。"
                 }
                 .into();
             }
@@ -5676,7 +5676,7 @@ impl Launcher {
                 self.catalog.status = if self.catalog.config.max_fps_mode {
                     "Max FPS Mode enabled: 260 FPS uncapped with VSync disabled."
                 } else {
-                    "Max FPS Mode disabled."
+                    "最大帧率模式已禁用。"
                 }
                 .into();
             }
@@ -5684,9 +5684,9 @@ impl Launcher {
                 self.catalog.config.zero_latency_touch = !self.catalog.config.zero_latency_touch;
                 self.catalog.config.save(&self.home)?;
                 self.catalog.status = if self.catalog.config.zero_latency_touch {
-                    "Zero-Latency Touch Pipeline active."
+                    "零延迟触摸管线已启用。"
                 } else {
-                    "Standard touch pipeline active."
+                    "标准触摸管线已启用。"
                 }
                 .into();
             }
@@ -5699,9 +5699,9 @@ impl Launcher {
                 self.catalog.config.save(&self.home)?;
                 self.catalog.config.apply_experimental_to_game(&self.home);
                 self.catalog.status = if self.catalog.config.fast_chunk_upload {
-                    "Fast Chunk Mesh Upload Boost active."
+                    "快速区块网格上传加速已启用。"
                 } else {
-                    "Standard chunk mesh upload active."
+                    "标准区块网格上传已启用。"
                 }
                 .into();
             }
@@ -6005,13 +6005,13 @@ impl Launcher {
             }
             Some(Action::PerformanceHints) => {
                 self.catalog.config.device.performance_hints ^= true;
-                self.catalog.status="ADPF gives Android CPU frame-work hints on supported devices. It does not cap FPS or guarantee a speedup.".into();
+                self.catalog.status="ADPF 在支持的设备上提供安卓 CPU 帧调度提示，不限制帧率，也不保证提速。".into();
                 self.catalog.config.save(&self.home)?;
                 crate::ha_launcher::device_runtime::configure(self.catalog.config.device);
             }
             Some(Action::GpuProfile) => {
                 self.catalog.config.device.gpu_profile ^= true;
-                self.catalog.status="Detailed GPU profiling records diagnostics and has overhead. Reports remain on this device.".into();
+                self.catalog.status="详细 GPU 分析会记录诊断信息并产生开销，报告仅保存在此设备。".into();
                 self.catalog.config.save(&self.home)?;
                 crate::ha_launcher::device_runtime::configure(self.catalog.config.device);
             }
@@ -6040,9 +6040,9 @@ impl Launcher {
                     folder,
                 );
                 self.catalog.status = if crate::ha_launcher::platform::open_documents(&id) {
-                    "Opened in Files. Return here after copying files.".into()
+                    "已在文件应用中打开，复制文件后返回此处。".into()
                 } else {
-                    "Open the system Files app and choose Starling.".into()
+                    "打开系统文件应用并选择 Starling。".into()
                 };
             }
             Some(Action::Import(kind)) => {
@@ -6069,9 +6069,9 @@ impl Launcher {
             }
             Some(Action::Repository) => {
                 self.catalog.status = if crate::ha_launcher::platform::open_repository() {
-                    "Repository opened in browser."
+                    "已在浏览器中打开仓库。"
                 } else {
-                    "No browser available to open the repository."
+                    "没有可用于打开仓库的浏览器。"
                 }
                 .into();
             }
@@ -6385,9 +6385,9 @@ impl Launcher {
             Some(Action::OpenReportsFolder) => {
                 self.diagnostics_modal_open = false;
                 self.catalog.status = if crate::ha_launcher::platform::open_documents("reports") {
-                    "Opened Reports folder in system Files.".into()
+                    "已在系统文件中打开报告文件夹。".into()
                 } else {
-                    "Reports are saved in Starling's diagnostics.".into()
+                    "报告保存在 Starling 的诊断中。".into()
                 };
             }
             Some(Action::ToggleOpenDirectly) => {
@@ -6399,7 +6399,7 @@ impl Launcher {
                         self.catalog.config.profile + 1
                     )
                 } else {
-                    "Starling opens in the launcher.".into()
+                    "Starling 在启动器中打开。".into()
                 };
             }
             Some(Action::ToggleLauncherAnimations) => {
@@ -6412,7 +6412,7 @@ impl Launcher {
                 self.catalog.status = if self.catalog.config.disable_launcher_animations {
                     "Launcher animations disabled (instant page & modal transitions)."
                 } else {
-                    "Launcher animations enabled."
+                    "启动器动画已启用。"
                 }
                 .into();
             }
@@ -6426,7 +6426,7 @@ impl Launcher {
                 self.catalog.status = if next {
                     "In-game animations disabled (static textures, instant FOV/menus, no view bobbing)."
                 } else {
-                    "In-game animations enabled."
+                    "游戏内动画已启用。"
                 }
                 .into();
             }
@@ -6454,12 +6454,12 @@ impl Launcher {
                 }
                 self.catalog.config.save(&self.home)?;
                 self.catalog.status = if self.catalog.config.record_performance {
-                    "Recording starts on Play. Detailed timings add overhead. Return here to save the report."
-                } else { "Performance recording off." }.into();
+                    "点击开始游戏后开始记录，详细计时会增加开销。返回此处保存报告。"
+                } else { "性能记录已关闭。" }.into();
             }
             Some(Action::ExportPerformance) => {
                 self.catalog.status = match crate::ha_launcher::performance::export(&self.home) {
-                    Ok(()) => "Reports opened in Files. Copy or share a report from there.".into(),
+                    Ok(()) => "报告已在文件中打开，可从中复制或共享。".into(),
                     Err(e) => e,
                 };
             }
@@ -6732,7 +6732,7 @@ impl Launcher {
                 }
             }
             Some(Action::FmOpenNewFolder) => {
-                self.catalog.fm_input_text = "New Folder".into();
+                self.catalog.fm_input_text = "新建文件夹".into();
                 self.catalog.fm_modal = Some(crate::ha_launcher::catalog::FmModal::NewFolder);
                 self.catalog.editing = Some("fm_new_folder");
                 crate::ha_launcher::platform::show(&self.catalog.fm_input_text);
@@ -6745,7 +6745,7 @@ impl Launcher {
                     if crate::ha_launcher::document_store::is_protected_root_folder(&entry.rel_path)
                     {
                         self.catalog.status =
-                            "Built-in profile root folders cannot be renamed.".into();
+                            "内置存档根文件夹无法重命名。".into();
                     } else {
                         self.catalog.fm_input_text = entry.name;
                         self.catalog.fm_modal =
@@ -6761,7 +6761,7 @@ impl Launcher {
                 if let Some(rel) = self.catalog.fm_selected.iter().next().cloned() {
                     if crate::ha_launcher::document_store::is_protected_root_folder(&rel) {
                         self.catalog.status =
-                            "Built-in profile root folders cannot be renamed.".into();
+                            "内置存档根文件夹无法重命名。".into();
                     } else {
                         let cur_name = rel.rsplit_once('/').map_or(rel.as_str(), |(_, n)| n);
                         self.catalog.fm_input_text = cur_name.to_owned();
@@ -6771,7 +6771,7 @@ impl Launcher {
                         crate::ha_launcher::platform::show(&self.catalog.fm_input_text);
                     }
                 } else {
-                    self.catalog.status = "Select a single file or folder to rename.".into();
+                    self.catalog.status = "请选择单个文件或文件夹进行重命名。".into();
                 }
             }
             Some(Action::FmSubmitRename) => {
@@ -6782,7 +6782,7 @@ impl Launcher {
                     if crate::ha_launcher::document_store::is_protected_root_folder(&entry.rel_path)
                     {
                         self.catalog.status =
-                            "Built-in profile root folders cannot be deleted.".into();
+                            "内置存档根文件夹无法删除。".into();
                     } else {
                         self.catalog.fm_modal =
                             Some(crate::ha_launcher::catalog::FmModal::ConfirmDelete {
@@ -6793,7 +6793,7 @@ impl Launcher {
             }
             Some(Action::FmRequestDeleteSelected) => {
                 if self.catalog.fm_selected.is_empty() {
-                    self.catalog.status = "Select one or more items to delete.".into();
+                    self.catalog.status = "选择一个或多个要删除的项目。".into();
                 } else {
                     let paths: Vec<String> = self
                         .catalog
@@ -6806,7 +6806,7 @@ impl Launcher {
                         .collect();
                     if paths.is_empty() {
                         self.catalog.status =
-                            "Built-in profile root folders cannot be deleted.".into();
+                            "内置存档根文件夹无法删除。".into();
                     } else {
                         self.catalog.fm_modal =
                             Some(crate::ha_launcher::catalog::FmModal::ConfirmDelete { paths });
@@ -6873,7 +6873,7 @@ impl Launcher {
                         Err(e) => self.catalog.status = e,
                     }
                 } else {
-                    self.catalog.status = "Select a file to export.".into();
+                    self.catalog.status = "请选择要导出的文件。".into();
                 }
             }
             Some(Action::FmCloseModal) => {
@@ -7216,7 +7216,7 @@ fn wrap_text_lines(ui: &Ui, face: Face, size: f32, text: &str, max_w: f32) -> Ve
         }
     }
     if lines.is_empty() {
-        lines.push("No additional description available.".into());
+        lines.push("暂无其他描述。".into());
     }
     lines
 }

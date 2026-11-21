@@ -177,7 +177,7 @@ pub enum Aspect {
 impl Aspect {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Native => "Native",
+            Self::Native => "原生",
             Self::Wide => "16:9",
             Self::Classic => "4:3",
             Self::Square => "1:1",

@@ -70,9 +70,9 @@ pub enum RendererMode {
 impl RendererMode {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Vulkan => "Vulkan / GPU batching",
-            Self::OpenGl => "OpenGL ES / experimental",
-            Self::VulkanCompatibility => "Vulkan / compatibility",
+            Self::Vulkan => "Vulkan / GPU 批处理",
+            Self::OpenGl => "OpenGL ES / 实验性",
+            Self::VulkanCompatibility => "Vulkan / 兼容",
         }
     }
 }
@@ -183,7 +183,7 @@ impl Orientation {
             Self::Portrait => "Portrait (sensor)",
             Self::ReverseLandscape => "Landscape (reversed)",
             Self::ReversePortrait => "Portrait (reversed)",
-            Self::Auto => "Automatic rotation",
+            Self::Auto => "自动旋转",
         }
     }
     pub fn android_value(self) -> i32 {
@@ -433,13 +433,13 @@ impl Page {
     ];
     pub fn name(self) -> &'static str {
         match self {
-            Self::Play => "Play",
-            Self::Mods => "Mods",
-            Self::Packs => "Resource Pack",
-            Self::Shaders => "Shaders",
-            Self::Installed => "Installed",
-            Self::Settings => "Settings",
-            Self::Skins => "Skins",
+            Self::Play => "开始游戏",
+            Self::Mods => "模组",
+            Self::Packs => "资源包",
+            Self::Shaders => "光影",
+            Self::Installed => "已安装",
+            Self::Settings => "设置",
+            Self::Skins => "皮肤",
         }
     }
     pub fn is_catalog(self) -> bool {
@@ -465,14 +465,14 @@ pub enum SettingsCategory {
 impl SettingsCategory {
     pub fn title(self) -> &'static str {
         match self {
-            Self::Overview => "Settings",
-            Self::Video => "Video Settings",
-            Self::Launcher => "Launcher Settings",
-            Self::Theme => "Theme Customization",
+            Self::Overview => "设置",
+            Self::Video => "视频设置",
+            Self::Launcher => "启动器设置",
+            Self::Theme => "主题定制",
             Self::Controls => "Controls & HUD Layout",
-            Self::Experimental => "Experimental Stuff",
+            Self::Experimental => "实验性功能",
             Self::Diagnostics => "Diagnostics & Logs",
-            Self::Account => "Account",
+            Self::Account => "账号",
         }
     }
 }
@@ -537,7 +537,7 @@ impl TransferTracker {
         }
         let s = self.speed_mib_s.max(0.0);
         if s < 0.05 {
-            "Calculating...".into()
+            "计算中…".into()
         } else if s < 1.0 {
             format!("{:.0} KiB/s", s * 1024.0)
         } else {
@@ -546,7 +546,7 @@ impl TransferTracker {
     }
     pub fn eta_label(&self, done_mib: f64, total_mib: f64) -> String {
         if self.paused {
-            return "Paused".into();
+            return "已暂停".into();
         }
         let rem = (total_mib - done_mib).max(0.0);
         if rem <= 0.05 {
@@ -560,7 +560,7 @@ impl TransferTracker {
         if secs >= 60 {
             format!("ETA {}m {:02}s", secs / 60, secs % 60)
         } else {
-            format!("ETA {secs}s")
+            format!("预计剩余 {secs} 秒")
         }
     }
 }
@@ -620,9 +620,9 @@ impl InstalledFilter {
     pub fn label(self) -> &'static str {
         match self {
             Self::All => "All",
-            Self::Mods => "Mods",
-            Self::Packs => "Resource Packs",
-            Self::Shaders => "Shaders",
+            Self::Mods => "模组",
+            Self::Packs => "资源包",
+            Self::Shaders => "光影",
         }
     }
     pub fn matches(self, kind: crate::ha_launcher::client::content_files::Kind) -> bool {
@@ -1033,7 +1033,7 @@ impl Catalog {
                         enabled: true,
                         size_bytes: 0,
                         badge: "MOD",
-                        subtitle: format!("Built-in Horizon Mod  •  {b_desc}  •  {b_id}"),
+                        subtitle: format!("内置 Horizon 模组 • {b_desc} • {b_id}"),
                         mod_id: b_id.to_owned(),
                     });
                 }
@@ -1144,14 +1144,14 @@ impl Catalog {
 
     pub fn fm_copy_or_cut(&mut self, home: &Path, is_cut: bool) {
         if self.fm_selected.is_empty() {
-            self.status = "Select one or more files or folders first.".into();
+            self.status = "请先选择一个或多个文件或文件夹。".into();
             return;
         }
         let game = self.config.game_home(home);
         let mut paths = Vec::new();
         for rel in &self.fm_selected {
             if is_cut && crate::ha_launcher::document_store::is_protected_root_folder(rel) {
-                self.status = format!("Built-in root folder '{rel}' cannot be moved.");
+                self.status = format!("内置根文件夹 '{rel}' 无法移动。");
                 return;
             }
             match crate::ha_launcher::document_store::resolve_fm_path(home, &game, rel) {
@@ -1166,13 +1166,13 @@ impl Catalog {
         self.fm_clipboard = Some((paths, is_cut));
         self.status = format!(
             "{} {count} item(s) to clipboard. Open destination folder and tap Paste.",
-            if is_cut { "Cut" } else { "Copied" }
+            if is_cut { "Cut" } else { "已复制" }
         );
     }
 
     pub fn fm_paste_here(&mut self, home: &Path) {
         let Some((sources, is_cut)) = self.fm_clipboard.clone() else {
-            self.status = "Clipboard is empty.".into();
+            self.status = "剪贴板为空。".into();
             return;
         };
         let game = self.config.game_home(home);
@@ -1190,7 +1190,7 @@ impl Catalog {
                 self.fm_selected.clear();
                 self.status = format!(
                     "{} {count} item(s) into '/{}'.",
-                    if is_cut { "Moved" } else { "Pasted" },
+                    if is_cut { "已移动" } else { "已粘贴" },
                     self.fm_current_dir
                 );
                 self.refresh(home);
@@ -1209,7 +1209,7 @@ impl Catalog {
         match crate::ha_launcher::document_store::fm_delete(home, &game, &paths) {
             Ok(count) => {
                 self.fm_selected.clear();
-                self.status = format!("Deleted {count} item(s).");
+                self.status = format!("已删除 {count} 个项目。");
                 self.refresh(home);
             }
             Err(e) => {
@@ -1230,7 +1230,7 @@ impl Catalog {
                 self.editing = None;
                 self.fm_selected.clear();
                 crate::ha_launcher::platform::hide();
-                self.status = format!("Renamed to '{new_name}'.");
+                self.status = format!("已重命名为 '{new_name}'。");
                 self.refresh(home);
             }
             Err(e) => {
@@ -1255,7 +1255,7 @@ impl Catalog {
                 self.fm_modal = None;
                 self.editing = None;
                 crate::ha_launcher::platform::hide();
-                self.status = format!("Created folder '{folder_name}'.");
+                self.status = format!("已创建文件夹 '{folder_name}'。");
                 self.refresh(home);
             }
             Err(e) => {
@@ -1290,11 +1290,11 @@ impl Catalog {
         self.worker = None;
         self.downloading = None;
         self.downloading_title.clear();
-        self.status = "Download cancelled.".into();
+        self.status = "已取消下载。".into();
     }
     pub fn download_label(&self, project: &Project) -> Option<String> {
         if native_unsupported(project) {
-            return Some("Unsupported".into());
+            return Some("不支持".into());
         }
         if self
             .downloading
@@ -1324,7 +1324,7 @@ impl Catalog {
                             || item.file == format!("horizon-native-mods/{}.hnmod", project.id))
                 }))
         {
-            return Some("Installed".into());
+            return Some("已安装".into());
         }
         None
     }
@@ -1334,9 +1334,9 @@ impl Catalog {
             .as_ref()
             .is_some_and(|(source, id)| *source == project.source && *id == project.id)
         {
-            "Retry"
+            "重试"
         } else {
-            "Install"
+            "安装"
         }
     }
     fn job(&mut self, status: &str, job: impl FnOnce() -> Result<Reply, String> + Send + 'static) {
@@ -1424,7 +1424,7 @@ impl Catalog {
         }
         let reply = self.worker.as_ref().and_then(|rx| match rx.try_recv() {
             Ok(v) => Some(v),
-            Err(mpsc::TryRecvError::Disconnected) => Some(Err("Launcher worker stopped".into())),
+            Err(mpsc::TryRecvError::Disconnected) => Some(Err("启动器线程已停止".into())),
             Err(_) => None,
         });
         if let Some(reply) = reply {
@@ -1451,7 +1451,7 @@ impl Catalog {
             .as_ref()
             .and_then(|rx| match rx.try_recv() {
                 Ok(v) => Some(v),
-                Err(mpsc::TryRecvError::Disconnected) => Some(Err("Search worker stopped".into())),
+                Err(mpsc::TryRecvError::Disconnected) => Some(Err("搜索线程已停止".into())),
                 Err(_) => None,
             });
         if let Some(result) = result {
@@ -1716,7 +1716,7 @@ impl Catalog {
                 self.import_native(home);
             } else {
                 self.results.clear();
-                self.status = "Press Import .hmod to download this HTTPS link".into();
+                self.status = "点击“导入 .hmod”下载此 HTTPS 链接".into();
             }
             return;
         }
@@ -1733,7 +1733,7 @@ impl Catalog {
             self.fetch_icons(home);
         } else {
             self.results.clear();
-            self.status = "Searching... You can switch tabs while results load.".into();
+            self.status = "搜索中… 加载结果时你可以切换标签页。".into();
         }
         self.start_search();
     }
@@ -1742,7 +1742,7 @@ impl Catalog {
             && items.is_empty()
             && self.config.shader_source == crate::ha_launcher::shader_catalog::Origin::Horizon
         {
-            "No Horizon shader packs match this search. Try another query or import a .hshader."
+            "没有匹配此搜索的 Horizon 光影包，请换个关键词或导入 .hshader。"
                 .into()
         } else if self.page == Page::Mods
             && self.config.mod_source == crate::ha_launcher::shader_catalog::Origin::Modrinth
@@ -1812,13 +1812,13 @@ impl Catalog {
         let url = self.query.trim().to_owned();
         let game = self.config.game_home(home);
         self.downloading = Some((browser::SourceId::Horizon, "https-import".into()));
-        self.downloading_title = "Custom .hmod Package".into();
+        self.downloading_title = "自定义 .hmod 包".into();
         self.downloading_size_mib = 2.4;
         self.paused.store(false, Ordering::Relaxed);
         self.cancelled.store(false, Ordering::Relaxed);
         *self.progress.lock().unwrap_or_else(|e| e.into_inner()) = 0.15;
         let progress = self.progress.clone();
-        self.job("Downloading sandboxed .hmod over HTTPS...", move || {
+        self.job("正在通过 HTTPS 下载沙盒 .hmod…", move || {
             use std::io::Read;
             let mut bytes = Vec::new();
             ureq::AgentBuilder::new()
@@ -1868,7 +1868,7 @@ impl Catalog {
         };
 
         if native_unsupported(&project) {
-            self.status = "Native .hnmod mods are temporarily unsupported on Android. Built-in mods remain available.".into();
+            self.status = "原生 .hnmod 模组在安卓上暂时不受支持，内置模组仍可使用。".into();
             return;
         }
         if self.busy() || self.download_label(&project).is_some() {
@@ -1896,10 +1896,10 @@ impl Catalog {
         let paused = self.paused.clone();
         let cancelled = self.cancelled.clone();
         let status = match (project.kind, project.source) {
-            (Kind::Shader, browser::SourceId::Modrinth) => "Downloading shader pack ZIP...",
-            (Kind::Mod, browser::SourceId::Modrinth) => "Downloading and porting Modrinth mod...",
-            (Kind::Mod, _) => "Downloading Horizon mod package...",
-            _ => "Checking compatibility and downloading...",
+            (Kind::Shader, browser::SourceId::Modrinth) => "正在下载光影包 ZIP…",
+            (Kind::Mod, browser::SourceId::Modrinth) => "正在下载并移植 Modrinth 模组…",
+            (Kind::Mod, _) => "正在下载 Horizon 模组包…",
+            _ => "正在检查兼容性并下载…",
         };
         self.job(status, move || {
             std::fs::create_dir_all(&game).map_err(|e| e.to_string())?;
@@ -1914,7 +1914,7 @@ impl Catalog {
                     *progress.lock().unwrap_or_else(|e| e.into_inner()) = p.clamp(0.0, 1.0);
                 }
             };
-            let source = browser::source(project.source).ok_or("Unsupported download source")?;
+            let source = browser::source(project.source).ok_or("不支持的下载来源")?;
             // A native mod waits in `horizon-native-mods/` for the game's Compile.
             let mut native = false;
             let count = if project.kind == Kind::Shader
@@ -1947,7 +1947,7 @@ impl Catalog {
                 }
             };
             if cancelled.load(Ordering::Relaxed) {
-                return Err("Download cancelled".into());
+                return Err("已取消下载".into());
             }
             Ok(Reply::Done(
                 if native {
@@ -1956,7 +1956,7 @@ impl Catalog {
                          the native mod."
                     )
                 } else {
-                    format!("Installed {count} item(s). Open Play to load this profile.")
+                    format!("已安装 {count} 个项目，打开“开始游戏”加载此档案。")
                 },
                 match project.kind {
                     Kind::Mod => crate::ha_launcher::client::content_files::Kind::Mods,
@@ -1989,7 +1989,7 @@ impl Catalog {
                         on.enabled.insert(bid.to_owned());
                     }
                     on.save(&game);
-                    self.status = "Selection saved for the next game launch".into();
+                    self.status = "已保存选择，将在下次启动游戏时生效".into();
                     self.refresh(home);
                     return;
                 }
@@ -2022,7 +2022,7 @@ impl Catalog {
                 settings.save(&path);
             }
         }
-        self.status = "Selection saved for the next game launch".into();
+        self.status = "已保存选择，将在下次启动游戏时生效".into();
         self.refresh(home);
     }
     pub fn remove_local(&mut self, home: &Path) {
@@ -2044,7 +2044,7 @@ impl Catalog {
                 let target = game.join(&item.file);
                 let meta = std::fs::symlink_metadata(&target).map_err(|e| e.to_string())?;
                 if meta.file_type().is_symlink() {
-                    return Err("Refusing a redirected content path".into());
+                    return Err("拒绝重定向的内容路径".into());
                 }
                 if meta.is_dir() {
                     std::fs::remove_dir_all(&target).map_err(|e| e.to_string())?;
@@ -2070,7 +2070,7 @@ impl Catalog {
                 return Ok(());
             }
             if !crate::ha_launcher::client::content_files::plain_name(&item.file) {
-                return Err("Invalid content filename".into());
+                return Err("无效的内容文件名".into());
             }
             let dir = game.join(item.kind.folder());
             if std::fs::symlink_metadata(&dir)
@@ -2078,13 +2078,13 @@ impl Catalog {
                 .file_type()
                 .is_symlink()
             {
-                return Err("Refusing a redirected content directory".into());
+                return Err("拒绝重定向的内容目录".into());
             }
             let target = dir.join(&item.file);
             let meta = std::fs::symlink_metadata(&target).map_err(|e| e.to_string())?;
             if !meta.is_file() || meta.file_type().is_symlink() {
                 return Err(
-                    "Only an explicitly selected regular add-on file can be removed".into(),
+                    "只能移除明确选中的普通附加项文件".into(),
                 );
             }
             std::fs::remove_file(target).map_err(|e| e.to_string())?;
@@ -2271,7 +2271,7 @@ impl Catalog {
                     crate::ha_launcher::client::ui_theme::set_active_theme(
                         self.config.theme.resolve(),
                     );
-                    self.status = "Custom theme color applied and saved.".into();
+                    self.status = "自定义主题色已应用并保存。".into();
                 } else {
                     crate::ha_launcher::client::ui_theme::set_active_theme(
                         self.config.theme.resolve(),
@@ -2344,7 +2344,7 @@ fn install_modrinth_jar_fallback(
         checksum: format!("{algo}:{hash}"),
         page: project.page.clone(),
         dependency: false,
-        verdict: Some("Downloaded".into()),
+        verdict: Some("已下载".into()),
         skipped: Vec::new(),
         namespaces: vec![slug],
     });

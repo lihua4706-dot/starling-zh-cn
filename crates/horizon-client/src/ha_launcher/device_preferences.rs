@@ -39,7 +39,7 @@ impl Settings {
 
     pub fn display_label(self) -> String {
         if self.display_hz == 0 {
-            "System default".into()
+            "系统默认".into()
         } else {
             format!("{} Hz (request)", self.display_hz)
         }
@@ -63,7 +63,7 @@ mod tests {
         let mut settings: Settings = serde_json::from_value(saved.clone()).unwrap();
         settings.migrate_missing(&saved, &old);
         assert_eq!(settings.display_hz, 0);
-        assert_eq!(settings.display_label(), "System default");
+        assert_eq!(settings.display_label(), "系统默认");
         assert!(!settings.performance_hints && !settings.gpu_profile);
     }
 
