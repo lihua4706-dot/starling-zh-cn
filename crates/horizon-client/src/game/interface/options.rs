@@ -121,7 +121,7 @@ impl Game<'_> {
                 }
                 self.handle_option_events(events)?;
                 match *key {
-                    "lang" => self.load_language(&self.settings.language.clone()),
+                    "lang" => self.load_language("zh_cn"),
                     "resourcePacks" | "incompatibleResourcePacks" => self.reload_packs(),
                     _ => {}
                 }
