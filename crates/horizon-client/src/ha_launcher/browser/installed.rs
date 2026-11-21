@@ -101,13 +101,13 @@ pub struct Step {
 pub fn plan(source: &dyn Source, project: &Project, everything: bool) -> Result<Vec<Step>, String> {
     if project.kind == Kind::Modpack {
         return Err(format!(
-            "{} is a modpack: it is imported, not installed.",
+            "{} 是整合包：它是导入的，不是安装的。",
             project.title
         ));
     }
     if project.kind.folder().is_none() {
         return Err(format!(
-            "{} is ported, not installed as a file.",
+            "{} 是移植的，不作为文件安装。",
             project.title
         ));
     }
@@ -128,28 +128,28 @@ fn add(
         return Ok(());
     }
     if depth > MAX_DEPTH {
-        return Err(format!("{}'s dependencies go too deep.", project.title));
+        return Err(format!("{} 的依赖层级过深。", project.title));
     }
     if let Support::No(why) = project.support() {
-        return Err(format!("{} doesn't run in Horizon: {why}", project.title));
+        return Err(format!("{} 无法在 Horizon 中运行：{why}", project.title));
     }
     let versions = source.versions(&project)?;
     let Some(version) = pick(project.kind, &versions, everything).cloned() else {
         return Err(match versions.iter().find_map(|v| v.blocked.clone()) {
-            Some(why) => format!("{} can't be installed from here: {why}", project.title),
-            None => format!("{} has no version Horizon runs.", project.title),
+            Some(why) => format!("{} 无法从此处安装：{why}", project.title),
+            None => format!("{} 没有 Horizon 可运行的版本。", project.title),
         });
     };
     for id in &version.required {
         let needed = source.project(id).map_err(|_| {
             format!(
-                "{} needs {id} on {}, which isn't a pack Horizon loads (a Java mod?).",
+                "{} 需要 {} 上的 {id}，而这不是 Horizon 可加载的包（Java 模组？）。",
                 project.title,
                 source.id().label()
             )
         })?;
         if needed.kind.folder().is_none() {
-            return Err(format!("{} needs {}.", project.title, needed.title));
+            return Err(format!("{} 需要 {}。", project.title, needed.title));
         }
         add(source, needed, everything, true, depth + 1, steps)?;
     }
@@ -210,14 +210,14 @@ pub(super) fn put(
             .expect("pick keeps versions with a file");
         let folder_name = folder(p.kind);
         let name = safe_name(&file.name)
-            .ok_or_else(|| format!("{:?} isn't a plain file name.", file.name))?;
+            .ok_or_else(|| format!("{:?} 不是普通文件名。", file.name))?;
         let relative = format!("{folder_name}/{name}");
         let owner = installed.entries.iter().find(|e| e.file == relative);
         let ours = owner.is_some_and(|e| e.source == p.source && e.project == p.id);
         if home.join(&relative).exists() && !ours {
             return Err(match owner {
                 Some(e) => format!(
-                    "{relative} belongs to {}, installed from the browser.",
+                    "{relative} 属于 {}，由浏览器安装。",
                     e.title
                 ),
                 None => format!(
@@ -266,7 +266,7 @@ pub fn remove(home: &Path, name: &str) -> Result<Entry, String> {
     let entry = installed
         .lookup(name)
         .cloned()
-        .ok_or_else(|| format!("{name} wasn't installed by the browser."))?;
+        .ok_or_else(|| format!("{name} 不是由浏览器安装的。"))?;
     if entry.kind == Kind::Mod && entry.source != SourceId::Horizon {
         super::java::remove(home, &entry)?;
     } else {
@@ -311,7 +311,7 @@ pub fn fetch_modpack(
     }
     let versions = source.versions(project)?;
     let version = pick(Kind::Modpack, &versions, true)
-        .ok_or_else(|| format!("{} has no file to download.", project.title))?;
+        .ok_or_else(|| format!("{} 没有可下载的文件。", project.title))?;
     let file = version.file().expect("pick keeps versions with a file");
     source.fetch(file, folder, progress)
 }
@@ -338,16 +338,16 @@ pub fn install_datapack(
     progress: &dyn Fn(f32),
 ) -> Result<DataPackInstall, String> {
     if project.kind != Kind::DataPack && !project.loaders.iter().any(|l| l == "datapack") {
-        return Err(format!("{} isn't a data pack.", project.title));
+        return Err(format!("{} 不是数据包。", project.title));
     }
     let versions = source.versions(project)?;
     let version = pick(Kind::DataPack, &versions, everything).ok_or_else(|| {
         format!(
-            "{} has no data pack for {}{}.",
+            "{} 没有适用于 {}{} 的数据包。",
             project.title,
             super::GAME,
             if everything {
-                " or any other version"
+                " 或任何其他版本"
             } else {
                 ""
             }

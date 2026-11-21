@@ -83,7 +83,7 @@ fn install_in(
         .project(id)
         .ok_or_else(|| format!("{id} isn't in Horizon's registry."))?;
     if p.kind != idx::Kind::Modpack {
-        return Err(format!("{} is a {}, not a modpack.", p.name, p.kind.name()));
+        return Err(format!("{} 是 {}，不是整合包。", p.name, p.kind.name()));
     }
     let v = newest(index, p, None)?;
     let work = dir.join(&p.id);
@@ -129,7 +129,7 @@ fn install_version_in(
             .and_then(|mp| Some((mp, mp.versions.iter().find(|w| w.version == m.version)?)));
         let Some((mp, mv)) = found.filter(|(_, mv)| mv.file.sha256 == m.sha256) else {
             return Err(format!(
-                "{} needs {} {}, which isn't in the registry.",
+                "{} 需要 {} {}，而它不在注册表中。",
                 p.name, m.id, m.version
             ));
         };
@@ -161,7 +161,7 @@ fn install_version_in(
 /// options.txt copied in when the pack brings none), its taken-down mods turned off first.
 pub fn apply(cmd: &mut Command, work: &Path) -> Result<(), String> {
     if !is_pack(work) {
-        return Err(format!("{} is not an installed modpack.", work.display()));
+        return Err(format!("{} 不是已安装的整合包。", work.display()));
     }
     let home = home(work);
     fs::create_dir_all(&home).map_err(|e| format!("{}: {e}", home.display()))?;
@@ -178,7 +178,7 @@ pub fn apply(cmd: &mut Command, work: &Path) -> Result<(), String> {
 /// Removes an installed pack: its mods and the profile's saves.
 pub fn remove(work: &Path) -> Result<(), String> {
     if work.parent() != Some(packs_dir().as_path()) || !is_pack(work) {
-        return Err(format!("{} is not an installed modpack.", work.display()));
+        return Err(format!("{} 不是已安装的整合包。", work.display()));
     }
     fs::remove_dir_all(work).map_err(|e| format!("{}: {e}", work.display()))
 }

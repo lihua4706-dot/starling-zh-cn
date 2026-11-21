@@ -74,9 +74,9 @@ impl RenderScale {
             .trim_end_matches('%')
             .trim()
             .parse::<u32>()
-            .map_err(|_| "Enter a whole percentage from 25 to 200")?;
+            .map_err(|_| "输入 25 到 200 之间的整数百分比")?;
         if !(25..=200).contains(&percent) {
-            return Err("Enter a percentage from 25 to 200");
+            return Err("输入 25 到 200 之间的百分比");
         }
         Ok(Self(percent))
     }

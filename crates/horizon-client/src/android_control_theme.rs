@@ -1887,7 +1887,7 @@ impl<'a> Ui<'a> {
                 cx,
                 sub_y,
                 color::with_alpha(theme.text_muted, title_t * 0.9),
-                "RUST EDITION  •  ANDROID LAUNCHER",
+                "RUST 版 • 安卓启动器",
             );
 
             // Real initialization progress indicator
@@ -1915,9 +1915,9 @@ impl<'a> Ui<'a> {
 
             let msg = if status_text.trim().is_empty() {
                 if real_prog >= 0.999 {
-                    "Ready • Tap anywhere to continue".to_owned()
+                    "就绪 • 点击任意处继续".to_owned()
                 } else {
-                    format!("Initializing workspace... {:.0}%", real_prog * 100.0)
+                    format!("正在初始化工作区… {:.0}%", real_prog * 100.0)
                 }
             } else {
                 format!("{status_text} ({:.0}%)", real_prog * 100.0)
@@ -2009,7 +2009,7 @@ fn wordmark(atlas: &HudAtlas, batch: &mut HudBatch) {
         cx,
         sub_y,
         BOOT_LOG,
-        "Minecraft on Android, in Rust",
+        "Rust 打造的安卓版 Minecraft",
     );
 
     // Symmetrical centered startup progress bar below the tagline
@@ -2123,27 +2123,27 @@ impl ThemePreset {
 
     pub fn label(self) -> &'static str {
         match self {
-            Self::ObsidianViolet => "Obsidian Violet",
-            Self::CyberCyan => "Cyber Cyan",
-            Self::EmeraldForest => "Emerald Forest",
-            Self::CrimsonEmber => "Crimson Ember",
-            Self::SolarGold => "Solar Gold",
-            Self::SakuraRose => "Sakura Rose",
-            Self::DaylightFrost => "Daylight Frost",
-            Self::Custom => "Custom Theme",
+            Self::ObsidianViolet => "黑曜石紫",
+            Self::CyberCyan => "赛博青",
+            Self::EmeraldForest => "翡翠森林",
+            Self::CrimsonEmber => "绯红余烬",
+            Self::SolarGold => "曜日金",
+            Self::SakuraRose => "樱花粉",
+            Self::DaylightFrost => "晨曦霜",
+            Self::Custom => "自定义主题",
         }
     }
 
     pub fn subtitle(self) -> &'static str {
         match self {
-            Self::ObsidianViolet => "Signature Horizon dark violet",
-            Self::CyberCyan => "Deep slate with electric cyan",
-            Self::EmeraldForest => "Woodland moss with emerald mint",
-            Self::CrimsonEmber => "Obsidian ruby with warm coral",
-            Self::SolarGold => "Dark bronze with radiant amber",
-            Self::SakuraRose => "Twilight plum with blossom pink",
-            Self::DaylightFrost => "High-contrast Material 3 light",
-            Self::Custom => "Personalized colors & gradients",
+            Self::ObsidianViolet => "Horizon 标志性深紫",
+            Self::CyberCyan => "深石板色与电光青",
+            Self::EmeraldForest => "林地苔绿与翡翠薄荷",
+            Self::CrimsonEmber => "黑曜石红宝与暖珊瑚",
+            Self::SolarGold => "暗青铜与灿烂琥珀",
+            Self::SakuraRose => "暮色梅紫与花苞粉",
+            Self::DaylightFrost => "高对比 Material 3 浅色",
+            Self::Custom => "个性化颜色与渐变",
         }
     }
 
@@ -2186,8 +2186,8 @@ pub enum ThemeAppearance {
 impl ThemeAppearance {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Dark => "Dark Mode",
-            Self::Light => "Light Mode",
+            Self::Dark => "深色模式",
+            Self::Light => "浅色模式",
         }
     }
 }
@@ -2203,8 +2203,8 @@ pub enum BackgroundMode {
 impl BackgroundMode {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Solid => "Solid Color",
-            Self::Gradient => "Multi-Stop Gradient",
+            Self::Solid => "纯色",
+            Self::Gradient => "多段渐变",
         }
     }
 }
@@ -2229,10 +2229,10 @@ impl GradientDirection {
 
     pub fn label(self) -> &'static str {
         match self {
-            Self::Vertical => "Top → Bottom",
-            Self::Horizontal => "Left → Right",
-            Self::DiagonalDown => "Diagonal ↘",
-            Self::DiagonalUp => "Diagonal ↗",
+            Self::Vertical => "从上到下",
+            Self::Horizontal => "从左到右",
+            Self::DiagonalDown => "斜向 ↘",
+            Self::DiagonalUp => "斜向 ↗",
         }
     }
 
@@ -2260,20 +2260,20 @@ pub const THEME_ACCENT_SWATCHES: [(u32, &str, &str); 8] = [
 
 pub const THEME_BG_SWATCHES_DARK: [(u32, &str, &str); 6] = [
     (0x13111C, "#13111C", "Obsidian"),
-    (0x0C131F, "#0C131F", "Abyss Blue"),
-    (0x0D1714, "#0D1714", "Deep Pine"),
-    (0x191013, "#191013", "Dark Ruby"),
+    (0x0C131F, "#0C131F", "深渊蓝"),
+    (0x0D1714, "#0D1714", "深松绿"),
+    (0x191013, "#191013", "暗红宝石"),
     (0x141418, "#141418", "Carbon"),
-    (0x0A0A0E, "#0A0A0E", "OLED Pitch"),
+    (0x0A0A0E, "#0A0A0E", "OLED 纯黑"),
 ];
 
 pub const THEME_BG_SWATCHES_LIGHT: [(u32, &str, &str); 6] = [
-    (0xF3F1FA, "#F3F1FA", "Frost Lavender"),
-    (0xEEF4FA, "#EEF4FA", "Ice Sky"),
-    (0xEFF7F3, "#EFF7F3", "Mint Cream"),
-    (0xFAF1F2, "#FAF1F2", "Rose Quartz"),
-    (0xF9F6EE, "#F9F6EE", "Warm Ivory"),
-    (0xF4F5F7, "#F4F5F7", "Pure Alabaster"),
+    (0xF3F1FA, "#F3F1FA", "霜薰衣草"),
+    (0xEEF4FA, "#EEF4FA", "冰天蓝"),
+    (0xEFF7F3, "#EFF7F3", "薄荷奶油"),
+    (0xFAF1F2, "#FAF1F2", "玫瑰石英"),
+    (0xF9F6EE, "#F9F6EE", "暖象牙"),
+    (0xF4F5F7, "#F4F5F7", "纯雪花白"),
 ];
 
 #[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]

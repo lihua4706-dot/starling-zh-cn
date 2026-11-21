@@ -94,7 +94,7 @@ impl Login {
     pub fn status(&self, offline_name: &str) -> String {
         match (&self.profile, self.signed_in) {
             (Some(name), true) => {
-                format!("Already signed in as {name} · {}", self.provider_name())
+                format!("已登录为 {name} · {}", self.provider_name())
             }
             (Some(name), false) => format!("需要登录 {name}"),
             _ if self.pending() => "正在登录…".into(),
@@ -142,7 +142,7 @@ impl Login {
                 }))
         {
             self.message =
-                "Register our Microsoft public client application first, then enter its client ID."
+                "请先注册我们的微软公共客户端应用，然后输入其客户端 ID。"
                     .into();
             return;
         }
@@ -158,7 +158,7 @@ impl Login {
             self.state = Some(task.state());
             if let Some(SignInState::Done(result)) = &self.state {
                 self.message = match result {
-                    Ok(a) => format!("Signed in as {}", a.name),
+                    Ok(a) => format!("已登录为 {}", a.name),
                     Err(e) => e.clone(),
                 };
                 self.task = None;
@@ -371,7 +371,7 @@ impl Login {
         } else if self.choosing {
             let line = if let Some(name) = &self.profile {
                 if self.signed_in {
-                    format!("Signed in as {name} with {}", self.provider_name())
+                    format!("已以 {} 登录为 {name}", self.provider_name())
                 } else {
                     format!("需要登录 {name}")
                 }
@@ -731,7 +731,7 @@ impl Login {
                 x + 20.0,
                 content_y + 88.0,
                 w - 40.0,
-                "This name is local; it is not an online identity.",
+                "此名称仅限本地，不是在线身份。",
                 login_muted(),
             );
             if focused {
@@ -802,9 +802,9 @@ impl Login {
             card[1] + 60.0,
             login_muted(),
             if self.signed_in {
-                "Microsoft · Connected"
+                "Microsoft · 已连接"
             } else {
-                "Microsoft · Not connected"
+                "Microsoft · 未连接"
             },
         );
 
@@ -826,7 +826,7 @@ impl Login {
                 x + 34.0,
                 row_y + 12.0,
                 login_muted(),
-                "SIGN-IN CODE",
+                "登录码",
             );
             ui.text(
                 Face::SemiBold,
@@ -871,7 +871,7 @@ impl Login {
         if !message.is_empty() {
             row_y = paragraph(ui, x + 20.0, row_y, w - 40.0, message, login_text(), 2) + 4.0;
         }
-        if self.message.contains("not approved by Mojang") && row_y + 30.0 < footer_y - 54.0 {
+        if self.message.contains("未经 Mojang 认可") && row_y + 30.0 < footer_y - 54.0 {
             button(
                 ui,
                 targets,

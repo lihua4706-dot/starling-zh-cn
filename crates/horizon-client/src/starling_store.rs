@@ -155,7 +155,7 @@ pub fn builds(text: &str) -> Result<Vec<Build>, String> {
     let file: File = serde_json::from_str(text).map_err(|e| format!("{BUILDS}: {e}"))?;
     if file.schema != 1 {
         return Err(format!(
-            "{BUILDS}: schema {} is newer than this Starling",
+            "{BUILDS}：schema {} 比此 Starling 版本更新",
             file.schema
         ));
     }
@@ -234,7 +234,7 @@ pub struct Index {
 
 /// What a store's failure says of a mod only the whole-game Compile builds (mod-builds'
 /// scripts/mod_lib.py).
-const WHOLE_GAME: &str = "whole-game Compile";
+const WHOLE_GAME: &str = "整游戏编译";
 
 /// The native mods only the whole-game Compile builds, by id, as `index` says: a library of its own
 /// holds no mixin, nor a crate beside the mod API. A mod the store built some version of is not
@@ -289,7 +289,7 @@ pub fn index(text: &str, build: &str) -> Result<Index, String> {
     }
     let file: File = serde_json::from_str(text).map_err(|e| format!("{INDEX}: {e}"))?;
     if file.schema != 1 || file.build != build {
-        return Err(format!("{INDEX}: not build {build}'s"));
+        return Err(format!("{INDEX}：不是构建 {build} 的"));
     }
     let mods = file
         .mods

@@ -595,7 +595,7 @@ pub fn validate_entry_name(name: &str) -> Result<(), String> {
         return Err("名称不能为空。".into());
     }
     if trimmed == "." || trimmed == ".." || trimmed.contains("..") {
-        return Err("Path traversal ('..') is not allowed.".into());
+        return Err("不允许路径穿越（'..'）。".into());
     }
     if trimmed.starts_with('.') {
         return Err("不允许以 '.' 开头的隐藏或系统名称。".into());
@@ -625,7 +625,7 @@ fn verify_no_symlinks(home: &Path, target: &Path) -> Result<(), String> {
             Component::Normal(seg) => {
                 let seg_str = seg.to_string_lossy();
                 if seg_str == ".local" {
-                    return Err("Access to internal engine storage (.local) is restricted.".into());
+                    return Err("对内部引擎存储（.local）的访问受限。".into());
                 }
                 cur.push(seg);
             }
@@ -698,11 +698,11 @@ pub fn classify_entry_kind(path: &Path, is_dir: bool) -> String {
         Some("zip") => "Archive / Pack (.zip)".into(),
         Some("png") => "PNG Image (.png)".into(),
         Some("json") => "JSON Config (.json)".into(),
-        Some("jsonl") => "Telemetry Log (.jsonl)".into(),
+        Some("jsonl") => "遥测日志（.jsonl）".into(),
         Some("toml") => "TOML Config (.toml)".into(),
         Some("txt" | "cfg" | "properties") => "Text Config (.txt)".into(),
         Some("dat" | "mca" | "mcr") => "世界数据".into(),
-        Some(ext) => format!("{} File (.{ext})", ext.to_ascii_uppercase()),
+        Some(ext) => format!("{} 文件（.{ext}）", ext.to_ascii_uppercase()),
         None => "文件".into(),
     }
 }
@@ -846,7 +846,7 @@ pub fn fm_mkdir(
     let target = resolve_fm_path(home, profile_root, &new_rel)?;
     if target.exists() {
         return Err(format!(
-            "'{}' already exists in this folder.",
+            "'{}' 已存在于此文件夹。",
             folder_name.trim()
         ));
     }
@@ -881,7 +881,7 @@ pub fn fm_rename(
     }
     if dst_path.exists() {
         return Err(format!(
-            "An item named '{}' already exists.",
+            "名为 '{}' 的项目已存在。",
             new_name.trim()
         ));
     }
@@ -1023,7 +1023,7 @@ pub fn fm_paste(
         validate_entry_name(fname)?;
         if src_meta.is_dir() && (dest_dir == *src || dest_dir.starts_with(src)) {
             return Err(format!(
-                "Cannot {} folder '{fname}' into itself or its own subfolder.",
+                "无法将文件夹 '{fname}' {} 到其自身或自己的子文件夹中。",
                 if is_cut { "move" } else { "copy" }
             ));
         }
@@ -1101,7 +1101,7 @@ pub fn fm_details(
         }
         size_bytes = total_bytes;
         preview_lines.push(format!(
-            "Contains {dirs_count} folder(s) and {files_count} file(s)."
+            "包含 {dirs_count} 个文件夹和 {files_count} 个文件。"
         ));
     } else {
         let ext = path
@@ -1134,7 +1134,7 @@ pub fn fm_details(
                         preview_lines.push(line.chars().take(120).collect());
                     }
                     if preview_lines.is_empty() {
-                        preview_lines.push("(Empty text file)".into());
+                        preview_lines.push("（空文本文件）".into());
                     }
                 }
             }

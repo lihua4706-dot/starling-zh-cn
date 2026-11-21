@@ -78,7 +78,7 @@ pub fn read_file(file: &Path) -> Result<Vec<u8>, String> {
 
 fn check_size(bytes: &[u8]) -> Result<(), String> {
     if bytes.len() > MAX_IMPORT_BYTES {
-        return Err("The PNG must be at most 1 MiB.".into());
+        return Err("PNG 不能超过 1 MiB。".into());
     }
     Ok(())
 }
@@ -101,7 +101,7 @@ pub fn read_skin(bytes: &[u8]) -> Result<image::RgbaImage, String> {
     match dimensions(bytes)? {
         (64, 64) | (64, 32) => decode(bytes),
         (w, h) => Err(format!(
-            "A skin is 64×64 (or the older 64×32) pixels; this one is {w}×{h}."
+            "皮肤应为 64×64（或旧版 64×32）像素；此图为 {w}×{h}。"
         )),
     }
 }
@@ -111,7 +111,7 @@ pub fn read_cape(bytes: &[u8]) -> Result<image::RgbaImage, String> {
     match dimensions(bytes)? {
         (64, 32) | (22, 17) => decode(bytes),
         (w, h) => Err(format!(
-            "A cape is 64×32 (or the older 22×17) pixels; this one is {w}×{h}."
+            "披风应为 64×32（或旧版 22×17）像素；此图为 {w}×{h}。"
         )),
     }
 }

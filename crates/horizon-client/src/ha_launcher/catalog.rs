@@ -179,10 +179,10 @@ impl Orientation {
     ];
     pub fn label(self) -> &'static str {
         match self {
-            Self::Landscape => "Landscape (sensor)",
-            Self::Portrait => "Portrait (sensor)",
-            Self::ReverseLandscape => "Landscape (reversed)",
-            Self::ReversePortrait => "Portrait (reversed)",
+            Self::Landscape => "横屏（传感器）",
+            Self::Portrait => "竖屏（传感器）",
+            Self::ReverseLandscape => "横屏（反向）",
+            Self::ReversePortrait => "竖屏（反向）",
             Self::Auto => "自动旋转",
         }
     }
@@ -310,18 +310,18 @@ impl Config {
     }
     pub fn last_name_changed_label(&self) -> &str {
         if self.last_name_changed.trim().is_empty() {
-            "Default profile (Never changed)"
+            "默认档案（从未更改）"
         } else {
             &self.last_name_changed
         }
     }
     pub fn ui_scale_label(&self) -> &'static str {
         match self.ui_scale_percent {
-            85 => "85% (Compact)",
-            100 => "100% (Default DPI)",
-            115 => "115% (Large)",
-            130 => "130% (Extra Large)",
-            _ => "Auto (Phone DPI)",
+            85 => "85%（紧凑）",
+            100 => "100%（默认 DPI）",
+            115 => "115%（大）",
+            130 => "130%（特大）",
+            _ => "自动（手机 DPI）",
         }
     }
     /// The rendering mode chosen in the launcher, as the instance's graphics API: OpenGL ES, or
@@ -469,9 +469,9 @@ impl SettingsCategory {
             Self::Video => "视频设置",
             Self::Launcher => "启动器设置",
             Self::Theme => "主题定制",
-            Self::Controls => "Controls & HUD Layout",
+            Self::Controls => "按键与 HUD 布局",
             Self::Experimental => "实验性功能",
-            Self::Diagnostics => "Diagnostics & Logs",
+            Self::Diagnostics => "诊断与日志",
             Self::Account => "账号",
         }
     }
@@ -550,7 +550,7 @@ impl TransferTracker {
         }
         let rem = (total_mib - done_mib).max(0.0);
         if rem <= 0.05 {
-            return "ETA <1s".into();
+            return "剩余 <1 秒".into();
         }
         let speed = self.speed_mib_s;
         if speed <= 0.05 {
@@ -558,7 +558,7 @@ impl TransferTracker {
         }
         let secs = (rem / speed).ceil() as u64;
         if secs >= 60 {
-            format!("ETA {}m {:02}s", secs / 60, secs % 60)
+            format!("剩余 {} 分 {:02} 秒", secs / 60, secs % 60)
         } else {
             format!("预计剩余 {secs} 秒")
         }
@@ -647,10 +647,10 @@ pub enum InstalledSort {
 impl InstalledSort {
     pub fn label(self) -> &'static str {
         match self {
-            Self::Name => "Sort: Name",
-            Self::Type => "Sort: Type",
-            Self::Size => "Sort: Size",
-            Self::Status => "Sort: Status",
+            Self::Name => "排序：名称",
+            Self::Type => "排序：类型",
+            Self::Size => "排序：大小",
+            Self::Status => "排序：状态",
         }
     }
     pub fn next(self) -> Self {
@@ -959,7 +959,7 @@ impl Catalog {
             );
             let size_bytes = std::fs::metadata(&full_path).map(|m| m.len()).unwrap_or(0);
             let subtitle = format!(
-                "Mod Package ({})  •  {}  •  {}",
+                "模组包（{}）• {} • {}",
                 e.number,
                 format_file_size(size_bytes),
                 file_name
@@ -1165,7 +1165,7 @@ impl Catalog {
         let count = paths.len();
         self.fm_clipboard = Some((paths, is_cut));
         self.status = format!(
-            "{} {count} item(s) to clipboard. Open destination folder and tap Paste.",
+            "已将 {} {count} 个项目复制到剪贴板，打开目标文件夹并点击粘贴。",
             if is_cut { "剪切" } else { "已复制" }
         );
     }
@@ -1189,7 +1189,7 @@ impl Catalog {
                 }
                 self.fm_selected.clear();
                 self.status = format!(
-                    "{} {count} item(s) into '/{}'.",
+                    "已将 {} {count} 个项目移动到 '/{}'。",
                     if is_cut { "已移动" } else { "已粘贴" },
                     self.fm_current_dir
                 );
@@ -1440,7 +1440,7 @@ impl Catalog {
                     self.show_installed(Some(kind));
                 }
                 Err(e) => {
-                    log::warn!("Add-on operation failed: {e}");
+                    log::warn!("附加项操作失败：{e}");
                     self.status = e;
                 }
             }
@@ -1687,7 +1687,7 @@ impl Catalog {
                     && let Ok((w, h, rgba)) = crate::ha_launcher::client::hud::decode(&path)
                 {
                     let label = if img.title.trim().is_empty() {
-                        format!("Screenshot {}", idx + 1)
+                        format!("截图 {}", idx + 1)
                     } else {
                         img.title
                     };
@@ -1748,16 +1748,16 @@ impl Catalog {
             && self.config.mod_source == crate::ha_launcher::shader_catalog::Origin::Modrinth
         {
             format!(
-                "{} Java mods - browsing only; this Rust client cannot run Java loaders",
+                "{} 个 Java 模组——仅供浏览；此 Rust 客户端无法运行 Java 加载器",
                 items.len()
             )
         } else if self.page == Page::Mods {
             format!(
-                "{} Horizon mods available (playhorizon.dev/mods) - select Install to download",
+                "有 {} 个 Horizon 模组可用（playhorizon.dev/mods）——选择安装即可下载",
                 items.len()
             )
         } else {
-            format!("{} results - select Install to download", items.len())
+            format!("{} 个结果——选择安装即可下载", items.len())
         };
         self.results = items;
     }
@@ -1834,7 +1834,7 @@ impl Catalog {
                 .read_to_end(&mut bytes)
                 .map_err(|e| e.to_string())?;
             if bytes.len() > 32 * 1024 * 1024 {
-                return Err("Horizon mod exceeds 32 MiB".into());
+                return Err("Horizon 模组超过 32 MiB".into());
             }
             *progress.lock().unwrap_or_else(|e| e.into_inner()) = 0.85;
             let dir = game.join("horizon-mods");
@@ -1852,7 +1852,7 @@ impl Catalog {
                 *progress.lock().unwrap_or_else(|e| e.into_inner()) = 1.0;
                 Ok(Reply::Done(
                     format!(
-                        "Installed {}. Enable it in Installed after reviewing its capabilities in game Mods.",
+                        "已安装 {}。在游戏「模组」中查看其能力后，于「已安装」中启用。",
                         package.manifest.name
                     ),
                     crate::ha_launcher::client::content_files::Kind::Mods,
@@ -1976,7 +1976,7 @@ impl Catalog {
         match item.kind {
             crate::ha_launcher::client::content_files::Kind::Mods => {
                 if !cfg!(target_pointer_width = "64") {
-                    self.status = "Sandboxed code mods require a 64-bit APK".into();
+                    self.status = "沙盒代码模组需要 64 位 APK".into();
                     return;
                 }
                 let mut on = crate::ha_launcher::client::mod_list::ModList::load(&game);
@@ -2119,7 +2119,7 @@ impl Catalog {
             Ok(())
         })();
         self.status = match result {
-            Ok(()) => format!("Removed {}", item.title),
+            Ok(()) => format!("已移除 {}", item.title),
             Err(e) => e,
         };
         self.refresh(home);
@@ -2216,7 +2216,7 @@ impl Catalog {
                         let _ = self.config.save(home);
                         crate::ha_launcher::platform::show(&self.config.custom_profile_desc);
                         self.status =
-                            "Step 2/2: Edit preset description and press Enter to save.".into();
+                            "第 2/2 步：编辑预设描述并按回车保存。".into();
                         return;
                     }
                     let game_home = self.config.game_home(home);
@@ -2245,7 +2245,7 @@ impl Catalog {
                         touch.preset_description = desc;
                         let _ = touch.save_replace_preset(&game_home);
                         self.status = format!(
-                            "Updated {} preset '{}'.",
+                            "已更新 {} 预设 '{}'。",
                             touch.control_style.label(),
                             touch.preset_name
                         );
@@ -2297,12 +2297,12 @@ fn install_modrinth_jar_fallback(
     let versions = source.versions(project)?;
     let version = browser::pick(Kind::Mod, &versions, true)
         .or_else(|| versions.iter().find(|v| v.file().is_some()))
-        .ok_or_else(|| format!("{} has no downloadable mod version.", project.title))?;
+        .ok_or_else(|| format!("{} 没有可下载的模组版本。", project.title))?;
     let file = version
         .file()
-        .ok_or_else(|| format!("{} has no primary file.", project.title))?;
+        .ok_or_else(|| format!("{} 没有主文件。", project.title))?;
     let staging = home.join("mod-browser/downloads");
-    let title = format!("Downloading {} {}", project.title, version.number);
+    let title = format!("正在下载 {} {}", project.title, version.number);
     let downloaded = source.fetch(file, &staging, &|f| progress(&title, f))?;
     let slug: String = project
         .slug
@@ -2349,7 +2349,7 @@ fn install_modrinth_jar_fallback(
         namespaces: vec![slug],
     });
     installed.save(home)?;
-    progress(&format!("Installed {}", project.title), 1.0);
+    progress(&format!("已安装 {}", project.title), 1.0);
     Ok(1)
 }
 

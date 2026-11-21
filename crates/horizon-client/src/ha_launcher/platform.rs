@@ -58,7 +58,7 @@ fn with_vibrator(f: impl FnOnce(&mut JNIEnv<'_>, &JObject<'_>) -> jni::errors::R
         if let Err(error) = result {
             // A device without a vibrator must not leave a pending Java exception.
             let _ = env.exception_clear();
-            log::warn!("Android haptics: {error}");
+            log::warn!("安卓触感反馈：{error}");
         }
     });
 }
@@ -144,7 +144,7 @@ fn vibrate_gamepad(pulse: crate::ha_launcher::client::gamepad::Pulse, amplitude:
             );
             let count = env.get_array_length(&ids)?;
             if first_probe {
-                log::info!("Android controller haptics: device {id}, {count} vibrator(s)");
+                log::info!("安卓手柄触感：设备 {id}，{count} 个振动器");
             }
             if count > 0 {
                 let effect = env.call_static_method(
@@ -170,7 +170,7 @@ fn vibrate_gamepad(pulse: crate::ha_launcher::client::gamepad::Pulse, amplitude:
         let vibrator = env.call_method(&device, "getVibrator", "()Landroid/os/Vibrator;", &[])?.l()?;
         if !env.call_method(&vibrator, "hasVibrator", "()Z", &[])?.z()? {
             if first_probe {
-                log::warn!("Android controller haptics: device {id} exposes no vibrator; using phone feedback");
+                log::warn!("安卓手柄触感：设备 {id} 没有振动器；使用手机振动反馈");
             }
             return Ok(false);
         }
@@ -214,7 +214,7 @@ pub(crate) fn with_context<R>(
             Ok(value) => Some(value),
             Err(error) => {
                 let _ = env.exception_clear();
-                log::warn!("Android platform: {error}");
+                log::warn!("安卓平台：{error}");
                 None
             }
         }

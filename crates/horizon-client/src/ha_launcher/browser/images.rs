@@ -42,10 +42,10 @@ fn dir(home: &Path) -> PathBuf {
 /// Why `url` is never fetched.
 pub fn refuse(url: &str) -> Option<&'static str> {
     if !HOSTS.iter().any(|h| url.starts_with(h)) {
-        return Some("not on Modrinth's or CurseForge's image servers over HTTPS");
+        return Some("不在 Modrinth 或 CurseForge 的 HTTPS 图片服务器上");
     }
     if url.len() > 2048 || url.contains(char::is_whitespace) {
-        return Some("not a plain URL");
+        return Some("不是普通链接");
     }
     None
 }
@@ -123,7 +123,7 @@ pub fn fetch(home: &Path, url: &str, size: u32) -> Result<PathBuf, String> {
         .read_to_end(&mut bytes)
         .map_err(|e| format!("{url}: {e}"))?;
     if bytes.len() as u64 > MAX_DOWNLOAD {
-        return Err(format!("{url}: larger than {} MB", MAX_DOWNLOAD >> 20));
+        return Err(format!("{url}：大于 {} MB", MAX_DOWNLOAD >> 20));
     }
     let stored = store(home, url, size, &bytes)?;
     let _ = fs::write(validators(&stored), tags);

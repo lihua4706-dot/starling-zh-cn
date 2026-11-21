@@ -64,10 +64,10 @@ pub fn validate(
     }
     let file = std::fs::File::open(path)?;
     if kind == Kind::Mods && file.metadata()?.len() > 32 << 20 {
-        return Err("Horizon mod exceeds 32 MiB".into());
+        return Err("Horizon 模组超过 32 MiB".into());
     }
     if file.metadata()?.len() > MAX_INPUT {
-        return Err("Import exceeds 256 MiB".into());
+        return Err("导入超过 256 MiB".into());
     }
     let mut zip = zip::ZipArchive::new(file)?;
     if zip.len() > 32768 {
@@ -101,7 +101,7 @@ pub fn validate(
             .checked_add(entry.size())
             .ok_or("压缩包大小溢出")?;
         if total > MAX_EXPANDED || kind == Kind::Mods && total > 64 << 20 {
-            return Err("Expanded archive exceeds 512 MiB".into());
+            return Err("解压后超过 512 MiB".into());
         }
         pack |= raw == "pack.mcmeta";
         native_shader |= raw == "horizon-shaders.toml";
@@ -151,7 +151,7 @@ pub fn validate(
         Kind::Mods => manifest,
     } {
         return Err(format!(
-            "Archive is not a {} package (required files must be at the ZIP root)",
+            "压缩包不是 {} 包（必需文件必须位于 ZIP 根目录）",
             kind.label()
         )
         .into());
@@ -184,7 +184,7 @@ pub fn copy_bounded(
         }
         total += n as u64;
         if total > MAX_INPUT {
-            return Err(io::Error::other("Import exceeds 256 MiB"));
+            return Err(io::Error::other("导入超过 256 MiB"));
         }
         output.write_all(&buffer[..n])?;
     }
@@ -236,7 +236,7 @@ mod tests {
                 "{name}"
             );
         }
-        std::fs::write(&path, archive(&[("pack.mcmeta", b"not JSON")])).unwrap();
+        std::fs::write(&path, archive(&[("pack.mcmeta", b"不是 JSON")])).unwrap();
         assert!(validate(&path, Kind::Packs, "Test.zip", || false).is_err());
         std::fs::write(&path, archive(&[("shaders/test.fsh", b"shader")])).unwrap();
         assert!(validate(&path, Kind::Shaders, "Test.zip", || false).is_ok());

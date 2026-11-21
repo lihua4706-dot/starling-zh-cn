@@ -54,7 +54,7 @@ pub fn install(
     }
     let file = v.file().ok_or("着色器文件缺失")?;
     if file.size > crate::ha_launcher::client::content_files::MAX_INPUT {
-        return Err("Shader ZIP exceeds 256 MiB".into());
+        return Err("光影 ZIP 超过 256 MiB".into());
     }
     let name = browser::safe_name(&file.name).ok_or("不安全的着色器文件名")?;
     let folder = home.join("shaderpacks");

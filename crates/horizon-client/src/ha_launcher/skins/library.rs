@@ -63,10 +63,10 @@ impl Library {
         let mut removed = Vec::new();
         value.entries.retain(|entry| {
             let titles = [
-                "Violet stripes",
-                "Tidal weave",
-                "Copper trail",
-                "Midnight grid",
+                "紫条纹",
+                "潮汐编织",
+                "铜色轨迹",
+                "午夜网格",
             ];
             let index = titles.iter().position(|title| *title == entry.title);
             if let Some(index) = index.filter(|_| entry.kind == Kind::Cape) {

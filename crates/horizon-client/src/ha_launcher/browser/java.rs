@@ -99,9 +99,9 @@ pub fn check_project(
     let version = pick(Kind::Mod, &versions, everything)
         .cloned()
         .ok_or_else(|| match versions.iter().find_map(|v| v.blocked.clone()) {
-            Some(why) => format!("{} can't be downloaded from here: {why}", project.title),
+            Some(why) => format!("{} 无法从此处下载：{why}", project.title),
             None => format!(
-                "{} has no Fabric, NeoForge or Forge version Horizon can port.",
+                "{} 没有 Horizon 可移植的 Fabric、NeoForge 或 Forge 版本。",
                 project.title
             ),
         })?;
@@ -201,11 +201,11 @@ impl Job<'_> {
             return Ok(());
         }
         let (version, check) = check_project(home, source, project, everything, &|f| {
-            progress(&format!("Checking {}", project.title), f)
+            progress(&format!("正在检查 {}", project.title), f)
         })?;
         if check.verdict == Verdict::No {
             return Err(format!(
-                "{} doesn't run in Horizon: {}",
+                "{} 无法在 Horizon 中运行：{}",
                 project.title, check.summary
             ));
         }
@@ -220,7 +220,7 @@ impl Job<'_> {
             match self.add(&needed, true, depth + 1, done) {
                 Ok(()) => {}
                 Err(_) if dependency => {}
-                Err(why) => skipped.push(format!("needs {}: {why}", needed.title)),
+                Err(why) => skipped.push(format!("需要 {}：{why}", needed.title)),
             }
         }
         let file = version.file().expect("pick keeps versions with a file");
@@ -236,7 +236,7 @@ impl Job<'_> {
                 && (e.file == relative || e.namespaces.iter().any(|n| check.namespaces.contains(n)))
         }) {
             return Err(format!(
-                "{} shares its id or namespace with {}, installed already: remove one first.",
+                "{} 与已安装的 {} 共享 ID 或命名空间：请先移除其一。",
                 project.title, other.title
             ));
         }
@@ -244,7 +244,7 @@ impl Job<'_> {
         let old = installed.entries.iter().find(|e| ours(e)).cloned();
         if target.exists() && old.as_ref().is_none_or(|o| o.file != relative) {
             return Err(format!(
-                "{relative} is already there and wasn't installed by the browser: move it away first."
+                "{relative} 已存在且不是由浏览器安装的：请先移走。"
             ));
         }
         progress(&format!("正在安装 {}", project.title), 1.);

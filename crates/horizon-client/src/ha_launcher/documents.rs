@@ -127,7 +127,7 @@ pub fn begin(kind: Kind, home: PathBuf) -> std::result::Result<(), String> {
         picker_failed("安卓文档选择器不可用");
         return Err("安卓文档选择器不可用".into());
     }
-    notice(format!("Choose a {} file", kind.label()), false);
+    notice(format!("选择一个 {} 文件", kind.label()), false);
     Ok(())
 }
 pub fn picker_failed(error: &str) {
@@ -203,7 +203,7 @@ pub fn export_file(
     if file_name.to_ascii_lowercase().ends_with(".png") {
         let _ = crate::ha_launcher::gallery::save(file_path);
         return Ok(format!(
-            "Exporting '{file_name}' to Pictures/HorizonAndroid..."
+            "正在将 '{file_name}' 导出到 Pictures/HorizonAndroid…"
         ));
     }
     let rel_str = file_path
@@ -226,11 +226,11 @@ pub fn export_file(
     };
     if crate::ha_launcher::platform::open_documents(&saf_folder) {
         Ok(format!(
-            "Opened '{file_name}' in Android Files for sharing/export."
+            "已在安卓文件中打开 '{file_name}' 以供共享/导出。"
         ))
     } else {
         Ok(format!(
-            "Ready to export '{file_name}' via system Files > Starling."
+            "已准备好通过系统文件 > Starling 导出 '{file_name}'。"
         ))
     }
 }
@@ -331,7 +331,7 @@ fn stage(request: Request, mut input: std::fs::File, name: String) -> Result<()>
                 .create_new(true)
                 .open(&staged)?;
             content_files::copy_bounded(&mut input, &mut output, |bytes| {
-                notice(format!("Importing {name}: {} KiB", bytes / 1024), false);
+                notice(format!("正在导入 {name}：{} KiB", bytes / 1024), false);
                 !CANCEL.load(Ordering::Relaxed)
             })?;
             output.sync_all()?;
@@ -411,7 +411,7 @@ fn stage(request: Request, mut input: std::fs::File, name: String) -> Result<()>
             .open(&staged)?;
         content_files::copy_bounded(&mut input, &mut output, |bytes| {
             notice(
-                format!("Importing {}: {} KiB", request.kind.label(), bytes / 1024),
+                format!("正在导入 {}：{} KiB", request.kind.label(), bytes / 1024),
                 false,
             );
             !CANCEL.load(Ordering::Relaxed)
@@ -450,14 +450,14 @@ fn stage(request: Request, mut input: std::fs::File, name: String) -> Result<()>
                 target,
             });
             notice(
-                "File already exists: choose Keep both, Replace or Cancel",
+                "文件已存在：选择保留两者、替换或取消",
                 false,
             );
         } else {
             std::fs::rename(&staged, &target)?;
             imported(
                 format!(
-                    "Imported {} into {}. Enable it in game settings.",
+                    "已将 {} 导入 {}。在游戏设置中启用。",
                     target.file_name().unwrap_or_default().to_string_lossy(),
                     request.kind.label()
                 ),
@@ -495,7 +495,7 @@ pub fn resolve(choice: Choice) {
         if matches!(choice, Choice::KeepBoth) {
             if c.kind == Kind::Mods {
                 return Err(
-                    "A mod ID cannot be installed twice; choose Replace to update it".into(),
+                    "模组 ID 不能安装两次；选择「替换」来更新它".into(),
                 );
             }
             let mut stem = c

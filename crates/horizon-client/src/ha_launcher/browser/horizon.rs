@@ -250,22 +250,22 @@ pub fn trust_and_capabilities(id: &str) -> Vec<String> {
         "由 Horizon 制作".to_owned()
     } else {
         format!(
-            "Made by {}. Not made or endorsed by the Horizon project ({POLICY})",
+            "由 {} 制作，并非 Horizon 项目制作或背书（{POLICY}）",
             p.authors.join(", ")
         )
     }];
     lines.push(match &p.key {
-        Some(_) => "Signed by its author: the launcher checks the signature".to_owned(),
-        None => "Unsigned: the launcher checks its checksum only".to_owned(),
+        Some(_) => "由其作者签名：启动器会校验签名".to_owned(),
+        None => "未签名：启动器仅校验其校验和".to_owned(),
     });
     if p.kind == index::Kind::NativeMod {
         lines.push(
-            "Native code: it is compiled into the game and runs with full access to your computer. Its source was reviewed before it was listed".into(),
+            "原生代码：它被编译进游戏并以你设备的完整权限运行。其源码在上架前已经审核".into(),
         );
         if let Some(v) = p.versions.first() {
             let pin = v.api.split('/').nth(1).unwrap_or_default();
             lines.push(format!(
-                "Built by the launcher on Horizon {}",
+                "由启动器基于 Horizon {} 构建",
                 &pin[..pin.len().min(7)]
             ));
         }
@@ -274,7 +274,7 @@ pub fn trust_and_capabilities(id: &str) -> Vec<String> {
         lines.extend(
             v.capabilities
                 .iter()
-                .map(|c| format!("May {}", c.describe())),
+                .map(|c| format!("可能 {}", c.describe())),
         );
         if v.capabilities.is_empty() {
             lines.push("仅请求其自身日志".into());
@@ -337,7 +337,7 @@ fn version_of(
         required: v.requires.iter().map(|r| r.id.clone()).collect(),
         blocked: index
             .revoked(&p.id, &v.file.sha256)
-            .map(|r| format!("taken down: {}", r.reason))
+            .map(|r| format!("已下架：{}", r.reason))
             .or_else(|| needs_newer(v, level).then(|| NEEDS_NEWER.to_string())),
     }
 }
@@ -400,7 +400,7 @@ impl Source for Registry {
             .ok_or_else(|| format!("{id} isn't in Horizon's registry."))?;
         project_of(p).ok_or_else(|| {
             format!(
-                "{} is a {} in Horizon's registry: this launcher can't install those yet.",
+                "{} 是 Horizon 注册表中的 {}：此启动器尚不能安装。",
                 p.name,
                 p.kind.name()
             )
@@ -445,7 +445,7 @@ impl Source for Registry {
                 let may: Vec<&str> = w.capabilities.iter().map(|c| c.describe()).collect();
                 let may = match may.is_empty() {
                     true => String::new(),
-                    false => format!(": may {}", may.join(", ")),
+                    false => format!("：可能 {}", may.join(", ")),
                 };
                 body.push_str(&format!("- {} {}{may}\n", m.name, w.version));
             }
@@ -586,13 +586,13 @@ fn newest<'a>(
         }
     }
     Err(match taken_down {
-        _ if too_new => format!("{} {NEEDS_NEWER}: update it first.", p.name),
-        Some(r) => format!("{} was taken down: {}", p.name, r.reason),
-        None => format!("{} has no version for {GAME} to install.", p.name),
+        _ if too_new => format!("{} {NEEDS_NEWER}：请先更新。", p.name),
+        Some(r) => format!("{} 已下架：{}", p.name, r.reason),
+        None => format!("{} 没有适用于 {GAME} 的可安装版本。", p.name),
     })
 }
 
-const NEEDS_NEWER: &str = "needs a newer Horizon than the game you play";
+const NEEDS_NEWER: &str = "需要比你所玩游戏更新的 Horizon";
 
 /// Whether version `v` calls mod API functions a game serving `level` doesn't have.
 /// The registry now names an API line (`api`), which the game checks as it loads the mod.
@@ -611,9 +611,9 @@ fn install_version(
     home: &Path,
     progress: &dyn Fn(&str, f32),
 ) -> Result<installed::Entry, String> {
-    let project = project_of(p).ok_or_else(|| format!("{} can't be installed here.", p.name))?;
+    let project = project_of(p).ok_or_else(|| format!("{} 无法在此安装。", p.name))?;
     if let Some(r) = index.revoked(&p.id, &v.file.sha256) {
-        return Err(format!("{} was taken down: {}", p.name, r.reason));
+        return Err(format!("{} 已下架：{}", p.name, r.reason));
     }
     let native = p.kind == index::Kind::NativeMod;
     let relative = match native {
@@ -631,20 +631,20 @@ fn install_version(
     let folder_mod = home.join(java::MODS_DIR).join(&p.id);
     if let Some(other) = taken_by {
         return Err(format!(
-            "{relative} belongs to {}: remove it first.",
+            "{relative} 属于 {}：请先移除。",
             other.title
         ));
     }
     let clash = target.exists() && old.as_ref().is_none_or(|o| o.file != relative);
     if project.kind == Kind::Mod && (clash || (!native && folder_mod.exists())) {
         return Err(format!(
-            "A mod with the id {} is already in {}: move it away first.",
+            "ID 为 {} 的模组已在 {} 中：请先移走。",
             p.id,
             java::MODS_DIR
         ));
     }
     if clash {
-        return Err(format!("{relative} is already there: move it away first."));
+        return Err(format!("{relative} 已存在：请先移走。"));
     }
     let line = format!("{} {}", p.name, v.version);
     let file = &version_of(index, p, v, None).files[0];
@@ -655,7 +655,7 @@ fn install_version(
         match native {
             true => index::native::Bundle::read(&path).and_then(|b| match b.manifest.id == p.id {
                 true => Ok(trust),
-                false => Err(format!("it is {}, not {}", b.manifest.id, p.id)),
+                false => Err(format!("它是 {}，不是 {}", b.manifest.id, p.id)),
             }),
             false => Ok(trust),
         }
@@ -741,13 +741,13 @@ pub fn turn_off_revoked(index: &Index, home: &Path) -> Vec<String> {
         if let (Kind::Mod, Some(id)) = (e.kind, mod_id(&e)) {
             if java::is_enabled(home, id) && java::set_enabled(home, id, false).is_ok() {
                 out.push(format!(
-                    "{} was taken down and is off: {}",
+                    "{} 已下架并停用：{}",
                     e.title, r.reason
                 ));
             }
         } else if matches!(e.kind, Kind::ResourcePack | Kind::Shader) {
             out.push(format!(
-                "{} was taken down: {} Remove it.",
+                "{} 已下架：{}，请移除。",
                 e.title, r.reason
             ));
         }

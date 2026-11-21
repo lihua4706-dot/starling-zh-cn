@@ -261,7 +261,7 @@ pub(crate) fn save_input_mode() {
     if config.input_host != mode {
         config.input_host = mode;
         if let Err(e) = config.save(&home) {
-            log::warn!("Saving input mode: {e}");
+            log::warn!("正在保存输入模式：{e}");
         }
     }
 }
@@ -306,7 +306,7 @@ pub fn acknowledge_play(private: &Path) {
     if let Err(error) = std::fs::remove_file(private.join(PLAY))
         && error.kind() != std::io::ErrorKind::NotFound
     {
-        log::warn!("Launcher: could not clear the launch request: {error}");
+        log::warn!("启动器：无法清除启动请求：{error}");
     }
 }
 
@@ -366,7 +366,7 @@ pub fn game_started(folder: &Path, home: &Path) {
                 "gpu_profiling": config.device.gpu_profile,
             }),
         ) {
-            log::warn!("Launcher: cannot start the performance recording: {error}");
+            log::warn!("启动器：无法开始性能记录：{error}");
         }
     }
     let _ = home;

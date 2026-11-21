@@ -139,7 +139,7 @@ pub fn fetch(account: &Account, secrets: &Secrets, root: &Path) -> Result<Cache,
             let texture = |key: &str| {
                 value[key]["url"].as_str().map(|url| Texture {
                     id: format!("ely-{key}"),
-                    title: format!("Current Ely.by {}", key.to_lowercase()),
+                    title: format!("当前 Ely.by {}", key.to_lowercase()),
                     url: url.into(),
                     active: true,
                     slim: value[key]["metadata"]["model"] == "slim",
@@ -236,7 +236,7 @@ fn upload_skin_at(
         return Err("账号与会话提供方不匹配。".into());
     }
     if account.provider != Provider::Microsoft {
-        return Err("Ely.by cloud skins are managed on ely.by; its public API does not expose skin uploads.".into());
+        return Err("Ely.by 云端皮肤在 ely.by 管理；其公开 API 不支持皮肤上传。".into());
     }
     let image = read_skin(bytes)?;
     let mut png = std::io::Cursor::new(vec![]);

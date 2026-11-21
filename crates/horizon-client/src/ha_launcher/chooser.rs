@@ -62,13 +62,13 @@ impl Launcher {
             }
             Kind::CacheBudget => (
                 "可复用内存缓存",
-                "Decoded sounds (80%) and empty mesh buffers (20%). Recreated at the same quality. Smaller budgets can increase CPU work. Not total RAM/VRAM. Applies on next Play.",
+                "已解码声音（80%）与空网格缓冲（20%），会以同等质量重建。更小的预算会增加 CPU 负担。并非总内存/显存上限，下次启动游戏时生效。",
                 [0, 16, 32, 64, 128, 256]
                     .into_iter()
                     .map(|mib| {
                         (
                             if mib == 0 {
-                                "Engine default (80 MiB)".into()
+                                "引擎默认（80 MiB）".into()
                             } else {
                                 format!("{mib} MiB")
                             },
@@ -81,7 +81,7 @@ impl Launcher {
             ),
             Kind::WorkerLimit => (
                 "区块工作线程上限",
-                "Ceiling for generation and meshing workers, not all app threads. Lower values can reduce CPU contention but slow loading. Applies on next Play.",
+                "仅限世界生成与网格构建线程的上限，不限制所有应用线程。较低的值可减少 CPU 争抢但会拖慢加载，下次启动游戏时生效。",
                 (0..=64u32)
                     .map(|limit| {
                         (
@@ -99,7 +99,7 @@ impl Launcher {
             ),
             Kind::DisplayHz => (
                 "显示刷新率",
-                "An Android display preference, not a game FPS cap. Unsupported rates may be ignored.",
+                "这是安卓显示偏好，不是游戏帧率上限。不支持的刷新率可能被忽略。",
                 crate::ha_launcher::device_preferences::DISPLAY_RATES
                     .into_iter()
                     .map(|hz| {
@@ -126,9 +126,9 @@ impl Launcher {
                             if percent == 100 {
                                 "原生分辨率".into()
                             } else if percent > 100 {
-                                "Higher 3D rendering resolution".into()
+                                "更高的 3D 渲染分辨率".into()
                             } else {
-                                "Lower 3D rendering resolution".into()
+                                "更低的 3D 渲染分辨率".into()
                             },
                             Action::ChooseRenderScale(crate::ha_launcher::display::RenderScale::new(percent)),
                             current == percent,
@@ -137,7 +137,7 @@ impl Launcher {
                     .collect();
                 choices.push((
                     "自定义百分比…".into(),
-                    "Enter a value from 25 to 200".into(),
+                    "输入 25 到 200 之间的值".into(),
                     Action::Field("render_scale"),
                     false,
                 ));
@@ -168,7 +168,7 @@ impl Launcher {
                 vec![
                     (
                         "OpenGL ES / 实验性".into(),
-                        "For older GPUs. Requires ES 3.0+ and sufficient driver limits.".into(),
+                        "适用于较旧的 GPU，需要 ES 3.0+ 与足够的驱动限制。".into(),
                         Action::ChooseRenderer(RendererMode::OpenGl),
                         c.renderer == RendererMode::OpenGl,
                     ),
@@ -216,11 +216,11 @@ impl Launcher {
                     .map(|id| {
                         (
                             // As the Play page counts them: Profile 1 is the game folder (0).
-                            format!("Profile {}", id + 1),
+                            format!("档案 {}", id + 1),
                             if id == 0 {
                                 "默认档案".into()
                             } else {
-                                "Separate saves, mods and packs".into()
+                                "独立的存档、模组与整合包".into()
                             },
                             Action::ChooseProfile(id),
                             id == c.profile,
@@ -230,7 +230,7 @@ impl Launcher {
                 if let Some(id) = next {
                     choices.push((
                         "新建档案".into(),
-                        format!("Create Profile {}", id + 1),
+                        format!("创建档案 {}", id + 1),
                         Action::ChooseProfile(id),
                         false,
                     ));
@@ -247,15 +247,15 @@ impl Launcher {
                 [
                     (
                         0u32,
-                        "Auto (Phone DPI)",
+                        "自动（手机 DPI）",
                         "自动匹配显示器的 DPI 密度",
                     ),
-                    (85, "85% (Compact)", "屏幕上可容纳更多行"),
-                    (100, "100% (Default DPI)", "标准手机 DPI 缩放"),
-                    (115, "115% (Large)", "Larger buttons, cards and text"),
+                    (85, "85%（紧凑）", "屏幕上可容纳更多行"),
+                    (100, "100%（默认 DPI）", "标准手机 DPI 缩放"),
+                    (115, "115%（大）", "更大的按钮、卡片与文字"),
                     (
                         130,
-                        "130% (Extra Large)",
+                        "130%（特大）",
                         "高 DPI 手机最大触摸舒适度",
                     ),
                 ]
@@ -284,7 +284,7 @@ impl Launcher {
                         let active = touch.preset_id.eq_ignore_ascii_case(&meta.id);
                         let mut title = meta.name.clone();
                         if meta.is_default {
-                            title.push_str("  [Protected Default]");
+                            title.push_str("  [受保护的默认]");
                         }
                         let sub = format!(
                             "{}  •  controls/{}/{}.json",
@@ -327,7 +327,7 @@ impl Launcher {
 impl Chooser {
     pub(super) fn confirm_delete(name: String) -> Self {
         Self {
-            title: "Remove add-on?",
+            title: "移除附加项？",
             help: "仅从此档案中删除所选文件，此操作不可撤销。",
             device: Some(name),
             choices: vec![
@@ -347,13 +347,13 @@ impl Chooser {
     /// Cancel goes back to the profiles.
     pub(super) fn confirm_delete_profile(id: u32) -> Self {
         Self {
-            title: "Delete profile?",
-            help: "Deletes its worlds, mods, packs and settings. This cannot be undone.",
-            device: Some(format!("Profile {}", id + 1)),
+            title: "删除档案？",
+            help: "将删除其世界、模组、整合包与设置，且无法撤销。",
+            device: Some(format!("档案 {}", id + 1)),
             choices: vec![
                 (
                     "删除".into(),
-                    format!("Delete Profile {} for good", id + 1),
+                    format!("彻底删除档案 {}", id + 1),
                     Action::ConfirmDeleteProfile(id),
                     false,
                 ),

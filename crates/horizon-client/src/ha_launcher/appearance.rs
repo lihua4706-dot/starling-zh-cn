@@ -36,6 +36,6 @@ pub fn play_offline(name: &str) {
     if starling_account::valid_offline_name(name)
         && let Err(error) = starling_account::add_offline(&crate::accounts::dir(), name)
     {
-        log::warn!("Launcher: offline profile {name}: {error}");
+        log::warn!("启动器：离线档案 {name}：{error}");
     }
 }

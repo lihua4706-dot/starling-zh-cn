@@ -275,7 +275,7 @@ pub trait Source: Send + Sync {
 pub const CURSEFORGE_SOON: &str = "CurseForge 支持即将推出。";
 /// What another source answers for shader packs: Horizon's own are on its registry only.
 pub const SHADERS_ON_HORIZON: &str =
-    "Horizon's shader packs are on Horizon's registry: pick Horizon.";
+    "Horizon 的光影包在 Horizon 注册表中：请选择 Horizon。";
 
 /// The sources this launcher uses: Modrinth and Horizon's registry. CurseForge support is coming
 /// soon: its API needs a paid key, so no search or install goes to it; `curseforge` is kept for
@@ -314,7 +314,7 @@ pub fn support(kind: Kind, game_versions: &[String], loaders: &[String]) -> Supp
             }
         }
         Kind::Modpack => {
-            Support::Partial("Horizon runs the mods it can port, from your own downloads.".into())
+            Support::Partial("Horizon 会运行它所能移植的模组，请使用你自己的下载。".into())
         }
         Kind::Shader => Support::No("不是 Horizon 自己的光影包。".into()),
         Kind::DataPack => {
@@ -327,15 +327,15 @@ pub fn support(kind: Kind, game_versions: &[String], loaders: &[String]) -> Supp
         }
         Kind::Mod => {
             if !loaders.iter().any(|l| java::LOADERS.contains(&l.as_str())) {
-                Support::No("Not a Fabric, NeoForge or Forge mod.".into())
+                Support::No("不是 Fabric、NeoForge 或 Forge 模组。".into())
             } else if !game_versions.iter().any(|v| portable_version(v)) {
-                let newest = newest_release(game_versions).unwrap_or("an unknown version");
+                let newest = newest_release(game_versions).unwrap_or("未知版本");
                 Support::No(format!(
-                    "Made for {newest}: Horizon ports mods made for 1.21 and later."
+                    "为 {newest} 制作：Horizon 移植的是 1.21 及之后的模组。"
                 ))
             } else {
                 Support::Partial(
-                    "Not checked yet: the launcher reads its jar to say what of it ports.".into(),
+                    "尚未检查：启动器会读取其 jar 以判断可移植的部分。".into(),
                 )
             }
         }

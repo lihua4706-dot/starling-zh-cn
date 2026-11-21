@@ -202,7 +202,7 @@ pub fn modrinth_details(project: &Value, members: &Value) -> Details {
     for d in project["donation_urls"].as_array().into_iter().flatten() {
         if let Some(url) = d["url"].as_str().and_then(https) {
             links.push(Link {
-                label: format!("Donate ({})", text(&d["platform"])),
+                label: format!("赞助（{}）", text(&d["platform"])),
                 url,
             });
         }

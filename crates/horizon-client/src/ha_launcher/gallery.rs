@@ -168,7 +168,7 @@ fn write(request: Request) -> Result<String> {
             if std::time::Instant::now() >= deadline {
                 PERMISSION_PENDING.store(false, Ordering::Relaxed);
                 return Err(
-                    "Allow storage access to export this file; the original remains in Horizon"
+                    "允许存储访问以导出此文件；原件保留在 Horizon 中"
                         .into(),
                 );
             }
@@ -300,7 +300,7 @@ fn write(request: Request) -> Result<String> {
             env.call_method(request.resolver.as_obj(),"update","(Landroid/net/Uri;Landroid/content/ContentValues;Ljava/lang/String;[Ljava/lang/String;)I",&[JValue::Object(&row),JValue::Object(&published),JValue::Object(&JObject::null()),JValue::Object(&JObject::null())])?;
         }
         Ok(format!(
-            "{} saved to {}/HorizonAndroid/{name}",
+            "{} 已保存到 {}/HorizonAndroid/{name}",
             if request.report {
                 "性能报告"
             } else {

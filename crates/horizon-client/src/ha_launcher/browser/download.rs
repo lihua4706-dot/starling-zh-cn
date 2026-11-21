@@ -66,7 +66,7 @@ pub(super) fn agent(url: &str) -> ureq::Agent {
 pub fn refuse(file: &FileRef) -> Option<String> {
     if !HOSTS.iter().any(|h| file.url.starts_with(h)) && !github_release_asset(&file.url) {
         return Some(format!(
-            "{} isn't on Modrinth's, CurseForge's or Horizon's file servers, or a GitHub release.",
+            "{} 不在 Modrinth、CurseForge 或 Horizon 的文件服务器上，也不是 GitHub 发布。",
             file.url
         ));
     }
@@ -76,10 +76,10 @@ pub fn refuse(file: &FileRef) -> Option<String> {
 /// [`refuse`] without the host: the name, the checksum and the size.
 fn refuse_file(file: &FileRef) -> Option<String> {
     if safe_name(&file.name).is_none() {
-        return Some(format!("{:?} isn't a plain file name.", file.name));
+        return Some(format!("{:?} 不是普通文件名。", file.name));
     }
     if file.checksum().is_none() {
-        return Some("Its source gives no checksum, so it can't be checked.".into());
+        return Some("其来源未提供校验和，无法校验。".into());
     }
     if file.size > MAX {
         return Some("它比任何包应有的体积都大。".into());
@@ -168,7 +168,7 @@ pub(super) fn save_from_anywhere(
             progress(done as f32 / file.size.max(1) as f32);
         }
         if file.size > 0 && done != file.size {
-            return Err(format!("Got {done} bytes of {}.", file.size));
+            return Err(format!("已获取 {} 的 {done} 字节。", file.size));
         }
         let got = hasher.hex();
         if !got.eq_ignore_ascii_case(want) {
@@ -196,7 +196,7 @@ pub fn fetch(file: &FileRef, folder: &Path, progress: &dyn Fn(f32)) -> Result<Pa
         .get(&file.url)
         .call()
         .map_err(|e| match e {
-            ureq::Error::Status(code, _) => format!("{} answered {code}.", file.url),
+            ureq::Error::Status(code, _) => format!("{} 返回 {code}。", file.url),
             ureq::Error::Transport(t) => format!("无法连接：{t}"),
         })?;
     save(file, response.into_reader(), folder, progress)

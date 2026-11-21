@@ -119,7 +119,7 @@ impl Launcher {
                     &cleanup_home,
                 )
             {
-                log::warn!("Could not clean completed Minecraft downloads: {error}");
+                log::warn!("无法清理已完成的 Minecraft 下载：{error}");
             }
             if crate::ha_launcher::client::official_install::ready(&cleanup_home) {
                 let _ = crate::ha_launcher::client::android_resources::repair_structure_transforms(
@@ -139,9 +139,9 @@ impl Launcher {
             catalog.config.renderer =
                 crate::ha_launcher::catalog::RendererMode::VulkanCompatibility;
             if let Err(error) = catalog.config.save(&home) {
-                log::warn!("Could not save graphics recovery choice: {error}");
+                log::warn!("无法保存图形恢复选择：{error}");
             }
-            catalog.status = "Previous Vulkan startup was interrupted. Using Vulkan compatibility; you can change Rendering mode in Settings.".into();
+            catalog.status = "上次 Vulkan 启动被中断。正在使用 Vulkan 兼容模式；你可以在设置中更改渲染模式。".into();
         }
         crate::ha_launcher::configure_input_mode(catalog.config.input_host);
         crate::ha_launcher::device_runtime::configure(catalog.config.device);
@@ -170,7 +170,7 @@ impl Launcher {
                 let _ = std::fs::create_dir_all(dir);
             }
             if let Err(error) = touch.save_to(&touch_file) {
-                log::warn!("Cannot write the factory touch layout: {error}");
+                log::warn!("无法写入出厂触摸布局：{error}");
             }
         }
         // Load the selected wardrobe and its last head before the first draw:
@@ -297,7 +297,7 @@ impl Launcher {
                     })
                 })
                 .inspect_err(|error| {
-                    log::warn!("Launcher: could not start UI asset loading: {error}")
+                    log::warn!("启动器：无法开始界面资源加载：{error}")
                 })
                 .ok()
         });
@@ -329,12 +329,12 @@ impl Launcher {
                     crate::ha_launcher::client::ui_theme::reset_atlas();
                     self.gui = Some(gui);
                 }
-                Err(error) => log::warn!("Launcher: could not use the prepared GUI atlas: {error}"),
+                Err(error) => log::warn!("启动器：无法使用准备好的 GUI 图集：{error}"),
             },
             Ok(Err(error)) => {
-                log::warn!("Launcher: could not load the prepared GUI atlas: {error}")
+                log::warn!("启动器：无法加载准备好的 GUI 图集：{error}")
             }
-            Err(_) => log::warn!("Launcher: GUI asset loading stopped unexpectedly"),
+            Err(_) => log::warn!("启动器：界面资源加载意外停止"),
         }
     }
 
@@ -468,7 +468,7 @@ impl Launcher {
                 .wardrobe
                 .prepare_game(&self.catalog.config.name, &game_home)
             {
-                log::warn!("Launcher: could not apply wardrobe choice: {error}");
+                log::warn!("启动器：无法应用衣柜选择：{error}");
             }
             self.controller_edges = Default::default();
             self.controller_repeat = None;
@@ -617,7 +617,7 @@ impl ApplicationHandler for Launcher {
                     // app's own files, which the player can't reach otherwise.
                     let _ = crate::android::share_diagnostic(&name);
                     format!(
-                        "Saved {name} in Reports. Review the ZIP before sharing; nothing was uploaded."
+                        "已将 {name} 保存到 Reports。分享前请查看 ZIP；未上传任何内容。"
                     )
                 }
                 Err(error) => format!("诊断导出失败：{error}"),
@@ -639,8 +639,8 @@ impl ApplicationHandler for Launcher {
             self.worker = None;
             if let Err(error) = result {
                 let message = error.to_string();
-                if message.contains("Dns Failed") || message.contains("lookup address") {
-                    self.fail("Minecraft download interrupted: DNS could not resolve the download host. Check your connection, VPN or Private DNS, then retry Download. Completed files are kept.");
+                if message.contains("DNS 解析失败") || message.contains("lookup address") {
+                    self.fail("Minecraft 下载中断：DNS 无法解析下载主机。请检查你的网络、VPN 或私有 DNS，然后重试下载。已完成的文件会保留。");
                 } else {
                     self.fail(error);
                 }

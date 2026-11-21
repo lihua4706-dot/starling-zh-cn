@@ -202,7 +202,7 @@ impl Wardrobe {
                         self.preview();
                     }
                 }
-                Err(error) => log::warn!("Default skin unavailable: {error}"),
+                Err(error) => log::warn!("默认皮肤不可用：{error}"),
             }
         }
         if let Some((key, result)) = self.worker.as_ref().and_then(|r| r.try_recv().ok()) {
@@ -604,15 +604,15 @@ impl Wardrobe {
             x,
             top,
             theme.text_primary,
-            "Skins & Capes Studio",
+            "皮肤与披风工坊",
         );
         let subtitle = ui.fit_text(
             Face::Regular,
             11.5,
             if self.capes {
-                "Preview 3D capes, manage local cape overrides, or activate cloud account capes."
+                "预览 3D 披风、管理本地披风覆盖，或启用云端账号披风。"
             } else {
-                "Inspect your 3D character model, switch arm styles, and manage local or cloud skins."
+                "查看你的 3D 角色模型、切换手臂样式，并管理本地或云端皮肤。"
             },
             w,
         );
@@ -714,12 +714,12 @@ impl Wardrobe {
             if selection.hide_cape {
                 "隐藏披风"
             } else {
-                "3D Cape View"
+                "3D 披风视图"
             }
         } else if model == Model::Slim {
-            "Slim (3px Arms)"
+            "纤细（3px 手臂）"
         } else {
-            "Classic (4px Arms)"
+            "经典（4px 手臂）"
         };
         let badge_w = (ui.measure(Face::SemiBold, 9.5, badge_txt) + 16.0).min(preview_w * 0.55);
         ui.rounded(
@@ -835,9 +835,9 @@ impl Wardrobe {
                 targets,
                 [px, primary_toggle_y, preview_w, 34.0],
                 if selection.hide_cape {
-                    "Cape Visibility: Hidden (Tap to Show)"
+                    "披风可见性：隐藏（点击显示）"
                 } else {
-                    "Cape Visibility: Shown (Tap to Hide)"
+                    "披风可见性：显示（点击隐藏）"
                 },
                 Action::WardrobeHideCape,
                 !selection.hide_cape,
@@ -848,9 +848,9 @@ impl Wardrobe {
                 targets,
                 [px, primary_toggle_y, preview_w, 34.0],
                 if model == Model::Slim {
-                    "Arm Model: Alex / Slim (3px)"
+                    "手臂模型：Alex / 纤细（3px）"
                 } else {
-                    "Arm Model: Steve / Classic (4px)"
+                    "手臂模型：Steve / 经典（4px）"
                 },
                 Action::WardrobeModel,
                 false,
@@ -872,22 +872,22 @@ impl Wardrobe {
                 .entries
                 .iter()
                 .find(|e| e.id == id && e.kind == self.kind())
-                .map(|e| format!("Active Local: {}", e.title))
+                .map(|e| format!("当前本地：{}", e.title))
                 .unwrap_or_else(|| "当前本地覆盖".into())
         } else if self.capes {
             if selection.hide_cape {
                 "本地隐藏披风".into()
             } else if let Some(c) = self.cache.snapshot.capes.iter().find(|c| c.active) {
-                format!("Active Cloud Cape: {}", c.title)
+                format!("当前云端披风：{}", c.title)
             } else if self.provider.is_some() {
                 "账号云端披风".into()
             } else {
                 "未装备披风".into()
             }
         } else if self.provider.is_some() {
-            format!("Cloud Profile ({})", self.name)
+            format!("云端档案（{}）", self.name)
         } else {
-            "Default Appearance (Steve / Classic)".into()
+            "默认外观（Steve / 经典）".into()
         };
 
         let detail_h = 46.0;
@@ -909,9 +909,9 @@ impl Wardrobe {
         } else if crate::ha_launcher::documents::busy() {
             "等待安卓文件选择器…"
         } else if self.capes {
-            "Import a 64×32 PNG cape or select below"
+            "导入 64×32 PNG 披风或从下方选择"
         } else {
-            "Import a 64×64 PNG skin or select below"
+            "导入 64×64 PNG 皮肤或从下方选择"
         };
         let fitted_sub = ui.fit_text(Face::Regular, 9.5, detail_sub, info_w);
         ui.text(
@@ -931,9 +931,9 @@ impl Wardrobe {
             targets,
             [lx + lw - import_w - 8.0, listtop + 7.0, import_w, 32.0],
             if self.capes {
-                "+ Import Cape PNG"
+                "+ 导入披风 PNG"
             } else {
-                "+ Import Skin PNG"
+                "+ 导入皮肤 PNG"
             },
             Action::WardrobeImport,
             true,
@@ -1069,9 +1069,9 @@ impl Wardrobe {
                         row,
                         &cape.title,
                         if is_active {
-                            "Cloud Cape · Equipped on profile"
+                            "云端披风 · 已装备到档案"
                         } else {
-                            "Cloud Cape · Tap to activate"
+                            "云端披风 · 点击启用"
                         },
                         is_active,
                         Action::WardrobeActivateCape(index),
@@ -1098,11 +1098,11 @@ impl Wardrobe {
                     row,
                     &entry.title,
                     if is_sel {
-                        "Local Gallery · Currently applied"
+                        "本地图库 · 当前已应用"
                     } else if self.capes {
-                        "Local Cape PNG · Tap to equip"
+                        "本地披风 PNG · 点击装备"
                     } else {
-                        "Local Skin PNG · Tap to equip"
+                        "本地皮肤 PNG · 点击装备"
                     },
                     is_sel,
                     Action::WardrobeSelect(index),
@@ -1132,9 +1132,9 @@ impl Wardrobe {
                     Face::Regular,
                     10.0,
                     if self.capes {
-                        "Tap '+ Import Cape PNG' above to add a 64×32 cape texture from your device."
+                        "点击上方「+ 导入披风 PNG」从设备添加 64×32 披风贴图。"
                     } else {
-                        "Tap '+ Import Skin PNG' above to add a 64×64 skin texture from your device."
+                        "点击上方「+ 导入皮肤 PNG」从设备添加 64×64 皮肤贴图。"
                     },
                     lw - 28.0,
                 );

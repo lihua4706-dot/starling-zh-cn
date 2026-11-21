@@ -294,7 +294,7 @@ fn get(url: &str) -> Result<Value, String> {
         .call()
         .map_err(|e| match e {
             ureq::Error::Status(429, _) => {
-                "Modrinth asks to slow down: try again in a minute.".into()
+                "Modrinth 请求放慢速度：请一分钟后重试。".into()
             }
             ureq::Error::Status(code, _) => format!("Modrinth 返回 {code}。"),
             ureq::Error::Transport(t) => format!("无法连接 Modrinth：{t}"),
