@@ -236,7 +236,7 @@ mod tests {
                 "{name}"
             );
         }
-        std::fs::write(&path, archive(&[("pack.mcmeta", b"不是 JSON")])).unwrap();
+        std::fs::write(&path, archive(&[("pack.mcmeta", b"not JSON")])).unwrap();
         assert!(validate(&path, Kind::Packs, "Test.zip", || false).is_err());
         std::fs::write(&path, archive(&[("shaders/test.fsh", b"shader")])).unwrap();
         assert!(validate(&path, Kind::Shaders, "Test.zip", || false).is_ok());
