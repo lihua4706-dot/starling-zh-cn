@@ -241,5 +241,5 @@ jobs:
             每次推送到 android 分支成功构建后自动更新。
             汉化由 DeepSeek 生成；预览版为 debug 签名，不能与正式版覆盖升级。
           files: apks/*.apk
-          prerelease: true
-          make_latest: false
+          prerelease: false
+          make_latest: true
