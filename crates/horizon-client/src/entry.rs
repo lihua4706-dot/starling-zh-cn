@@ -143,6 +143,8 @@ pub fn start<G>(
     horizon_hooks::engine::seal();
     // The text crates ship (`horizon_hooks::lang`), loaded with the game's own languages.
     horizon_client::lang::install_crate_files(horizon_hooks::lang::engine::all());
+    // zh-cn fork: the app's own screens (setup, accounts, mods, diagnostics) are Chinese.
+    horizon_client::lang::set(horizon_client::lang::Language::load(&[], "zh_cn"));
     horizon_client::spans::startup::init(std::time::Instant::now());
     logging::set_game_home(launch.context.home.clone());
     // The dedicated server logs in its own folder, as vanilla's does; the game in its home.

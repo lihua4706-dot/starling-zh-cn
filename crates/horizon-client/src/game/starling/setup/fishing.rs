@@ -35,11 +35,11 @@ const CATCHES: &[(&str, u32)] = &[
     ("生鲑鱼", 21),
     ("河豚", 11),
     ("热带鱼", 2),
-    ("an Old Boot", 6),
-    ("a Stick", 4),
-    ("a Name Tag", 2),
-    ("an Enchanted Book", 2),
-    ("a Nautilus Shell", 1),
+    ("一只旧靴子", 6),
+    ("一根木棍", 4),
+    ("一个命名牌", 2),
+    ("一本附魔书", 2),
+    ("一个鹦鹉螺壳", 1),
 ];
 
 /// A fish from above, 12x6 cells facing left: a shadow under the water with a light eye. The
@@ -268,7 +268,7 @@ impl Fishing {
                 self.sounds.push(Sound::Catch);
                 self.say(format!("You caught {catch}!"), now);
             }
-            Phase::Coming { .. } => self.say("Too soon: it swam off.".into(), now),
+            Phase::Coming { .. } => self.say("收竿太早：它游走了。".into(), now),
             Phase::Idle => return,
             Phase::Cast | Phase::Waiting { .. } => {}
         }

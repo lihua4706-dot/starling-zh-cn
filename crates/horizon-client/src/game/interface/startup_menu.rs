@@ -118,7 +118,7 @@ impl StartupMenu {
         horizon_client::ui::load_metadata(&source);
         horizon_client::lang::set(horizon_client::lang::Language::load(
             &[&source],
-            &settings.language,
+            "zh_cn",
         ));
         self.root = root;
         if self.title.is_none() {

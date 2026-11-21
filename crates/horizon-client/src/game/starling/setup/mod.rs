@@ -352,7 +352,7 @@ fn transfer_details(
 ) -> String {
     let mut details = format!("{} elapsed", duration(elapsed.as_secs()));
     if stalled {
-        details.push_str(" · Waiting for the next file to finish");
+        details.push_str(" · 正在等待下一个文件完成");
     } else if received > 0 && elapsed.as_secs() >= 3 {
         let rate = received as f64 / elapsed.as_secs_f64();
         let remaining = duration((remaining as f64 / rate).ceil() as u64);
@@ -379,7 +379,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
              Close Horizon Android first, then, in the folder that opens, tap Use this folder and \
              Allow."
                 .into(),
-            Some("They are copied: Horizon Android keeps its own.".into()),
+            Some("它们已复制：Horizon Android 保留自己的副本。".into()),
         ),
         #[cfg(target_os = "android")]
         Step::Horizon(true) => (
@@ -411,7 +411,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         ),
         Step::Download(progress) => (
             "正在下载游戏",
-            "From Mojang's servers, checked file by file.".into(),
+            "来自 Mojang 服务器，逐文件校验。".into(),
             Some(if let Some(started) = progress.transfer_started {
                 let stalled = progress
                     .last_transfer
@@ -460,7 +460,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         #[cfg(target_os = "android")]
         Step::StartupScreen { error, .. } => (
             "Starling 已就绪",
-            "Open the launcher or go straight to the game. Starling remembers your choice. Change it anytime in Settings > Launcher."
+            "打开启动器或直接进入游戏。Starling 会记住你的选择，可随时在 设置 > 启动器 中更改。"
                 .into(),
             error.clone(),
         ),

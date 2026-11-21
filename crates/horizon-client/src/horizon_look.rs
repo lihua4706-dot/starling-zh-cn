@@ -49,10 +49,10 @@ pub(crate) fn give() {
             control_large: theme::CONTROL_LARGE,
         },
         fonts: Some(Fonts {
-            regular: theme::fonts::GEIST_REGULAR,
-            medium: theme::fonts::GEIST_MEDIUM,
-            semibold: theme::fonts::GEIST_SEMIBOLD,
-            mono: theme::fonts::GEIST_MONO,
+            regular: theme::fonts::NOTO_REGULAR,
+            medium: theme::fonts::NOTO_MEDIUM,
+            semibold: theme::fonts::NOTO_SEMIBOLD,
+            mono: theme::fonts::NOTO_REGULAR,
         }),
     });
 }
