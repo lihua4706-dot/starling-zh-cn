@@ -212,3 +212,34 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run native-mods.yml -R "$GITHUB_REPOSITORY" --ref starling -f version="${GITHUB_REF_NAME#v}"
+
+  # ---- zh-cn fork: rolling release of the built APKs ----
+  publish-apks:
+    name: Publish APKs to zh-cn-latest
+    needs: apk
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: starling-apk-*
+          path: apks
+          merge-multiple: true
+      - name: Remove previous rolling release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete zh-cn-latest --cleanup-tag --yes 2>/dev/null || true
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: zh-cn-latest
+          name: "Starling 汉化版（自动构建 #${{ github.run_number }}）"
+          body: |
+            简体中文汉化版，由 GitHub Actions 自动构建并发布。
+            每次推送到 android 分支成功构建后自动更新。
+            汉化由 DeepSeek 生成；预览版为 debug 签名，不能与正式版覆盖升级。
+          files: apks/*.apk
+          prerelease: true
+          make_latest: false
