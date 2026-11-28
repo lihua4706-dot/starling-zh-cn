@@ -85,18 +85,42 @@ fn fetch(
     progress: &dyn Fn(u64, u64),
     cancelled: &dyn Fn() -> bool,
 ) -> Result<(), String> {
-    crate::files::retrying(|| fetch_once(runtime, path, progress, cancelled))
+    crate::files::retrying(|| {
+        let mut failure = None;
+        for url in runtime_urls(runtime) {
+            match fetch_once(runtime, &url, path, progress, cancelled) {
+                Ok(()) => return Ok(()),
+                Err(e) => failure = Some(e),
+            }
+        }
+        Err(failure.unwrap_or(Failure::Final("no download source".into())))
+    })
+}
+
+/// The pinned URL first, then mirrors of it, for networks that cannot reach GitHub (the
+/// archive's pinned sha256 still guards whatever a mirror serves).
+fn runtime_urls(runtime: &Runtime) -> Vec<String> {
+    let mut urls = vec![runtime.url.to_owned()];
+    for prefix in [
+        "https://ghproxy.net/",
+        "https://mirror.ghproxy.com/",
+        "https://ghfast.top/",
+    ] {
+        urls.push(format!("{prefix}{}", runtime.url));
+    }
+    urls
 }
 
 fn fetch_once(
     runtime: &Runtime,
+    url: &str,
     path: &Path,
     progress: &dyn Fn(u64, u64),
     cancelled: &dyn Fn() -> bool,
 ) -> Result<(), Failure> {
     const NAME: &str = "the Java runtime";
     let response = crate::files::agent()
-        .get(runtime.url)
+        .get(url)
         .call()
         .map_err(|e| match e {
             ureq::Error::Status(code, _) => {
